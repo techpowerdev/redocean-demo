@@ -20,7 +20,7 @@ interface Props {
     category: string;
     brand: string;
     images: Array<{ color: string; colorCode: string; image: string }>; // Assuming images are an array of objects with URL and alt text
-    quantity: number; // Quantity should be a number
+    quantity?: number; // Quantity should be a number
     price: number;
   };
 }
@@ -94,7 +94,7 @@ export default function ProductCard({ product }: Props) {
     });
   }, [cartProduct]);
 
-  const handleAddToCart = (product) => {
+  const handleAddToCart = (product: CartProductType) => {
     if (!user) {
       router.push("/login"); // ถ้า user เป็น null ให้ redirect ไปที่หน้าแรก
       toast.error("กรุณาเชื่อมต่อไลน์");

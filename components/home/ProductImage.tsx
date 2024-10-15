@@ -16,7 +16,7 @@ interface ProductImageProps {
     category: string;
     brand: string;
     images: Array<{ color: string; colorCode: string; image: string }>; // Assuming images are an array of objects with URL and alt text
-    quantity: number; // Quantity should be a number
+    quantity?: number; // Quantity should be a number
     price: number;
   };
   handleColorSelect: (value: SelectedImgType) => void;
