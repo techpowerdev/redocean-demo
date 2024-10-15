@@ -12,9 +12,17 @@ import { Button } from "../ui/button";
 import { CartProductType, SelectedImgType } from "@/types/product";
 import { useUser } from "@/hooks/useUser";
 import toast from "react-hot-toast";
-
 interface Props {
-  product: any;
+  product: {
+    id: string;
+    name: string;
+    description: string;
+    category: string;
+    brand: string;
+    images: Array<{ color: string; colorCode: string; image: string }>; // Assuming images are an array of objects with URL and alt text
+    quantity: number; // Quantity should be a number
+    price: number;
+  };
 }
 
 export default function ProductCard({ product }: Props) {

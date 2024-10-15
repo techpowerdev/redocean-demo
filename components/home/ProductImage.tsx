@@ -1,14 +1,24 @@
 "use client";
 
-import {
-  CartProductType,
-  SelectedImgType,
-} from "@/app/product/[productID]/ProductDetail";
+import { CartProductType, SelectedImgType } from "@/types/product";
+// import {
+//   CartProductType,
+//   SelectedImgType,
+// } from "@/app/product/[productID]/ProductDetail";
 import Image from "next/image";
 
 interface ProductImageProps {
   cartProduct: CartProductType;
-  product: any;
+  product: {
+    id: string;
+    name: string;
+    description: string;
+    category: string;
+    brand: string;
+    images: Array<{ color: string; colorCode: string; image: string }>; // Assuming images are an array of objects with URL and alt text
+    quantity: number; // Quantity should be a number
+    price: number;
+  };
   handleColorSelect: (value: SelectedImgType) => void;
 }
 export default function ProductImage({

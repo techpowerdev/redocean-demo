@@ -5,6 +5,7 @@ export type CartProductType = {
   category: string;
   brand: string;
   selectedImg: SelectedImgType; // object type
+  // images: SelectedImgType; // object type
   quantity: number;
   price: number;
 };
