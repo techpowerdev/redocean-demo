@@ -7,6 +7,7 @@ import {
 } from "react";
 import liff from "@line/liff";
 import { toast } from "react-hot-toast";
+import axios from "axios";
 
 // Define User type
 type User = {
@@ -81,9 +82,20 @@ export const UserContextProvider = (props: Props) => {
           email: liff.getDecodedIDToken()?.email || "",
           pictureUrl: profile.pictureUrl || "", // Add profile picture URL
         };
-        setUser(user);
+        const response = await axios.post(
+          "http://localhost:3001/api/v1/register/line",
+          {
+            lineId: profile.userId,
+            displayName: profile.displayName,
+            email: liff.getDecodedIDToken()?.email || null,
+            pictureUrl: profile.pictureUrl || null, // Add profile picture URL
+          }
+        );
+        console.log(response.data);
+        setUser(response.data.user);
         localStorage.setItem("LoggedInUser", JSON.stringify(user));
         toast.success("Login successful!");
+        window.location.href = "http://localhost:3000/profile";
       }
     } catch (err) {
       console.error("Failed to log in with LIFF", err);

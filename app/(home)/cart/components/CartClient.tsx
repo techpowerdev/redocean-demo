@@ -6,7 +6,7 @@ import { MdArrowBack } from "react-icons/md";
 import ItemContent from "./ItemContent";
 import { formatPrice } from "@/utils/formatPrice";
 import { Button } from "@/components/ui/button";
-import Heading from "@/components/common/Heading";
+import Heading from "@/components/shared/Heading";
 import { PackageX } from "lucide-react";
 // import { useRouter } from "next/navigation";
 // import { SafeUser } from "@/types";

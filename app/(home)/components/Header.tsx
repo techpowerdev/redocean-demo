@@ -10,11 +10,15 @@ export default function Header() {
         className="text-white flex gap-4 justify-start items-center"
       >
         <Image
+          priority
           src={"/logo.jpeg"}
-          alt=""
+          alt="logo"
+          style={{
+            width: "80px",
+            height: "auto",
+          }}
           width={80}
           height={80}
-          priority
           className="rounded-sm"
         />
         <h1>RED OCEAN MARKETING</h1>

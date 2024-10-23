@@ -1,7 +1,7 @@
 "use client";
 
-import Container from "@/components/common/Container";
-import CartClient from "./CartClient";
+import Container from "@/components/shared/Container";
+import CartClient from "./components/CartClient";
 import { useEffect } from "react";
 import { useUser } from "@/hooks/useUser";
 import { useRouter } from "next/navigation";

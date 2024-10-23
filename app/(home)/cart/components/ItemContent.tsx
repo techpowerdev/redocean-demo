@@ -5,7 +5,7 @@ import { truncateText } from "@/utils/truncateText";
 // import Image from "next/image";
 import { useCart } from "@/hooks/useCart";
 import { CartProductType } from "@/types/product";
-import SetQuantity from "@/components/home/SetQuantity";
+import SetQuantity from "@/app/(home)/components/SetQuantity";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 

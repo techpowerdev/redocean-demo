@@ -1,10 +1,13 @@
 import React from "react";
 import Spinner from "./Spinner";
 
-export default function Loading() {
+type Props = {
+  size?: number;
+};
+export default function Loading({ size = 26 }: Props) {
   return (
     <div className="w-full h-full bg-primary-foreground z-50 opacity-50 flex justify-center items-center">
-      <Spinner size={60} />
+      <Spinner size={size} />
     </div>
   );
 }

@@ -8,7 +8,7 @@ import { MdCheckCircle } from "react-icons/md";
 import ProductImage from "./ProductImage";
 import SetColor from "./SetColor";
 import SetQuantity from "./SetQuantity";
-import { Button } from "../ui/button";
+import { Button } from "../../../components/ui/button";
 import { CartProductType, SelectedImgType } from "@/types/product";
 import { useUser } from "@/hooks/useUser";
 import toast from "react-hot-toast";
@@ -110,7 +110,7 @@ export default function ProductCard({ product }: Props) {
         product={product}
         handleColorSelect={handleColorSelect}
       />
-      <div className="flex flex-col gap-y-4 w-full p-8">
+      <div className="flex flex-col gap-y-4 w-full p-2 md:p-8">
         <h1 className="text-xl">{product.name}</h1>
         <p className="text-xl font-medium">{formatPrice(product.price)}</p>
 

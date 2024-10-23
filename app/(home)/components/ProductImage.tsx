@@ -27,7 +27,7 @@ export default function ProductImage({
   handleColorSelect,
 }: ProductImageProps) {
   return (
-    <div className="grid grid-cols-6 gap-2 h-full max-h-[500px] min-h-[300px] sm:min-h-[400px]">
+    <div className="grid grid-cols-[20%_80%] md:gap-2 h-full max-h-[500px] min-h-[300px] sm:min-h-[400px]">
       <div className="flex flex-col items-center justify-center gap-4 cursor-pointer border h-full max-h-[500px] min-h-[300px] sm:min-h-[400px]">
         {product.images.map((image: SelectedImgType) => {
           return (
@@ -47,13 +47,13 @@ export default function ProductImage({
                 alt={image.color}
                 fill
                 className="object-contain"
-                // sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               />
             </div>
           );
         })}
       </div>
-      <div className="col-span-5 relative aspect-square">
+      <div className="relative aspect-square">
         <Image
           fill
           src={cartProduct.selectedImg.image}

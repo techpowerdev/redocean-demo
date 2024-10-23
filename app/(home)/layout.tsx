@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "../globals.css";
-import Header from "@/components/home/Header";
-import MobileMenu from "@/components/home/MobileMenu";
+import Header from "@/app/(home)/components/Header";
+import MobileMenu from "@/app/(home)/components/MobileMenu";
 import CartProvider from "@/providers/CartProvider";
 import { Toaster } from "react-hot-toast";
 import UserProvider from "@/providers/UserProvider";

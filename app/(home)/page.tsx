@@ -1,8 +1,7 @@
-"use client";
-import Container from "@/components/common/Container";
+import Container from "@/components/shared/Container";
 // import Loading from "@/components/common/Loading";
-import ProductCard from "@/components/home/ProductCard";
-import { products } from "@/mockup/product";
+import ProductCard from "@/app/(home)/components/ProductCard";
+import { products } from "@/app/(home)/product";
 
 export default function Home() {
   return (
@@ -10,9 +9,6 @@ export default function Home() {
       <Container>
         <ProductCard product={products[0]} />
       </Container>
-      {/* <div className="fixed top-0 left-0 w-full h-screen justify-center items-center">
-        <Loading />
-      </div> */}
     </div>
   );
 }
