@@ -1,6 +1,7 @@
 "use client";
 
-import { addDays, addHours, format, nextSaturday } from "date-fns";
+// import { addDays, addHours, format, nextSaturday } from "date-fns";
+
 import {
   Archive,
   ArchiveX,
@@ -16,35 +17,33 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 // import { Calendar } from "@/components/ui/calendar";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Label } from "@/components/ui/label";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Mail } from "@/app/(admin)/admin/data/data";
+import { useProductStore } from "@/state-stores/admin/adminProductStore";
+import Image from "next/image";
 
-interface Props {
-  mail: Mail | null;
-}
+// interface Props {
+//   product: Product | null;
+// }
 
-export default function ProductDetailComponent({ mail }: Props) {
-  const today = new Date();
+// export default function ProductDetailComponent({ product }: Props) {
+export default function ProductDetailComponent() {
+  const selectedProduct = useProductStore((state) => state.selectedProduct);
 
   return (
     <div className="h-full flex-1 flex flex-col justify-stretch">
@@ -52,7 +51,7 @@ export default function ProductDetailComponent({ mail }: Props) {
         <div className="flex items-center gap-2">
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" disabled={!mail}>
+              <Button variant="ghost" size="icon" disabled={!selectedProduct}>
                 <Archive className="h-4 w-4" />
                 <span className="sr-only">Archive</span>
               </Button>
@@ -61,7 +60,7 @@ export default function ProductDetailComponent({ mail }: Props) {
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" disabled={!mail}>
+              <Button variant="ghost" size="icon" disabled={!selectedProduct}>
                 <ArchiveX className="h-4 w-4" />
                 <span className="sr-only">Move to junk</span>
               </Button>
@@ -70,7 +69,7 @@ export default function ProductDetailComponent({ mail }: Props) {
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" disabled={!mail}>
+              <Button variant="ghost" size="icon" disabled={!selectedProduct}>
                 <Trash2 className="h-4 w-4" />
                 <span className="sr-only">Move to trash</span>
               </Button>
@@ -82,7 +81,11 @@ export default function ProductDetailComponent({ mail }: Props) {
             <Popover>
               <PopoverTrigger asChild>
                 <TooltipTrigger asChild>
-                  <Button variant="ghost" size="icon" disabled={!mail}>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    disabled={!selectedProduct}
+                  >
                     <Clock className="h-4 w-4" />
                     <span className="sr-only">Snooze</span>
                   </Button>
@@ -98,7 +101,7 @@ export default function ProductDetailComponent({ mail }: Props) {
                     >
                       Later today{" "}
                       <span className="ml-auto text-muted-foreground">
-                        {format(addHours(today, 4), "E, h:m b")}
+                        {/* {format(addHours(today, 4), "E, h:m b")} */}
                       </span>
                     </Button>
                     <Button
@@ -107,7 +110,7 @@ export default function ProductDetailComponent({ mail }: Props) {
                     >
                       Tomorrow
                       <span className="ml-auto text-muted-foreground">
-                        {format(addDays(today, 1), "E, h:m b")}
+                        {/* {format(addDays(today, 1), "E, h:m b")} */}
                       </span>
                     </Button>
                     <Button
@@ -116,7 +119,7 @@ export default function ProductDetailComponent({ mail }: Props) {
                     >
                       This weekend
                       <span className="ml-auto text-muted-foreground">
-                        {format(nextSaturday(today), "E, h:m b")}
+                        {/* {format(nextSaturday(today), "E, h:m b")} */}
                       </span>
                     </Button>
                     <Button
@@ -125,7 +128,7 @@ export default function ProductDetailComponent({ mail }: Props) {
                     >
                       Next week
                       <span className="ml-auto text-muted-foreground">
-                        {format(addDays(today, 7), "E, h:m b")}
+                        {/* {format(addDays(today, 7), "E, h:m b")} */}
                       </span>
                     </Button>
                   </div>
@@ -139,7 +142,7 @@ export default function ProductDetailComponent({ mail }: Props) {
         <div className="ml-auto flex items-center gap-2">
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" disabled={!mail}>
+              <Button variant="ghost" size="icon" disabled={!selectedProduct}>
                 <Reply className="h-4 w-4" />
                 <span className="sr-only">Reply</span>
               </Button>
@@ -148,7 +151,7 @@ export default function ProductDetailComponent({ mail }: Props) {
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" disabled={!mail}>
+              <Button variant="ghost" size="icon" disabled={!selectedProduct}>
                 <ReplyAll className="h-4 w-4" />
                 <span className="sr-only">Reply all</span>
               </Button>
@@ -157,7 +160,7 @@ export default function ProductDetailComponent({ mail }: Props) {
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" disabled={!mail}>
+              <Button variant="ghost" size="icon" disabled={!selectedProduct}>
                 <Forward className="h-4 w-4" />
                 <span className="sr-only">Forward</span>
               </Button>
@@ -168,7 +171,7 @@ export default function ProductDetailComponent({ mail }: Props) {
         <Separator orientation="vertical" className="mx-2 h-6" />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" disabled={!mail}>
+            <Button variant="ghost" size="icon" disabled={!selectedProduct}>
               <MoreVertical className="h-4 w-4" />
               <span className="sr-only">More</span>
             </Button>
@@ -182,44 +185,53 @@ export default function ProductDetailComponent({ mail }: Props) {
         </DropdownMenu>
       </div>
       <Separator />
-      {mail ? (
-        <div className="flex flex-col flex-1 bg-yellow-400">
-          <div className="flex items-start p-4">
+      {selectedProduct ? (
+        <div className="flex flex-col flex-1 ">
+          <div className="grid grid-cols-[30%_1fr] gap-4 p-4">
             <div className="flex items-start gap-4 text-sm">
-              <Avatar>
-                <AvatarImage alt={mail.name} />
-                <AvatarFallback>
-                  {mail.name
-                    .split(" ")
-                    .map((chunk) => chunk[0])
-                    .join("")}
-                </AvatarFallback>
-              </Avatar>
-              <div className="grid gap-1">
-                <div className="font-semibold">{mail.name}</div>
-                <div className="line-clamp-1 text-xs">{mail.subject}</div>
-                <div className="line-clamp-1 text-xs">
-                  <span className="font-medium">Reply-To:</span> {mail.email}
+              {selectedProduct.images?.[0]?.url && (
+                <div className="relative w-full aspect-square">
+                  <Image
+                    fill
+                    src={`${
+                      process.env.NEXT_PUBLIC_IMAGE_HOST_URL +
+                      selectedProduct.images[0].url
+                    }`}
+                    alt={selectedProduct.images[0].id}
+                    className="object-contain"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  />
                 </div>
-              </div>
+              )}
             </div>
-            {mail.date && (
-              <div className="ml-auto text-xs text-muted-foreground">
-                {format(new Date(mail.date), "PPpp")}
+            <div className="flex flex-col items-start justify-between">
+              <div className="font-semibold">{selectedProduct.name}</div>
+              <div className="flex-1 my-2 whitespace-pre-wrap text-sm">
+                {selectedProduct.description}
               </div>
-            )}
+              <div className="line-clamp-1 text-primary text-xl font-bold">
+                จำนวนคงเหลือ : {selectedProduct.stock}
+              </div>
+              {/* {selectedProduct.inStock ? (
+                <div className="font-semibold">มีสินค้าพร้อมส่ง</div>
+              ) : (
+                <div className="text-end font-semibold">สินค้าหมด</div>
+              )} */}
+            </div>
           </div>
+          {/* end header */}
+
           <Separator />
-          <div className="flex-1 whitespace-pre-wrap p-4 text-sm">
-            {mail.text}
-          </div>
-          <Separator className="mt-auto" />
-          <div className="p-4">
+
+          {/* main content */}
+
+          {/* <Separator className="mt-auto" /> */}
+          {/* <div className="p-4">
             <form>
               <div className="grid gap-4">
                 <Textarea
                   className="p-4"
-                  placeholder={`Reply ${mail.name}...`}
+                  placeholder={`Reply ${selectedProduct.name}...`}
                 />
                 <div className="flex items-center">
                   <Label
@@ -239,11 +251,11 @@ export default function ProductDetailComponent({ mail }: Props) {
                 </div>
               </div>
             </form>
-          </div>
+          </div> */}
         </div>
       ) : (
         <div className="p-8 text-center text-muted-foreground">
-          No message selected
+          ยังไม่ได้เลือกสินค้าที่ต้องการแสดง
         </div>
       )}
     </div>

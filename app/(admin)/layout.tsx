@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 
 import { AdminLayout } from "@/app/(admin)/admin/components/shared/AdminLayout";
 import { cookies } from "next/headers";
+import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
   title: "RED OCEAN MARKETING",
@@ -25,6 +26,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        <Toaster
+        // toastOptions={{
+        //   style: {
+        //     background: "rgb(51 65 85",
+        //     color: "#fff",
+        //   },
+        // }}
+        />
         <AdminLayout
           defaultLayout={defaultLayout} // กำหนดความกว้างเริ่มต้น
           defaultCollapsed={defaultCollapsed} // กำหนดการหุบ ขยาย

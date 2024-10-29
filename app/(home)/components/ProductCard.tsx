@@ -10,8 +10,8 @@ import SetColor from "./SetColor";
 import SetQuantity from "./SetQuantity";
 import { Button } from "../../../components/ui/button";
 import { CartProductType, SelectedImgType } from "@/types/product";
-import { useUser } from "@/hooks/useUser";
 import toast from "react-hot-toast";
+import { useCurrentUserStore } from "@/state-stores/useCurrentUserStore";
 interface Props {
   product: {
     id: string;
@@ -26,7 +26,7 @@ interface Props {
 }
 
 export default function ProductCard({ product }: Props) {
-  const { user } = useUser();
+  const currentUser = useCurrentUserStore((state) => state.currentUser);
 
   // If you need to define a type
   const [cartProduct, setCartProduct] = useState<CartProductType>({
@@ -95,12 +95,16 @@ export default function ProductCard({ product }: Props) {
   }, [cartProduct]);
 
   const handleAddToCart = (product: CartProductType) => {
-    if (!user) {
+    if (!currentUser) {
       router.push("/login"); // ถ้า user เป็น null ให้ redirect ไปที่หน้าแรก
       toast.error("กรุณาเชื่อมต่อไลน์");
-    } else {
-      handleAddProductToCart(product);
+      return;
     }
+    if (!currentUser.phoneVerified) {
+      router.push("/verify-user"); // ถ้า user เป็น null ให้ redirect ไปที่หน้าแรก
+      return;
+    }
+    handleAddProductToCart(product);
   };
 
   return (

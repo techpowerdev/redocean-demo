@@ -8,6 +8,7 @@ import { formatPrice } from "@/utils/formatPrice";
 import { Button } from "@/components/ui/button";
 import Heading from "@/components/shared/Heading";
 import { PackageX } from "lucide-react";
+import { useRouter } from "next/navigation";
 // import { useRouter } from "next/navigation";
 // import { SafeUser } from "@/types";
 
@@ -19,7 +20,7 @@ import { PackageX } from "lucide-react";
 export default function CartClient() {
   const { cartProducts, handleClearCart, cartTotalAmount } = useCart();
 
-  // const router = useRouter();
+  const router = useRouter();
 
   if (!cartProducts || cartProducts.length === 0) {
     return (
@@ -80,7 +81,11 @@ export default function CartClient() {
           >
             {currentUser ? "Checkout" : "Login To Checkout"}
           </button> */}
-          <Button size={"lg"} className="text-lg">
+          <Button
+            size={"lg"}
+            className="text-lg"
+            onClick={() => router.push("/checkout")}
+          >
             ชำระเงิน
           </Button>
         </div>

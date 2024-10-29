@@ -38,9 +38,9 @@ export default function MobileMenu() {
       </Link>
       <Link
         className={`p-2 flex flex-col text-sm items-center gap-2 hover:bg-primary-foreground hover:rounded-lg ${
-          pathname === "/order" ? "bg-primary-foreground rounded-lg" : ""
+          pathname === "/orders" ? "bg-primary-foreground rounded-lg" : ""
         }`}
-        href="/order"
+        href="/orders"
         rel="noopener noreferrer"
       >
         <FileClock />

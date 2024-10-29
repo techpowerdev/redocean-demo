@@ -10,7 +10,7 @@ import { CirclePlus } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 
 // Form valiation lib
-import { useForm } from "react-hook-form";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
@@ -27,10 +27,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import axios from "axios";
+import { useProductStore } from "@/state-stores/admin/adminProductStore";
 
 // zod schema
 const formSchema = z.object({
-  productName: z
+  name: z
     .string({ required_error: "กรุณากรอกชื่อสินค้า" })
     .trim()
     .min(1, "กรุณากรอกชื่อสินค้า"),
@@ -67,11 +69,6 @@ const formSchema = z.object({
       invalid_type_error: "ระบุราคาเป็นตัวเลขเท่านั้น",
     })
     .min(10, "ราคาขั้นตำ่ 10 บาท"),
-  // contactNumber: z
-  //   .string({
-  //     required_error: "Contact is required",
-  //   })
-  //   .regex(/^[0-9]{10}$/, "Invalid phone number"),
   inStock: z.boolean().optional(),
   stock: z.number({
     required_error: "กรุณาระบุจำนวนสินค้าในสต็อค",
@@ -79,9 +76,11 @@ const formSchema = z.object({
   }),
 });
 
-export type FormData = z.infer<typeof formSchema>;
+export type FormType = z.infer<typeof formSchema>;
 
 export default function AddProduct() {
+  const setProductLists = useProductStore((state) => state.setProductLists);
+
   const [isLoading, setIsLoading] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState("");
   const [success, setSuccess] = React.useState(false);
@@ -94,12 +93,12 @@ export default function AddProduct() {
     setValue,
     trigger,
     getValues,
-  } = useForm<FormData>({
+  } = useForm<FormType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      productName: undefined,
-      images: [],
+      name: undefined,
       description: undefined,
+      images: [],
       price: undefined,
       promotionPrice: undefined,
       inStock: false,
@@ -141,21 +140,53 @@ export default function AddProduct() {
     maxSize: 5 * 1024 * 1024, // 5MB
   });
 
-  const onSubmit = async (data: FormData) => {
+  // const onSubmit = async (data: FormType) => {
+  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     setSuccess(false);
     setErrorMessage("");
     setIsLoading(true);
-    console.log(data);
-    // const submittionResult = await createAd({
-    //   ...data,
-    //   userEmail: session.data.user.email,
-    // });
-    // const submittionResult = () => console.log("submit");
-    // console.log("submittionResult:", submittionResult);
-    // if (submittionResult.error) {
-    //   setErrorMessage(submittionResult.message);
-    //   return;
-    // }
+
+    const formData = new FormData();
+
+    // เพิ่มไฟล์ลงใน FormData
+    data.images.forEach((image: any) => {
+      formData.append("images", image.file);
+    });
+
+    // ใช้ Object.entries เพื่อเพิ่มฟิลด์ข้อมูลอื่นๆ
+    Object.entries(data).forEach(([key, value]) => {
+      if (key !== "images") {
+        // ยกเว้นฟิลด์ images เพราะเราได้เพิ่มไปแล้ว
+        formData.append(key, value);
+      }
+    });
+
+    // แสดงข้อมูลใน form
+    formData.forEach((value, key) => {
+      console.log(key, value);
+    });
+
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/products`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    const newProducdts = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/products`
+    );
+
+    setProductLists(newProducdts.data);
+
+    if (response.data.error) {
+      setErrorMessage(response.data.message);
+      return;
+    }
+
     reset();
     setImagePreviews([]);
     setIsLoading(false);
@@ -191,15 +222,15 @@ export default function AddProduct() {
             <form onSubmit={handleSubmit(onSubmit, onError)}>
               <div className="grid w-full items-center gap-4">
                 <div className="flex flex-col space-y-1.5">
-                  <Label htmlFor="productName">ชื่อสินค้า</Label>
+                  <Label htmlFor="name">ชื่อสินค้า</Label>
                   <Input
-                    {...register("productName")}
-                    id="productName"
+                    {...register("name")}
+                    id="name"
                     placeholder="กรอกชื่อสินค้า"
                   />
-                  {errors.productName && (
+                  {errors.name && (
                     <p className="text-[12px] text-red-500">
-                      {errors.productName.message}
+                      {errors.name.message}
                     </p>
                   )}
                 </div>

@@ -2,26 +2,31 @@
 
 import Container from "@/components/shared/Container";
 import CartClient from "./components/CartClient";
-import { useEffect } from "react";
-import { useUser } from "@/hooks/useUser";
-import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
+import { useCurrentUserStore } from "@/state-stores/useCurrentUserStore";
+import Loading from "@/components/shared/Loading";
+import LineLogin from "../../../components/auth/LineLogin";
+import MobileContainer from "@/components/shared/MobileContainer";
 
 export default function Cart() {
-  const { user } = useUser();
-  const router = useRouter();
+  const currentUser = useCurrentUserStore((state) => state.currentUser);
 
-  useEffect(() => {
-    if (!user) {
-      router.push("/login"); // ถ้า user เป็น null ให้ redirect ไปที่หน้าแรก
-      toast.error("กรุณาเชื่อมต่อไลน์");
-    }
-  }, [user, router]);
+  const loading = useCurrentUserStore((state) => state.loading);
 
-  return (
+  if (loading) {
+    return (
+      <div className="fixed top-0 left-0 w-full h-screen justify-center items-center">
+        <Loading size={40} />
+      </div>
+    );
+  }
+
+  return currentUser ? (
     <Container>
-      {/* <CartClient currentUser={currentUser} /> */}
       <CartClient />
     </Container>
+  ) : (
+    <MobileContainer>
+      <LineLogin />
+    </MobileContainer>
   );
 }

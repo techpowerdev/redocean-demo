@@ -8,6 +8,7 @@ import {
 import liff from "@line/liff";
 import { toast } from "react-hot-toast";
 import axios from "axios";
+import { useCurrentUserStore } from "@/state-stores/useCurrentUserStore";
 
 // Define User type
 type User = {
@@ -28,7 +29,7 @@ type UserContextType = {
 export const UserContext = createContext<UserContextType | null>(null);
 
 interface Props {
-  [propName: string]: any;
+  [propName: string]: never;
 }
 
 export const UserContextProvider = (props: Props) => {
@@ -37,6 +38,7 @@ export const UserContextProvider = (props: Props) => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true); // กำหนด type ของ loading เป็น boolean
 
+  const { setCurrentUser } = useCurrentUserStore();
   // Initialize LIFF and login if necessary
   useEffect(() => {
     const initializeLiff = async () => {
@@ -47,20 +49,31 @@ export const UserContextProvider = (props: Props) => {
         // If already logged in, retrieve the user profile
         if (liff.isLoggedIn()) {
           const profile = await liff.getProfile();
-          const user = {
+          const userInfo = {
             id: profile.userId,
             name: profile.displayName,
             email: liff.getDecodedIDToken()?.email || "",
             pictureUrl: profile.pictureUrl || "", // Add profile picture URL
           };
-          setUser(user);
-          localStorage.setItem("LoggedInUser", JSON.stringify(user));
+          setUser(userInfo);
+          // localStorage.setItem("LoggedInUser", JSON.stringify(userInfo));
+          const response = await axios.post(
+            `${process.env.NEXT_PUBLIC_API_URL}/register/line`,
+            {
+              lineId: profile.userId,
+              displayName: profile.displayName,
+              email: liff.getDecodedIDToken()?.email || null,
+              pictureUrl: profile.pictureUrl || null, // Add profile picture URL
+            }
+          );
+          setCurrentUser(response.data.user);
         }
       } catch (err) {
         console.error("Failed to initialize LIFF", err);
         setError("Failed to initialize LIFF");
       } finally {
         setLoading(false);
+        console.log("login success");
       }
     };
 
@@ -83,7 +96,7 @@ export const UserContextProvider = (props: Props) => {
           pictureUrl: profile.pictureUrl || "", // Add profile picture URL
         };
         const response = await axios.post(
-          "http://localhost:3001/api/v1/register/line",
+          `${process.env.NEXT_PUBLIC_API_URL}/register/line`,
           {
             lineId: profile.userId,
             displayName: profile.displayName,
@@ -93,7 +106,7 @@ export const UserContextProvider = (props: Props) => {
         );
         console.log(response.data);
         setUser(response.data.user);
-        localStorage.setItem("LoggedInUser", JSON.stringify(user));
+        // localStorage.setItem("LoggedInUser", JSON.stringify(user));
         toast.success("Login successful!");
         window.location.href = "http://localhost:3000/profile";
       }
@@ -108,7 +121,7 @@ export const UserContextProvider = (props: Props) => {
     if (liff.isLoggedIn()) {
       liff.logout();
       setUser(null);
-      localStorage.removeItem("LoggedInUser");
+      // localStorage.removeItem("LoggedInUser");
       toast.success("Logout successful!");
     } else {
       toast.error("Not logged in with LIFF");
@@ -118,6 +131,7 @@ export const UserContextProvider = (props: Props) => {
   const value = {
     user,
     loading,
+    error,
     liffLogin,
     liffLogout,
   };

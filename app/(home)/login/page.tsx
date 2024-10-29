@@ -1,26 +1,57 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { useUser } from "@/hooks/useUser";
-import { UserRoundCog } from "lucide-react";
-import React from "react";
+import Loading from "@/components/shared/Loading";
+import { useCurrentUserStore } from "@/state-stores/useCurrentUserStore";
+import liff from "@line/liff";
+import axios from "axios";
+
+import { useEffect } from "react";
+import toast from "react-hot-toast";
 
 export default function Login() {
-  const { liffLogin } = useUser();
+  const setCurrentUser = useCurrentUserStore((state) => state.setCurrentUser);
+  const setToken = useCurrentUserStore((state) => state.setToken);
+
+  const setLoading = useCurrentUserStore((state) => state.setLoading);
+
+  // Initialize LIFF and login if necessary
+  useEffect(() => {
+    const initializeLiff = async () => {
+      try {
+        await liff.init({ liffId: `${process.env.NEXT_PUBLIC_LINE_LIFF_ID}` }); // Replace with your LIFF ID
+
+        // If already logged in, send request to register/line api
+        if (liff.isLoggedIn()) {
+          const profile = await liff.getProfile();
+          const response = await axios.post(
+            `${process.env.NEXT_PUBLIC_API_URL}/login/line`,
+            {
+              lineUid: profile.userId,
+              displayName: profile.displayName,
+              email: liff.getDecodedIDToken()?.email || null,
+              pictureUrl: profile.pictureUrl || null, // Add profile picture URL
+            }
+          );
+          setCurrentUser(response.data.user);
+          setToken(response.data.accessToken);
+          toast.success("เชื่อมต่อกับไลน์แล้ว!");
+          window.location.href = `/`;
+        } else {
+          liff.login();
+        }
+      } catch (err) {
+        console.error("Failed to initialize LIFF", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initializeLiff();
+  }, []);
 
   return (
-    <div className="py-4 md:py-24">
-      <div className="flex flex-col items-center gap-4">
-        <UserRoundCog />
-        <h1>กรุณาเชื่อมต่อบัญชี LINE</h1>
-        <Button
-          onClick={liffLogin}
-          className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] bg-[#00b900] transition-colors flex items-center justify-center hover:bg-[#00b900]/85 dark:hover:bg-[#1a1a1a] hover:border-transparent text-white text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-          rel="noopener noreferrer"
-        >
-          เชื่อมต่อบัญชี
-        </Button>
-      </div>
+    <div className="fixed top-0 left-0 w-full h-screen justify-center items-center">
+      <Loading size={40} />
     </div>
   );
 }

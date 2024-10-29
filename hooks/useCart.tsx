@@ -13,7 +13,9 @@ type CartcontextType = {
   cartTotalQty: number;
   cartTotalAmount: number;
   cartProducts: CartProductType[] | null;
+  orderProducts: CartProductType[] | null; //test order
   handleAddProductToCart: (product: CartProductType) => void;
+  handleAddProductToOrder: (product: CartProductType) => void; //test order
   handleRemoveProductFromCart: (product: CartProductType) => void;
   handleCartQtyIncrease: (product: CartProductType) => void;
   handleCartQtyDecrease: (product: CartProductType) => void;
@@ -38,6 +40,10 @@ export const CartContextProvider = (props: Props) => {
   const [cartProducts, setCartProducts] = useState<CartProductType[] | null>(
     null
   );
+  //test order
+  const [orderProducts, setOrderProducts] = useState<CartProductType[] | null>(
+    null
+  );
 
   const [paymentIntent, setPaymentIntent] = useState<string | null>(null);
   // console.log("qty", cartTotalQty);
@@ -48,11 +54,16 @@ export const CartContextProvider = (props: Props) => {
     const cartItems: any = localStorage.getItem("ShopCartItems");
     const cProduct: CartProductType[] | null = JSON.parse(cartItems);
 
+    // test order
+    const orderItems: any = localStorage.getItem("ShopOrderItems");
+    const oProduct: CartProductType[] | null = JSON.parse(orderItems);
+
     // Get payment intent from localStorage
     const eShopPaymentIntent: any = localStorage.getItem("eShopPaymentIntent");
     const paymentIntent: string | null = JSON.parse(eShopPaymentIntent);
 
     setCartProducts(cProduct);
+    setOrderProducts(oProduct); // test order
     setPaymentIntent(paymentIntent);
   }, []);
 
@@ -84,10 +95,25 @@ export const CartContextProvider = (props: Props) => {
       } else {
         updatedCart = [product];
       }
-      toast.success("Product added to cart");
+      toast.success("เพิ่มสินค้าในตะกร้าแล้ว");
 
       localStorage.setItem("ShopCartItems", JSON.stringify(updatedCart));
       return updatedCart;
+    });
+  }, []);
+  // Function for adding a product to the cart
+  const handleAddProductToOrder = useCallback((product: CartProductType) => {
+    setOrderProducts((prev) => {
+      let updatedOrder;
+      if (prev) {
+        updatedOrder = [...prev, product];
+      } else {
+        updatedOrder = [product];
+      }
+      toast.success("เพิ่มคำสั่งซื้อสำเร็จ");
+
+      localStorage.setItem("ShopOrderItems", JSON.stringify(updatedOrder));
+      return updatedOrder;
     });
   }, []);
 
@@ -101,7 +127,7 @@ export const CartContextProvider = (props: Props) => {
         console.log(filteredProducts);
 
         setCartProducts(filteredProducts);
-        toast.success("Product removed");
+        toast.success("ลบสินค้าแล้ว");
         localStorage.setItem("ShopCartItems", JSON.stringify(filteredProducts));
       }
     },
@@ -113,7 +139,7 @@ export const CartContextProvider = (props: Props) => {
     (product: CartProductType) => {
       let updatedCart;
       if (product.quantity === 99) {
-        return toast.error("Ooop! Maximum reached");
+        return toast.error("เกินขีดจำกัดจำนวนสูงสุดที่เพิ่มได้แล้ว");
       }
 
       if (cartProducts) {
@@ -140,7 +166,7 @@ export const CartContextProvider = (props: Props) => {
     (product: CartProductType) => {
       let updatedCart;
       if (product.quantity === 1) {
-        return toast.error("Ooop! Minimum reached");
+        return toast.error("ขั้นต่ำ 1 ชิ้น");
       }
 
       if (cartProducts) {
@@ -182,7 +208,9 @@ export const CartContextProvider = (props: Props) => {
     cartTotalQty,
     cartTotalAmount,
     cartProducts,
+    orderProducts, // test order
     handleAddProductToCart,
+    handleAddProductToOrder, // test order
     handleRemoveProductFromCart,
     handleCartQtyIncrease,
     handleCartQtyDecrease,

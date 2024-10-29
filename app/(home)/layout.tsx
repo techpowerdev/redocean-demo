@@ -5,7 +5,8 @@ import Header from "@/app/(home)/components/Header";
 import MobileMenu from "@/app/(home)/components/MobileMenu";
 import CartProvider from "@/providers/CartProvider";
 import { Toaster } from "react-hot-toast";
-import UserProvider from "@/providers/UserProvider";
+// import UserProvider from "@/providers/UserProvider";
+import CheckLogined from "../../components/auth/CheckLogined";
 
 const geistSans = localFont({
   src: "../fonts/GeistVF.woff",
@@ -41,15 +42,16 @@ export default function RootLayout({
         //   },
         // }}
         />
-        <UserProvider>
-          <CartProvider>
-            <div className="flex flex-col justify-between min-h-screen gap-8 text-foreground/70 font-[family-name:var(--font-geist-sans)]">
-              <Header />
-              <main className="pt-20 pb-28">{children}</main>
-              <MobileMenu />
-            </div>
-          </CartProvider>
-        </UserProvider>
+        {/* <UserProvider> */}
+        <CheckLogined />
+        <CartProvider>
+          <div className="flex flex-col justify-between min-h-screen gap-8 text-foreground/70 font-[family-name:var(--font-geist-sans)]">
+            <Header />
+            <main className="pt-20 pb-28">{children}</main>
+            <MobileMenu />
+          </div>
+        </CartProvider>
+        {/* </UserProvider> */}
       </body>
     </html>
   );
