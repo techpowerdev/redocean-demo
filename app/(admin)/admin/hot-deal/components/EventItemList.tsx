@@ -103,7 +103,7 @@ const apiURL = process.env.NEXT_PUBLIC_IMAGE_HOST_URL;
 export function EventItemList() {
   const productLists = useProductStore((state) => state.productLists);
   const isLoading = productLists === undefined; // Adjust loading condition
-  const eventProduct = productLists?.filter((item) => item.isActive === true);
+  const eventProduct = productLists?.filter((item) => item.hotDeal === true);
 
   if (isLoading) return <Loading />;
 
@@ -122,7 +122,7 @@ export function EventItemList() {
                 <div className="flex items-center">
                   <div className="flex items-center gap-2">
                     <div className="font-semibold">{item.name}</div>
-                    {item.isActive ? (
+                    {item.hotDeal ? (
                       <span className="relative flex h-3 w-3">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                         <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
@@ -139,7 +139,7 @@ export function EventItemList() {
                 </div>
                 <div className="grid grid-cols-[1fr_20%] gap-2">
                   <div className="line-clamp-2 text-xs text-muted-foreground">
-                    {item.description.substring(0, 300)}
+                    {item.description.substring(0, 200)}
                   </div>
                   {item.images?.[0]?.url && (
                     <div className="relative w-full aspect-square">
@@ -155,8 +155,8 @@ export function EventItemList() {
                 </div>
               </div>
               <ToggleBooleanField
-                initialStatus={item.isActive}
-                fieldName="isActive"
+                initialStatus={item.hotDeal}
+                fieldName="hotDeal"
                 icon={Flame}
                 apiEndpoint={`${process.env.NEXT_PUBLIC_API_URL}/products/${item.id}/toggle-hot-deal`}
                 id={item.id}

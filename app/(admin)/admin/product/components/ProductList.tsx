@@ -3,8 +3,8 @@
 import { formatDistanceToNow } from "date-fns";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import ToggleBooleanField from "./ToggleBooleanField";
-import { Flame } from "lucide-react";
+// import ToggleBooleanField from "./ToggleBooleanField";
+// import { Flame } from "lucide-react";
 import Image from "next/image";
 import { useProductStore } from "@/state-stores/admin/adminProductStore";
 import { Product } from "@/types/types";
@@ -41,7 +41,7 @@ export function ProductList({ items }: Props) {
                 <div className="flex items-center">
                   <div className="flex items-center gap-2">
                     <div className="font-semibold">{item.name}</div>
-                    {item.isActive ? (
+                    {item.hotDeal ? (
                       <span className="relative flex h-3 w-3">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                         <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
@@ -58,7 +58,7 @@ export function ProductList({ items }: Props) {
                 </div>
                 <div className="grid grid-cols-[1fr_20%] gap-2">
                   <div className="line-clamp-2 text-xs text-muted-foreground">
-                    {item.description.substring(0, 300)}
+                    {item.description.substring(0, 200)}
                   </div>
                   {item.images?.[0]?.url && (
                     <div className="relative w-full aspect-square">
@@ -73,14 +73,14 @@ export function ProductList({ items }: Props) {
                   )}
                 </div>
               </div>
-              <ToggleBooleanField
-                initialStatus={item.isActive}
-                fieldName="isActive"
+              {/* <ToggleBooleanField
+                initialStatus={item.hotDeal}
+                fieldName="hotDeal"
                 icon={Flame}
                 apiEndpoint={`${process.env.NEXT_PUBLIC_API_URL}/products/${item.id}/toggle-hot-deal`} // ปรับ Endpoint ให้ตรงกับสินค้า
                 id={item.id} // ส่งค่า ID ที่ถูกต้อง
                 label="Hot Deal"
-              />
+              /> */}
             </div>
           ))
         ) : (

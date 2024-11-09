@@ -11,7 +11,22 @@ import { Separator } from "@/components/ui/separator";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AdminNavbar } from "@/app/(admin)/admin/components/shared/AdminNavbar";
 import { AccountSwitcher } from "./AccoutSwitch";
-import { mainLinks, secondLinks } from "../../data/navlink";
+// import { mainLinks, secondLinks } from "../../data/navlink";
+import { useProductStore } from "@/state-stores/admin/adminProductStore";
+import {
+  Archive,
+  CalendarClock,
+  CircleCheckBig,
+  CircleX,
+  Flame,
+  LucideIcon,
+  PackageOpen,
+  ShoppingBag,
+  ShoppingCart,
+  // TicketPercent,
+  Truck,
+} from "lucide-react";
+
 // import { mainLinks, secondLinks } from "../data/navlink";
 
 interface Props {
@@ -60,6 +75,14 @@ export const accounts = [
   },
 ];
 
+interface Link {
+  href: string;
+  title: string;
+  label?: string;
+  icon: LucideIcon;
+  variant: "default" | "default";
+}
+
 export function AdminLayout({
   children,
   defaultLayout = [20, 80], // [ขนาด side bar,ขนาด main content]
@@ -68,6 +91,78 @@ export function AdminLayout({
 }: Props) {
   const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed);
 
+  //
+  const productLists = useProductStore((state) => state.productLists);
+
+  const mainLinks: Link[] = [
+    {
+      href: "/admin",
+      title: "คำสั่งซื้อ",
+      label: "128",
+      icon: ShoppingCart,
+      variant: "default",
+    },
+    {
+      href: "/admin/packing",
+      title: "กำลังแพ็ค",
+      label: "99",
+      icon: PackageOpen,
+      variant: "default",
+    },
+    {
+      href: "/admin/shipping",
+      title: "อยู่ระหว่างจัดส่ง",
+      label: "9",
+      icon: Truck,
+      variant: "default",
+    },
+
+    {
+      href: "/admin/delivered",
+      title: "จัดส่งสำเร็จ",
+      label: "23",
+      icon: CircleCheckBig,
+      variant: "default",
+    },
+    {
+      href: "/admin/return-request",
+      title: "ขอคืนสินค้า",
+      label: "22",
+      icon: Archive,
+      variant: "default",
+    },
+    {
+      href: "/admin/cancel",
+      title: "ยกเลิกคำสั่งซื้อ",
+      label: "34",
+      icon: CircleX,
+      variant: "default",
+    },
+  ];
+
+  const secondLinks: Link[] = [
+    {
+      href: "/admin/product",
+      title: "สินค้า",
+      label: `${productLists ? productLists.length : 0}`,
+      icon: ShoppingBag,
+      variant: "default",
+    },
+    {
+      href: "/admin/hot-deal",
+      title: "Hot Deal",
+      label: "128",
+      icon: Flame,
+      variant: "default",
+    },
+    {
+      href: "/admin/event",
+      title: "จัดการอีเวนท์",
+      label: "342",
+      icon: CalendarClock,
+      variant: "default",
+    },
+  ];
   return (
     <TooltipProvider delayDuration={0}>
       <ResizablePanelGroup

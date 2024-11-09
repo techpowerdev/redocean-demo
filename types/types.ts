@@ -94,6 +94,7 @@ export type Product = {
   inStock: boolean;
   stock: number;
   isActive: boolean;
+  hotDeal: boolean;
   createdAt: Date;
   updatedAt: Date;
   images?: Image[];

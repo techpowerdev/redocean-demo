@@ -9,7 +9,29 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { CartProductType } from "@/types/product";
 import { useCart } from "@/hooks/useCart";
+import { useOrderStore } from "@/state-stores/orderStore";
+import { formatPrice } from "@/utils/formatPrice";
+import { useCartProductStore } from "@/state-stores/cartProductStore";
 
+type orderDetailType = {
+  name: string;
+  price: number;
+  qty: number;
+  image: string;
+  groupBuyEventId: string;
+};
+type createOrderType = {
+  type: string;
+  creditCardFee: number;
+  shippingFee: number;
+  totalAmount: number;
+  returnAmount: number;
+  recipient: string;
+  phoneNumber: string;
+  address: string;
+  userId: string;
+  orderDetails: orderDetailType[];
+};
 const checkoutSchema = z.object({
   fullName: z
     .string()
@@ -41,6 +63,12 @@ const checkoutSchema = z.object({
 type CheckoutFormData = z.infer<typeof checkoutSchema>;
 
 const CheckoutForm = () => {
+  // global state
+  const cartProducts = useCartProductStore((state) => state.cartProducts);
+  const cartTotalAmount = useCartProductStore((state) => state.cartTotalAmount);
+  const orders = useOrderStore((state) => state.orders);
+  const setOrders = useOrderStore((state) => state.setOrders);
+
   const { handleClearCart } = useCart(); // test order
 
   const router = useRouter();
@@ -61,12 +89,56 @@ const CheckoutForm = () => {
   });
 
   const onSubmit = (data: CheckoutFormData) => {
-    setIsLoading(true);
+    // setIsLoading(true);
     console.log("Form Data:", data);
+    console.log("cart Data:", cartProducts);
+    try {
+      if (cartProducts) {
+        let orderDetails: orderDetailType[] = []; // เริ่มต้นเป็น array เปล่า
+
+        cartProducts.forEach((product) => {
+          const orderDetail = {
+            name: product.name,
+            price: product.price,
+            qty: product.quantity,
+            image: product.image,
+            groupBuyEventId: product.id,
+          };
+          orderDetails.push(orderDetail); // เพิ่ม orderDetail เข้าไปใน orderDetails
+        });
+
+        const createOrderData = {
+          type: "string;", // กำหนดค่าให้ตรงกับชนิดข้อมูลที่ต้องการจริง ๆ
+          creditCardFee: 0, // กำหนดค่าเริ่มต้น หรือกำหนดค่าจากข้อมูลจริง
+          shippingFee: 0,
+          totalAmount: 0,
+          returnAmount: 0,
+          recipient: data.fullName,
+          phoneNumber: "",
+          address: data.address,
+          userId: "",
+          orderDetails: orderDetails.length > 0 ? orderDetails : null, // ถ้า orderDetails มีข้อมูลให้ใช้ ถ้าไม่มีให้ใช้ null
+        };
+
+        // ส่ง createOrderData ไปยัง API หรือนำไปใช้ตามต้องการ
+      }
+    } catch (error) {
+      console.error("Error creating order data:", error); // เพิ่มการจัดการข้อผิดพลาด
+    }
+
     // test add to order
-    const cartItems: any = localStorage.getItem("ShopCartItems");
-    const cProduct: CartProductType[] | null = JSON.parse(cartItems);
-    localStorage.setItem("ShopOrderItems", JSON.stringify(cProduct));
+    // const cartItems: unknown = localStorage.getItem("ShopCartItems");
+
+    // const cProduct: CartProductType[] | null =
+    //   typeof cartItems === "string" ? JSON.parse(cartItems) : null;
+    // if (cProduct) {
+    //   if (orders) {
+    //     setOrders([...orders, ...cProduct]); // Spread `cProduct` if it’s an array
+    //   } else {
+    //     setOrders(cProduct); // Directly assign `cProduct` if `orders` is initially null or undefined
+    //   }
+    // }
+
     handleClearCart(); // test order
     // Simulate a delay for API call
     setTimeout(() => {
@@ -292,7 +364,7 @@ const CheckoutForm = () => {
 
           {/* Total */}
           <div className="text-center text-xl font-semibold text-slate-700 py-4">
-            ยอดที่ต้องชำระ ฿40.00
+            ยอดที่ต้องชำระ {formatPrice(cartTotalAmount)}
           </div>
 
           {/* Submit button */}

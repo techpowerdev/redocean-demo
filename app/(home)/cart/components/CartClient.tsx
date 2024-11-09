@@ -1,6 +1,5 @@
 "use client";
 
-import { useCart } from "@/hooks/useCart";
 import Link from "next/link";
 import { MdArrowBack } from "react-icons/md";
 import ItemContent from "./ItemContent";
@@ -9,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import Heading from "@/components/shared/Heading";
 import { PackageX } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useCartProductStore } from "@/state-stores/cartProductStore";
+import { useEffect } from "react";
 // import { useRouter } from "next/navigation";
 // import { SafeUser } from "@/types";
 
@@ -18,9 +19,35 @@ import { useRouter } from "next/navigation";
 
 // export default function CartClient({ currentUser }: CartClientProps) {
 export default function CartClient() {
-  const { cartProducts, handleClearCart, cartTotalAmount } = useCart();
+  // const { cartProducts, handleClearCart, cartTotalAmount } = useCart();
+  const cartProducts = useCartProductStore((state) => state.cartProducts);
+  const clearCart = useCartProductStore((state) => state.clearCart);
+  const setCartTotalQty = useCartProductStore((state) => state.setCartTotalQty);
+  const cartTotalAmount = useCartProductStore((state) => state.cartTotalAmount);
+  const setCartTotalAmount = useCartProductStore(
+    (state) => state.setCartTotalAmount
+  );
 
   const router = useRouter();
+
+  useEffect(() => {
+    const getTotal = () => {
+      if (cartProducts) {
+        const { total, qty } = cartProducts?.reduce(
+          (acc, item) => {
+            const itemTotal = item.price * item.quantity;
+            acc.total += itemTotal;
+            acc.qty += item.quantity;
+            return acc;
+          },
+          { total: 0, qty: 0 }
+        );
+        setCartTotalQty(qty);
+        setCartTotalAmount(total);
+      }
+    };
+    getTotal();
+  });
 
   if (!cartProducts || cartProducts.length === 0) {
     return (
@@ -60,10 +87,7 @@ export default function CartClient() {
       </div>
       <div className="border-t-[1.5px] border-slate-200 py-4 flex flex-col justify-between gap-4 sm:flex-row">
         <div className="w-[120px]">
-          <Button
-            className="w-full bg-primary uppercase"
-            onClick={handleClearCart}
-          >
+          <Button className="w-full bg-primary uppercase" onClick={clearCart}>
             ล้างข้อมูลตะกร้า
           </Button>
         </div>

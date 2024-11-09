@@ -1,10 +1,6 @@
 "use client";
 
-import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
-import React, { useEffect } from "react";
-import axios from "axios";
-import { useProductStore } from "@/state-stores/admin/adminProductStore";
+import React from "react";
 import { EventItemList } from "./EventItemList";
 
 export default function EventItemComponent() {

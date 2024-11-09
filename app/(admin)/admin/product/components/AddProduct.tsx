@@ -57,23 +57,23 @@ const formSchema = z.object({
     .string({ required_error: "กรุณาระบุคำอธิบาย" })
     .trim()
     .min(20, "กรุณาระบุคำอธิบายอย่างน้อย 20 ตัวอักษร"),
-  price: z
-    .number({
-      required_error: "กรุณาระบุราคาขาย",
-      invalid_type_error: "ระบุราคาเป็นตัวเลขเท่านั้น",
-    })
-    .min(10, "ราคาขั้นตำ่ 10 บาท"),
-  promotionPrice: z
-    .number({
-      required_error: "กรุณาระบุราคาโปรโมชั่น",
-      invalid_type_error: "ระบุราคาเป็นตัวเลขเท่านั้น",
-    })
-    .min(10, "ราคาขั้นตำ่ 10 บาท"),
-  inStock: z.boolean().optional(),
-  stock: z.number({
-    required_error: "กรุณาระบุจำนวนสินค้าในสต็อค",
-    invalid_type_error: "ระบุจำนวนเป็นตัวเลขเท่านั้น",
-  }),
+  // price: z
+  //   .number({
+  //     required_error: "กรุณาระบุราคาขาย",
+  //     invalid_type_error: "ระบุราคาเป็นตัวเลขเท่านั้น",
+  //   })
+  //   .min(10, "ราคาขั้นตำ่ 10 บาท"),
+  // promotionPrice: z
+  //   .number({
+  //     required_error: "กรุณาระบุราคาโปรโมชั่น",
+  //     invalid_type_error: "ระบุราคาเป็นตัวเลขเท่านั้น",
+  //   })
+  //   .min(10, "ราคาขั้นตำ่ 10 บาท"),
+  // inStock: z.boolean().optional(),
+  // stock: z.number({
+  //   required_error: "กรุณาระบุจำนวนสินค้าในสต็อค",
+  //   invalid_type_error: "ระบุจำนวนเป็นตัวเลขเท่านั้น",
+  // }),
 });
 
 export type FormType = z.infer<typeof formSchema>;
@@ -99,10 +99,10 @@ export default function AddProduct() {
       name: undefined,
       description: undefined,
       images: [],
-      price: undefined,
-      promotionPrice: undefined,
-      inStock: false,
-      stock: 0,
+      // price: undefined,
+      // promotionPrice: undefined,
+      // inStock: false,
+      // stock: 0,
     },
   });
 
@@ -195,7 +195,7 @@ export default function AddProduct() {
 
   const onError = (errors: unknown) => {
     console.error("Validation errors:", errors);
-    setErrorMessage("เกิดข้อมูลผิดพลาด กรุณาตรวจสอบข้อมูลอีกครั้ง");
+    setErrorMessage("เกิดผิดพลาด กรุณาตรวจสอบข้อมูลอีกครั้ง");
   };
 
   return (
@@ -303,7 +303,7 @@ export default function AddProduct() {
                       </p>
                     )}
                   </div>
-                  <div className="flex justify-between items-start">
+                  {/* <div className="flex justify-between items-start">
                     <div className="flex flex-col space-y-1.5">
                       <Label htmlFor="price">ราคา</Label>
                       <Input
@@ -377,7 +377,7 @@ export default function AddProduct() {
                         </p>
                       )}
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
               {isLoading ? (

@@ -8,7 +8,8 @@ import LineLogin from "../../../components/auth/LineLogin";
 import MobileContainer from "@/components/shared/MobileContainer";
 
 export default function Cart() {
-  const currentUser = useCurrentUserStore((state) => state.currentUser);
+  // const currentUser = useCurrentUserStore((state) => state.currentUser);
+  const currentUser = true;
 
   const loading = useCurrentUserStore((state) => state.loading);
 
