@@ -3,10 +3,9 @@ import localFont from "next/font/local";
 import "../globals.css";
 import Header from "@/app/(home)/components/Header";
 import MobileMenu from "@/app/(home)/components/MobileMenu";
-import CartProvider from "@/providers/CartProvider";
 import { Toaster } from "react-hot-toast";
-// import UserProvider from "@/providers/UserProvider";
-import CheckLogined from "../../components/auth/CheckLogined";
+import CheckLogined from "../features/auth/CheckLogined";
+// import ResponsiveDivider from "@/components/shared/ResponsiveDivider";
 
 const geistSans = localFont({
   src: "../fonts/GeistVF.woff",
@@ -32,8 +31,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased overflow-scroll`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        {/* <ResponsiveDivider /> */}
         <Toaster
         // toastOptions={{
         //   style: {
@@ -42,16 +42,18 @@ export default function RootLayout({
         //   },
         // }}
         />
-        {/* <UserProvider> */}
         <CheckLogined />
-        <CartProvider>
-          <div className="flex flex-col justify-between min-h-screen gap-8 text-foreground/70 font-[family-name:var(--font-geist-sans)]">
-            <Header />
-            <main className="pt-20 pb-28">{children}</main>
-            <MobileMenu />
-          </div>
-        </CartProvider>
-        {/* </UserProvider> */}
+        {/* <div className="flex flex-col h-screen font-[family-name:var(--font-geist-sans)]"> */}
+        <div className="flex flex-col h-screen font-[family-name:var(--font-geist-sans)]">
+          {/* Header */}
+          <Header />
+
+          {/* Main content with scroll */}
+          <main className="flex-1 overflow-y-auto p-2">{children}</main>
+
+          {/* Footer */}
+          <MobileMenu />
+        </div>
       </body>
     </html>
   );

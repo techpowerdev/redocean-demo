@@ -1,21 +1,26 @@
 import Container from "@/components/shared/Container";
-import ProductCard from "@/app/(home)/components/ProductCard";
-import { products } from "@/app/(home)/product";
-import { Countdown } from "./components/Countdown";
-import EventList from "./components/events/EventList";
-// import CheckLogined from "./CheckLogined";
+import PromotionList from "../features/promotion/PromotionList";
+import { getPromotionToday } from "@/services/promotionServices";
+import NoPromotion from "../features/promotion/NoPromotion";
+import HeroBanner from "../features/banner/HeroBanner";
+import Campaign from "../features/social-share/Campaign";
 
+// export default async function Home( { params, searchParams }: Props) {
 export default async function Home() {
-  const dated = "31/10/2024, 08:00:00";
+  const promotions = await getPromotionToday();
   return (
-    // <MobileContainer>
-    // {/* <CheckLogined /> */}
-    <div className="flex flex-col gap-4 items-center">
-      <Container>
-        {/* <ProductCard product={products[0]} /> */}
-        <EventList />
-      </Container>
-    </div>
-    // </MobileContainer>
+    <Container>
+      <HeroBanner />
+      {promotions?.data?.[0] && (
+        // <SocialShare promotion={promotions?.data?.[0]} />
+        <Campaign promotion={promotions?.data?.[0]} />
+      )}
+      {/* <ProductCard product={products[0]} /> */}
+      {!promotions?.data || promotions.data.length === 0 ? (
+        <NoPromotion />
+      ) : (
+        <PromotionList promotions={promotions.data} />
+      )}
+    </Container>
   );
 }

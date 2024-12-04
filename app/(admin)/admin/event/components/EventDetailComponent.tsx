@@ -35,8 +35,10 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import Image from "next/image";
-import { useEventStore } from "@/state-stores/admin/adminEventStore";
-import { formatDateTimeEvent } from "@/utils/formatDate";
+import { formatDateTimePromotion } from "@/utils/formatDate";
+import { usePromotionStore } from "@/state-stores/admin/adminPromotionStore";
+import { PromotionCountdown } from "@/app/features/promotion/PromotionCountdown";
+import { formatPrice } from "@/utils/formatPrice";
 
 // interface Props {
 //   product: Product | null;
@@ -44,210 +46,143 @@ import { formatDateTimeEvent } from "@/utils/formatDate";
 
 // export default function ProductDetailComponent({ product }: Props) {
 export default function EventDetailComponent() {
-  const selectedEvent = useEventStore((state) => state.selectedEvent);
+  const selectedPromotion = usePromotionStore(
+    (state) => state.selectedPromotion
+  );
 
   return (
     <div className="h-full flex-1 flex flex-col justify-stretch">
-      <div className="flex items-center p-2">
-        <div className="flex items-center gap-2">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" disabled={!selectedEvent}>
-                <Archive className="h-4 w-4" />
-                <span className="sr-only">Archive</span>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Archive</TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" disabled={!selectedEvent}>
-                <ArchiveX className="h-4 w-4" />
-                <span className="sr-only">Move to junk</span>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Move to junk</TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" disabled={!selectedEvent}>
-                <Trash2 className="h-4 w-4" />
-                <span className="sr-only">Move to trash</span>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Move to trash</TooltipContent>
-          </Tooltip>
-          <Separator orientation="vertical" className="mx-1 h-6" />
-          <Tooltip>
-            <Popover>
-              <PopoverTrigger asChild>
-                <TooltipTrigger asChild>
-                  <Button variant="ghost" size="icon" disabled={!selectedEvent}>
-                    <Clock className="h-4 w-4" />
-                    <span className="sr-only">Snooze</span>
-                  </Button>
-                </TooltipTrigger>
-              </PopoverTrigger>
-              <PopoverContent className="flex w-[535px] p-0">
-                <div className="flex flex-col gap-2 border-r px-2 py-4">
-                  <div className="px-4 text-sm font-medium">Snooze until</div>
-                  <div className="grid min-w-[250px] gap-1">
-                    <Button
-                      variant="ghost"
-                      className="justify-start font-normal"
-                    >
-                      Later today{" "}
-                      <span className="ml-auto text-muted-foreground">
-                        {/* {format(addHours(today, 4), "E, h:m b")} */}
-                      </span>
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      className="justify-start font-normal"
-                    >
-                      Tomorrow
-                      <span className="ml-auto text-muted-foreground">
-                        {/* {format(addDays(today, 1), "E, h:m b")} */}
-                      </span>
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      className="justify-start font-normal"
-                    >
-                      This weekend
-                      <span className="ml-auto text-muted-foreground">
-                        {/* {format(nextSaturday(today), "E, h:m b")} */}
-                      </span>
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      className="justify-start font-normal"
-                    >
-                      Next week
-                      <span className="ml-auto text-muted-foreground">
-                        {/* {format(addDays(today, 7), "E, h:m b")} */}
-                      </span>
-                    </Button>
-                  </div>
-                </div>
-                <div className="p-2">{/* <Calendar /> */}</div>
-              </PopoverContent>
-            </Popover>
-            <TooltipContent>Snooze</TooltipContent>
-          </Tooltip>
-        </div>
-        <div className="ml-auto flex items-center gap-2">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" disabled={!selectedEvent}>
-                <Reply className="h-4 w-4" />
-                <span className="sr-only">Reply</span>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Reply</TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" disabled={!selectedEvent}>
-                <ReplyAll className="h-4 w-4" />
-                <span className="sr-only">Reply all</span>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Reply all</TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" disabled={!selectedEvent}>
-                <Forward className="h-4 w-4" />
-                <span className="sr-only">Forward</span>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Forward</TooltipContent>
-          </Tooltip>
-        </div>
-        <Separator orientation="vertical" className="mx-2 h-6" />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" disabled={!selectedEvent}>
-              <MoreVertical className="h-4 w-4" />
-              <span className="sr-only">More</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem>Mark as unread</DropdownMenuItem>
-            <DropdownMenuItem>Star thread</DropdownMenuItem>
-            <DropdownMenuItem>Add label</DropdownMenuItem>
-            <DropdownMenuItem>Mute thread</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-      <Separator />
-      {selectedEvent ? (
+      {selectedPromotion ? (
         <div className="flex flex-col flex-1 ">
-          <div className="grid grid-cols-[30%_1fr] gap-4 p-4">
-            <div className="flex items-start gap-4 text-sm">
-              {selectedEvent.images?.[0]?.url && (
-                <div className="relative w-full aspect-square">
-                  <Image
-                    fill
-                    src={`${
-                      process.env.NEXT_PUBLIC_IMAGE_HOST_URL +
-                      selectedEvent.images[0].url
-                    }`}
-                    alt={selectedEvent.images[0].id}
-                    className="object-contain"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  />
+          <div className="flex flex-col items-start justify-between p-4">
+            <div className="text-lg font-semibold">
+              ประเภทกิจกรรม : {selectedPromotion.type}
+            </div>
+            <div className="text-lg font-semibold">
+              ชื่อกิจกรรม : {selectedPromotion.name}
+            </div>
+            {selectedPromotion.promotionActivities?.[0]
+              .minimumPurchaseQuantity &&
+              selectedPromotion.promotionActivities?.[0]
+                .minimumPurchaseQuantity > 0 && (
+                <div className="text-lg font-semibold">
+                  จำนวนออเดอร์เป้าหมาย :{" "}
+                  {
+                    selectedPromotion.promotionActivities?.[0]
+                      .minimumPurchaseQuantity
+                  }
                 </div>
               )}
+            <div className="flex-1 whitespace-pre-wrap my-6">
+              รายละเอียด : {selectedPromotion.description}
             </div>
-            <div className="flex flex-col items-start justify-between">
-              <div className="font-semibold">{selectedEvent.title}</div>
-              <div className="flex-1 my-2 whitespace-pre-wrap text-sm">
-                {selectedEvent.description}
+            <div className="flex flex-col gap-4">
+              <div className="text-xl">
+                วันเวลาเริ่มกิจกรรม :{" "}
+                {formatDateTimePromotion(
+                  new Date(selectedPromotion.startAt).toISOString()
+                )}
               </div>
-              <div className="flex flex-col gap-2">
-                <div className="line-clamp-1 text-xl font-bold">
-                  วันเวลาเริ่มกิจกรรม :{" "}
-                  {formatDateTimeEvent(selectedEvent.startTime)}
-                </div>
-                <div className="line-clamp-1 text-xl font-bold">
-                  วันเวลาสิ้นสุดกิจกรรม :{" "}
-                  {formatDateTimeEvent(selectedEvent.endTime)}
-                </div>
+              <div className="text-xl">
+                วันเวลาสิ้นสุดกิจกรรม :{" "}
+                {formatDateTimePromotion(
+                  new Date(selectedPromotion.endAt).toISOString()
+                )}
               </div>
+              {/* <PromotionCountdown
+                startTime={formatDateTimePromotion(selectedPromotion.startAt)}
+                endTime={formatDateTimePromotion(selectedPromotion.endAt)}
+              /> */}
             </div>
           </div>
+          {/* </div> */}
           {/* end header */}
 
           <Separator />
 
           {/* product in event */}
           <div className="p-4 flex flex-col gap-2">
-            {selectedEvent.groupBuyEvent?.map((item) => (
+            <h1 className="font-bold text-lg mb-2">สินค้าในกิจกรรม</h1>
+            {selectedPromotion.promotionActivities?.map((item) => (
               <div key={item.id}>
-                <h1>{item.productName}</h1>
-                <p className="text-sm my-2">{item.productDescription}</p>
+                <h1>{item.product?.sku}</h1>
+                <h1>{item.product?.name}</h1>
+                <p className="text-sm my-2">{item.product?.description}</p>
                 <div className="grid grid-cols-[30%_1fr]">
-                  {item.productImages[0] && (
+                  {item.product?.image && (
                     <div className="relative w-full aspect-square">
                       <Image
                         fill
                         src={`${
                           process.env.NEXT_PUBLIC_IMAGE_HOST_URL +
-                          item.productImages[0]
+                          item.product.image
                         }`}
-                        alt={item.productImages[0]}
+                        alt={item.product.id}
                         className="object-contain"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       />
                     </div>
                   )}
-                  <div className="p-4 text-lg">
-                    <p>ราคาเริ่มต้น {item.productPrice} บาท</p>
-                    <p>จำนวนออเดอร์เป้าหมาย {item.targetAmount} บาท</p>
-                    <p>ราคาตามเป้าหมาย {item.finalPrice} ออเดอร์</p>
-                  </div>
+                  {selectedPromotion.type === "groupbuying" && (
+                    <div className="p-4 text-lg">
+                      <div>
+                        ราคาขายตั้งต้น {formatPrice(item.product.price)}
+                      </div>
+                      <div>
+                        <span>{"ส่วนลดเริ่มต้น " + item.discountAmount}</span>
+                        <span>
+                          {item.discountType === "fixed" ? " บาท" : " %"}
+                        </span>
+                      </div>
+                      <div>
+                        <span>
+                          {"จำนวนส่วนลดสูงสุด " + item.discountGroupAmount}
+                        </span>
+                        <span>
+                          {item.discountType === "fixed" ? " บาท" : " %"}
+                        </span>
+                      </div>
+                      {item.limitQuantity && item.maxQuantity && (
+                        <div>
+                          {"สินค้ามีจำนวนจำกัดแค่ " +
+                            item.maxQuantity +
+                            " ชิ้นเท่านั้น"}
+                        </div>
+                      )}
+                      {item.limitQuantityPerUser &&
+                        item?.maxQuantityPerUser && (
+                          <div>
+                            {"จำกัดจำนวนไม่เกิน " +
+                              item.maxQuantityPerUser +
+                              " ชิ้นต่อคน"}
+                          </div>
+                        )}
+                    </div>
+                  )}
+                  {selectedPromotion.type === "flashsale" && (
+                    <div className="p-4 text-lg">
+                      <div>
+                        <span>{"ส่วนลด " + item.discountAmount}</span>
+                        <span>
+                          {item.discountType === "fixed" ? " บาท" : " %"}
+                        </span>
+                      </div>
+                      {item.limitQuantity && item.maxQuantity && (
+                        <div>
+                          {"สินค้ามีจำนวนจำกัดแค่ " +
+                            item.maxQuantity +
+                            " ชิ้นเท่านั้น"}
+                        </div>
+                      )}
+                      {item.limitQuantityPerUser && item.maxQuantityPerUser && (
+                        <div>
+                          {"จำกัดจำนวนไม่เกิน " +
+                            item.maxQuantityPerUser +
+                            " ชิ้นต่อคน"}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

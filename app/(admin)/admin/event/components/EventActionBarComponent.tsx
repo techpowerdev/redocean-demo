@@ -1,10 +1,12 @@
 import React from "react";
 import AddEvent from "./AddEvent";
+import { CreateEvent } from "./CreateEvent";
 
 export default function EventActionBarComponent() {
   return (
     <div className="flex justify-end items-center gap-2">
-      <AddEvent />
+      {/* <AddEvent /> */}
+      <CreateEvent />
     </div>
   );
 }

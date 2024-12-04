@@ -10,22 +10,24 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AdminNavbar } from "@/app/(admin)/admin/components/shared/AdminNavbar";
-import { AccountSwitcher } from "./AccoutSwitch";
+// import { AccountSwitcher } from "./AccoutSwitch";
 // import { mainLinks, secondLinks } from "../../data/navlink";
-import { useProductStore } from "@/state-stores/admin/adminProductStore";
+// import { useProductStore } from "@/state-stores/admin/adminProductStore";
 import {
-  Archive,
+  // Archive,
   CalendarClock,
-  CircleCheckBig,
-  CircleX,
+  // CircleCheckBig,
+  // CircleX,
   Flame,
+  // LayoutDashboard,
   LucideIcon,
-  PackageOpen,
+  // PackageOpen,
   ShoppingBag,
   ShoppingCart,
   // TicketPercent,
-  Truck,
+  // Truck,
 } from "lucide-react";
+// import Image from "next/image";
 
 // import { mainLinks, secondLinks } from "../data/navlink";
 
@@ -38,7 +40,7 @@ interface Props {
 
 export const accounts = [
   {
-    label: "Alicia Koch",
+    // label: "Alicia Koch",
     email: "alicia@example.com",
     icon: (
       <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -48,7 +50,7 @@ export const accounts = [
     ),
   },
   {
-    label: "Alicia Koch",
+    // label: "Alicia Koch",
     email: "alicia@gmail.com",
     icon: (
       <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -61,7 +63,7 @@ export const accounts = [
     ),
   },
   {
-    label: "Alicia Koch",
+    // label: "Alicia Koch",
     email: "alicia@me.com",
     icon: (
       <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -92,73 +94,80 @@ export function AdminLayout({
   const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed);
 
   //
-  const productLists = useProductStore((state) => state.productLists);
+  // const productLists = useProductStore((state) => state.productLists);
 
   const mainLinks: Link[] = [
     {
       href: "/admin",
+      title: "Hot Deal",
+      // label: "128",
+      icon: Flame,
+      variant: "default",
+    },
+    {
+      href: "/admin/orders",
       title: "คำสั่งซื้อ",
-      label: "128",
+      // label: "128",
       icon: ShoppingCart,
       variant: "default",
     },
-    {
-      href: "/admin/packing",
-      title: "กำลังแพ็ค",
-      label: "99",
-      icon: PackageOpen,
-      variant: "default",
-    },
-    {
-      href: "/admin/shipping",
-      title: "อยู่ระหว่างจัดส่ง",
-      label: "9",
-      icon: Truck,
-      variant: "default",
-    },
+    // {
+    //   href: "/admin/packing",
+    //   title: "กำลังแพ็ค",
+    //   label: "99",
+    //   icon: PackageOpen,
+    //   variant: "default",
+    // },
+    // {
+    //   href: "/admin/shipping",
+    //   title: "อยู่ระหว่างจัดส่ง",
+    //   label: "9",
+    //   icon: Truck,
+    //   variant: "default",
+    // },
 
-    {
-      href: "/admin/delivered",
-      title: "จัดส่งสำเร็จ",
-      label: "23",
-      icon: CircleCheckBig,
-      variant: "default",
-    },
-    {
-      href: "/admin/return-request",
-      title: "ขอคืนสินค้า",
-      label: "22",
-      icon: Archive,
-      variant: "default",
-    },
-    {
-      href: "/admin/cancel",
-      title: "ยกเลิกคำสั่งซื้อ",
-      label: "34",
-      icon: CircleX,
-      variant: "default",
-    },
+    // {
+    //   href: "/admin/delivered",
+    //   title: "จัดส่งสำเร็จ",
+    //   label: "23",
+    //   icon: CircleCheckBig,
+    //   variant: "default",
+    // },
+    // {
+    //   href: "/admin/return-request",
+    //   title: "ขอคืนสินค้า",
+    //   label: "22",
+    //   icon: Archive,
+    //   variant: "default",
+    // },
+    // {
+    //   href: "/admin/cancel",
+    //   title: "ยกเลิกคำสั่งซื้อ",
+    //   label: "34",
+    //   icon: CircleX,
+    //   variant: "default",
+    // },
   ];
 
   const secondLinks: Link[] = [
     {
       href: "/admin/product",
       title: "สินค้า",
-      label: `${productLists ? productLists.length : 0}`,
+      // label: `${productLists ? productLists.length : 0}`,
       icon: ShoppingBag,
       variant: "default",
     },
-    {
-      href: "/admin/hot-deal",
-      title: "Hot Deal",
-      label: "128",
-      icon: Flame,
-      variant: "default",
-    },
+    // {
+    //   href: "/admin/hot-deal",
+    //   title: "Hot Deal",
+    //   // label: "128",
+    //   icon: Flame,
+    //   variant: "default",
+    // },
     {
       href: "/admin/event",
       title: "จัดการอีเวนท์",
-      label: "342",
+      // label: "342",
       icon: CalendarClock,
       variant: "default",
     },
@@ -205,7 +214,14 @@ export function AdminLayout({
               isCollapsed ? "h-[52px]" : "px-2"
             )}
           >
-            <AccountSwitcher isCollapsed={isCollapsed} accounts={accounts} />
+            <h1
+              className={cn(
+                "text-primary font-semibold",
+                isCollapsed ? "px-2 line-clamp-1" : "line-clamp-none"
+              )}
+            >
+              RED OCEAN MARKETING
+            </h1>
           </div>
           <Separator />
           <AdminNavbar isCollapsed={isCollapsed} links={mainLinks} />

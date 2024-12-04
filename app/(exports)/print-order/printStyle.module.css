@@ -1,0 +1,48 @@
+/* ซ่อนองค์ประกอบที่ไม่ต้องการพิมพ์ เช่น แถบเมนูหรือปุ่ม */
+@media print {
+  .no-print {
+    display: none;
+  }
+
+  /* ปรับขนาดฟอนต์ให้เหมาะสมกับการพิมพ์ */
+  body {
+    font-size: 12pt;
+    line-height: 1.5;
+    color: #000; /* ใช้สีดำสำหรับการพิมพ์ */
+  }
+
+  /* ลบสีพื้นหลังที่อาจสิ้นเปลืองหมึก */
+  * {
+    background: none !important;
+    box-shadow: none !important;
+  }
+
+  /* จัดระยะห่างของตารางสำหรับการพิมพ์ */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th,
+  td {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+
+  th {
+    background-color: #f2f2f2;
+    color: black;
+  }
+
+  /* ซ่อน header/footer ที่เป็น fixed */
+  header,
+  footer {
+    display: none;
+  }
+
+  /* ซ่อนปุ่ม */
+  button,
+  .print-button {
+    display: none;
+  }
+}

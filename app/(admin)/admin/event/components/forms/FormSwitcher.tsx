@@ -10,14 +10,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useEventStore } from "@/state-stores/admin/adminEventStore";
+import { usePromotionStore } from "@/state-stores/admin/adminPromotionStore";
 
 interface FormSwitcherProps {
   isCollapsed: boolean;
   forms: {
     label: string;
     event: string;
-    icon: React.ReactNode;
+    icon?: React.ReactNode;
   }[];
 }
 
@@ -25,11 +25,18 @@ export function FormSwitcher({ isCollapsed, forms }: FormSwitcherProps) {
   // const [selectedForm, setSelectedForm] = React.useState<string>(
   //   forms[0].event
   // );
-  const selectedEventForm = useEventStore((state) => state.selectedEventForm);
-  const selectEventForm = useEventStore((state) => state.selectEventForm);
+  const selectedPromotionType = usePromotionStore(
+    (state) => state.selectedPromotionType
+  );
+  const selectPromotionType = usePromotionStore(
+    (state) => state.selectPromotionType
+  );
 
   return (
-    <Select defaultValue={selectedEventForm} onValueChange={selectEventForm}>
+    <Select
+      defaultValue={selectedPromotionType}
+      onValueChange={selectPromotionType}
+    >
       <SelectTrigger
         className={cn(
           "flex items-center gap-2 [&>span]:line-clamp-1 [&>span]:flex [&>span]:w-full [&>span]:items-center [&>span]:gap-1 [&>span]:truncate [&_svg]:h-4 [&_svg]:w-4 [&_svg]:shrink-0",
@@ -39,9 +46,9 @@ export function FormSwitcher({ isCollapsed, forms }: FormSwitcherProps) {
         aria-label="Select event"
       >
         <SelectValue placeholder="Select an event">
-          {forms.find((form) => form.event === selectedEventForm)?.icon}
+          {forms.find((form) => form.event === selectedPromotionType)?.icon}
           <span className={cn("ml-2", isCollapsed && "hidden")}>
-            {forms.find((form) => form.event === selectedEventForm)?.label}
+            {forms.find((form) => form.event === selectedPromotionType)?.label}
           </span>
         </SelectValue>
       </SelectTrigger>

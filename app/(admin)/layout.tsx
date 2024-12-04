@@ -4,6 +4,18 @@ import type { Metadata } from "next";
 import { AdminLayout } from "@/app/(admin)/admin/components/shared/AdminLayout";
 import { cookies } from "next/headers";
 import { Toaster } from "react-hot-toast";
+import localFont from "next/font/local";
+
+const geistSans = localFont({
+  src: "../fonts/GeistVF.woff",
+  variable: "--font-geist-sans",
+  weight: "100 900",
+});
+const geistMono = localFont({
+  src: "../fonts/GeistMonoVF.woff",
+  variable: "--font-geist-mono",
+  weight: "100 900",
+});
 
 export const metadata: Metadata = {
   title: "RED OCEAN MARKETING",
@@ -25,7 +37,9 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <body>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased overflow-scroll`}
+      >
         <Toaster
         // toastOptions={{
         //   style: {

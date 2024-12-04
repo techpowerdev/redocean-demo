@@ -96,7 +96,7 @@ import { Flame } from "lucide-react";
 import Image from "next/image";
 import { useProductStore } from "@/state-stores/admin/adminProductStore";
 import Loading from "@/components/shared/Loading";
-import ToggleBooleanField from "../../product/components/ToggleBooleanField";
+import ToggleBooleanField from "../../product/components/forms/ToggleBooleanField";
 
 const apiURL = process.env.NEXT_PUBLIC_IMAGE_HOST_URL;
 

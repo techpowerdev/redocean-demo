@@ -1,63 +1,130 @@
-// import OrderList from "./OrderList";
-// import { getOneOrder } from "@/actions/getOrder";
-// import moment from "moment";
-// import Image from "next/image";
-// import { formatPrice } from "@/utils/formatPrice";
-// import { truncateText } from "@/utils/truncateText";
-// import Container from "@/components/shared/Container";
-// import Heading from "@/components/shared/Heading";
+import Image from "next/image";
+import { formatPrice } from "@/utils/formatPrice";
+import { truncateText } from "@/utils/truncateText";
+import { getOneOrder } from "@/services/orderServices";
+import { formatDateTimePromotion } from "@/utils/formatDate";
+import { OrderType } from "@/types/orderTypes";
+import Container from "@/components/shared/Container";
 
-// export default async function page({ params }: { params: { id: string } }) {
-//   const data = await getOneOrder(params.id);
+export default async function OrderDetail({
+  params,
+}: {
+  params: { id: string };
+}) {
+  const data: OrderType = await getOneOrder(params.id);
 
-//   return (
-//     <div className="py-8">
-//       <Container>
-//         <Heading title="OrderDetails" />
-//         <h3 className="mt8">OrderID : {data?.id}</h3>
-//         <h3>Total Amount : {data?.amount ? formatPrice(data.amount) : ""}</h3>
-//         <h3>Payment status : {data?.status}</h3>
-//         <h3>Delivery status : {data?.deliveryStatus}</h3>
-//         <h3>Date : {moment(data?.createDate).fromNow()}</h3>
-//         <div>
-//           <h1 className="mt-8 font-normal">Products Ordered</h1>
-//           <div className="grid grid-cols-[2fr_1fr_1fr] gap-2 border-b-2 py-2 font-light">
-//             <div>PRODUCT</div>
-//             <div>PRICE</div>
-//             <div className="text-center">QUANTITY</div>
-//           </div>
-//           <div className="divide-y">
-//             {data?.products.map((product: any) => (
-//               <div
-//                 key={product.id}
-//                 className="grid grid-cols-[2fr_1fr_1fr] gap-2 py-2"
-//               >
-//                 <div className="flex flex-col sm:flex-row gap-6">
-//                   {/* <div className="w-[20%] max-h-[500px] min-h-[300px] sm:min-h-[400px]"> */}
-//                   <div
-//                     className={`relative w-[30%] max-w-[150px] aspect-square rounded border-teal-300`}
-//                   >
-//                     <Image
-//                       src={product.selectedImg.image}
-//                       alt={product.name}
-//                       fill
-//                       className="object-contain"
-//                       // sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-//                     />
-//                   </div>
-//                   {/* </div> */}
-//                   <div>
-//                     <p>{truncateText(product.name)}</p>
-//                     <p>{product.selectedImg.color}</p>
-//                   </div>
-//                 </div>
-//                 <div>{formatPrice(product.price)}</div>
-//                 <div className="text-center">{product.quantity}</div>
-//               </div>
-//             ))}
-//           </div>
-//         </div>
-//       </Container>
-//     </div>
-//   );
-// }
+  return (
+    <Container>
+      {/* <MobileContainer> */}
+      <div className="p-2 md:p-8 bg-white text-black">
+        <h1 className="text-xl md:text-2xl font-bold mb-4 text-center">
+          รายละเอียดคำสั่งซื้อ
+        </h1>
+
+        {/* Order Information */}
+        <div className="mb-4 space-y-2">
+          <p className="flex flex-wrap gap-2 items-end">
+            <span className="font-semibold">หมายเลขคำสั่งซื้อ:</span>
+            <span>{data?.id}</span>
+          </p>
+          <p>
+            <span className="font-semibold">วันที่:</span>{" "}
+            {formatDateTimePromotion(data?.createdAt)}
+          </p>
+          <p className="flex flex-wrap gap-2">
+            <span className="font-semibold">เลขติดตามพัสดุ:</span>
+            <span>{data?.trackingNumber || "ไม่มีข้อมูล"}</span>
+          </p>
+          <p className="flex flex-wrap gap-2">
+            <span className="font-semibold">สถานะ:</span>
+            <span>{data?.status || "ไม่มีข้อมูล"}</span>
+          </p>
+        </div>
+        {/* Order Items Table */}
+        <div>
+          <h2 className="text-lg md:text-xl font-bold mb-4">รายการสินค้า</h2>
+          <div className="overflow-x-auto">
+            <table className="table-auto w-full border-collapse border border-gray-300">
+              <thead>
+                <tr className="bg-gray-100 border-b border-gray-300">
+                  <th className="border border-gray-300 px-2 py-2 md:px-4 text-left">
+                    สินค้า
+                  </th>
+                  <th className="border border-gray-300 px-2 py-2 md:px-4 text-right">
+                    ราคา
+                  </th>
+                  <th className="border border-gray-300 px-2 py-2 md:px-4 text-right">
+                    ส่วนลด
+                  </th>
+                  <th className="border border-gray-300 px-2 py-2 md:px-4 text-right">
+                    ราคาสุทธิ
+                  </th>
+                  <th className="border border-gray-300 px-2 py-2 md:px-4 text-center">
+                    จำนวน
+                  </th>
+                  <th className="border border-gray-300 px-2 py-2 md:px-4 text-right">
+                    รวมเป็นเงิน
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.orderItems?.map((item) => (
+                  <tr key={item.id} className="border-b">
+                    <td className="border border-gray-300 px-2 py-2 md:px-4">
+                      <div className="flex items-center gap-2 md:gap-4">
+                        <div className="relative w-12 h-12 md:w-16 md:h-16">
+                          <Image
+                            src={
+                              item?.image
+                                ? `${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}${item.image}`
+                                : "/no-image.jpg"
+                            }
+                            alt={item.name || "Product image"}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                        <div>
+                          <p className="font-semibold">
+                            {truncateText(30, item.name)}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            {item.variantOptions}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="border border-gray-300 px-2 py-2 md:px-4 text-right">
+                      {formatPrice(item.unitPrice)}
+                    </td>
+                    <td className="border border-gray-300 px-2 py-2 md:px-4 text-right">
+                      {formatPrice(item.discount)}
+                    </td>
+                    <td className="border border-gray-300 px-2 py-2 md:px-4 text-right">
+                      {formatPrice(item.unitPrice - item.discount)}
+                    </td>
+                    <td className="border border-gray-300 px-2 py-2 md:px-4 text-center">
+                      {item.quantity}
+                    </td>
+                    <td className="border border-gray-300 px-2 py-2 md:px-4 text-right">
+                      {formatPrice(
+                        item.unitPrice * item.quantity -
+                          item.discount * item.quantity
+                      )}
+                    </td>
+                  </tr>
+                ))}
+                <tr className="bg-gray-300 text-right font-bold">
+                  <td colSpan={6} className="py-2 px-4">
+                    รวมเป็นเงินทั้งหมด: {formatPrice(data?.totalAmount)}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      {/* </MobileContainer> */}
+    </Container>
+  );
+}

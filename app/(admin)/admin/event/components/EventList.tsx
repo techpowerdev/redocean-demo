@@ -7,16 +7,19 @@ import ToggleBooleanField from "./ToggleBooleanField";
 import { CalendarClock } from "lucide-react";
 import Image from "next/image";
 import Loading from "@/components/shared/Loading";
-import { EventType } from "@/types/fetchTypes";
+import { PromotionType } from "@/types/fetchTypes";
 import { useEventStore } from "@/state-stores/admin/adminEventStore";
+import { usePromotionStore } from "@/state-stores/admin/adminPromotionStore";
 
 type Props = {
-  events: EventType[];
+  events: PromotionType[];
 };
 export function EventList({ events }: Props) {
   // global state
-  const selectedEvent = useEventStore((state) => state.selectedEvent);
-  const selectEvent = useEventStore((state) => state.selectEvent);
+  const selectedPromotion = usePromotionStore(
+    (state) => state.selectedPromotion
+  );
+  const selectPromotion = usePromotionStore((state) => state.selectPromotion);
   console.log(events);
   if (events.length === 0) {
     return (
@@ -29,22 +32,22 @@ export function EventList({ events }: Props) {
     <ScrollArea className="h-[calc(100vh-180px)]">
       <div className="flex flex-col gap-2 p-4 pt-0">
         {events?.length ? (
-          events?.map((item: EventType) => (
+          events?.map((item: PromotionType) => (
             <div
               key={item.id}
               className={cn(
                 "flex flex-col items-start gap-2 rounded-lg border p-3 text-left text-sm cursor-pointer transition-all hover:bg-accent",
-                selectedEvent?.id === item.id && "bg-muted"
+                selectedPromotion?.id === item.id && "bg-muted"
               )}
             >
               <div
                 className="flex w-full flex-col gap-1"
-                onClick={() => selectEvent(item)}
+                onClick={() => selectPromotion(item)}
               >
                 <div className="flex items-center">
                   <div className="flex items-center gap-2">
                     <div className="font-semibold">
-                      ชื่อกิจกรรม : {item.title}
+                      ชื่อกิจกรรม : {item.name}
                     </div>
                     {item.isActive ? (
                       <span className="relative flex h-3 w-3">
@@ -56,7 +59,7 @@ export function EventList({ events }: Props) {
                     )}
                   </div>
                   <div className="ml-auto text-xs">
-                    {formatDistanceToNow(new Date(item.startTime), {
+                    {formatDistanceToNow(new Date(item.startAt), {
                       addSuffix: true,
                     })}
                   </div>
@@ -68,7 +71,7 @@ export function EventList({ events }: Props) {
                       {item.description.substring(0, 200)}
                     </div>
                   </div>
-                  {item.images?.[0]?.url && (
+                  {/* {item.image && (
                     <div className="relative w-full aspect-square">
                       <Image
                         fill
@@ -81,14 +84,14 @@ export function EventList({ events }: Props) {
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       />
                     </div>
-                  )}
+                  )} */}
                 </div>
               </div>
               <ToggleBooleanField
                 initialStatus={item.isActive}
                 fieldName="isActive"
                 icon={CalendarClock}
-                apiEndpoint={`${process.env.NEXT_PUBLIC_API_URL}/events/${item.id}/toggle-active`} // ปรับ Endpoint ให้ตรงกับสินค้า
+                apiEndpoint={`${process.env.NEXT_PUBLIC_API_URL}/promotions/${item.id}/toggle-active`} // ปรับ Endpoint ให้ตรงกับสินค้า
                 id={item.id} // ส่งค่า ID ที่ถูกต้อง
                 label="Active"
               />

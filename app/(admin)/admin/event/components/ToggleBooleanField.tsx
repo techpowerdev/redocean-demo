@@ -6,6 +6,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { LucideIcon } from "lucide-react";
 import { useEventStore } from "@/state-stores/admin/adminEventStore";
+import { usePromotionStore } from "@/state-stores/admin/adminPromotionStore";
 
 interface ToggleBooleanFieldProps {
   initialStatus: boolean;
@@ -27,8 +28,11 @@ export default function ToggleBooleanField({
   const [isActive, setIsActive] = useState(initialStatus);
   const [isLoading, setIsLoading] = useState(false);
 
-  const setEventLists = useEventStore((state) => state.setEventLists);
-  const eventLists = useEventStore((state) => state.eventLists || []);
+  const setPromotionLists = usePromotionStore(
+    (state) => state.setPromotionLists
+  );
+  const promotionLists =
+    usePromotionStore((state) => state.promotionLists) || [];
 
   const handleToggle = async () => {
     setIsLoading(true);
@@ -36,7 +40,7 @@ export default function ToggleBooleanField({
       const newStatus = !isActive;
 
       // ส่งคำร้องไปที่ API พร้อมกับ id และสถานะใหม่
-      const response = await axios.put(apiEndpoint, {
+      const response = await axios.patch(apiEndpoint, {
         id,
         [fieldName]: newStatus, // ใช้ fieldName เป็นกุญแจในการอัปเดต
       });
@@ -46,11 +50,11 @@ export default function ToggleBooleanField({
         // ถ้าอัปเดตสำเร็จ เปลี่ยนสถานะใน UI
         setIsActive(newStatus);
 
-        const updated = eventLists.map((item) =>
+        const updated = promotionLists.map((item) =>
           item.id === id ? { ...item, [fieldName]: newStatus } : item
         );
-
-        setEventLists(updated);
+        console.log(updated);
+        setPromotionLists(updated);
 
         const notification = `${newStatus ? "เปิดกิจกรรม" : "ปิดกิจกรรม"}`;
         toast.success(notification);
@@ -77,4 +81,7 @@ export default function ToggleBooleanField({
       />
     </div>
   );
+}
+function usePromotionsStore(arg0: (state: any) => any) {
+  throw new Error("Function not implemented.");
 }

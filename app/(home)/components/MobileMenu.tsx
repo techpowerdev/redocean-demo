@@ -1,4 +1,5 @@
 "use client";
+import { useCartServerStore } from "@/state-stores/cartServerStore";
 import {
   CalendarCheck2,
   FileClock,
@@ -11,8 +12,12 @@ import React from "react";
 
 export default function MobileMenu() {
   const pathname = usePathname();
+
+  // global state
+  const cart = useCartServerStore((state) => state.cart);
   return (
-    <footer className="fixed z-30 bg-white bottom-0 border-t p-2 w-full flex gap-6 flex-wrap items-center justify-center">
+    // <footer className="fixed z-30 bottom-0 bg-white border-t p-2 w-full flex gap-6 flex-wrap items-center justify-center">
+    <footer className="bg-white border-t p-2 w-full flex gap-6 flex-wrap items-center justify-center">
       <Link
         className={`p-2 flex flex-col text-sm items-center gap-2 hover:bg-primary-foreground hover:rounded-lg ${
           pathname === "/" ? "bg-primary-foreground rounded-lg" : ""
@@ -31,7 +36,7 @@ export default function MobileMenu() {
         rel="noopener noreferrer"
       >
         <span className="absolute -top-1 right-0 rounded-full bg-primary w-6 h-6 flex justify-center items-center text-white text-[12px]">
-          99
+          {cart?.cartTotalQuantity}
         </span>
         <ShoppingCart />
         ตะกร้า

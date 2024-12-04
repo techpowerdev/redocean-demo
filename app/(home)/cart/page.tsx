@@ -1,33 +1,27 @@
 "use client";
 
 import Container from "@/components/shared/Container";
-import CartClient from "./components/CartClient";
 import { useCurrentUserStore } from "@/state-stores/useCurrentUserStore";
-import Loading from "@/components/shared/Loading";
-import LineLogin from "../../../components/auth/LineLogin";
-import MobileContainer from "@/components/shared/MobileContainer";
+import LineLogin from "../../features/auth/LineLogin";
+import UserCart from "@/app/features/cart/UserCart";
 
 export default function Cart() {
-  // const currentUser = useCurrentUserStore((state) => state.currentUser);
-  const currentUser = true;
+  const currentUser = useCurrentUserStore((state) => state.currentUser);
 
-  const loading = useCurrentUserStore((state) => state.loading);
-
-  if (loading) {
-    return (
-      <div className="fixed top-0 left-0 w-full h-screen justify-center items-center">
-        <Loading size={40} />
-      </div>
-    );
+  if (!currentUser) {
+    return <LineLogin />;
   }
 
-  return currentUser ? (
+  // if (!userOrders || userOrders.length === 0) {
+  //   return <NoOrder />;
+  // }
+
+  return (
     <Container>
-      <CartClient />
+      {/* <MobileContainer> */}
+      {/* <CartClient /> */}
+      <UserCart />
+      {/* </MobileContainer> */}
     </Container>
-  ) : (
-    <MobileContainer>
-      <LineLogin />
-    </MobileContainer>
   );
 }

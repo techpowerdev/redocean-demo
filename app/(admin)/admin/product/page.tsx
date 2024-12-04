@@ -1,10 +1,12 @@
-import React from "react";
-import PagePanelLayout from "@/app/(admin)/admin/components/shared/PagePanelLayout";
-import ProductListComponent from "@/app/(admin)/admin/product/components/ProductListComponent";
-import ProductDetailComponent from "@/app/(admin)/admin/product/components/ProductDetailComponent";
-import ProductActionBarComponent from "./components/ProductActionBarComponent";
+"use client";
 
-export default function page() {
+import PagePanelLayout from "@/app/(admin)/admin/components/shared/PagePanelLayout";
+import ProductActionBarComponent from "@/app/features/product/admin/ProductActionBarComponent";
+import ProductDetailComponent from "@/app/features/product/admin/ProductDetailComponent";
+import ProductListComponent from "@/app/features/product/admin/ProductListComponent";
+import { ProductRightActionToolbar } from "@/app/features/product/admin/ProductRightActionToolbar";
+
+export default function Product() {
   return (
     <PagePanelLayout
       LeftHeading="สินค้า"
@@ -12,6 +14,7 @@ export default function page() {
       LeftActionBarComponent={<ProductActionBarComponent />}
       LeftComponent={<ProductListComponent />}
       RightComponent={<ProductDetailComponent />}
+      RightActionBarComponent={<ProductRightActionToolbar />}
     />
   );
 }

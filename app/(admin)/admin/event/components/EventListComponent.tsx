@@ -6,25 +6,29 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Loading from "@/components/shared/Loading";
 import { EventList } from "./EventList";
-import { useEventStore } from "@/state-stores/admin/adminEventStore";
-import { EventType } from "@/types/fetchTypes";
+import { PromotionType } from "@/types/fetchTypes";
+import { usePromotionStore } from "@/state-stores/admin/adminPromotionStore";
 
 export default function EventListComponent() {
-  const eventLists = useEventStore((state) => state.eventLists);
-  const setEventLists = useEventStore((state) => state.setEventLists);
+  const promotionLists = usePromotionStore((state) => state.promotionLists);
+  const setPromotionLists = usePromotionStore(
+    (state) => state.setPromotionLists
+  );
   const [searchTerm, setSearchTerm] = useState(""); // State for search input
-  const [filteredEvents, setFilteredEvents] = useState<EventType[]>([]); // State for filtered products
+  const [filteredPromotions, setFilteredPromotions] = useState<PromotionType[]>(
+    []
+  ); // State for filtered products
   const [loading, setLoading] = useState(true); // State for loading
   const [error, setError] = useState<string | null>(null); // State for error message
 
   useEffect(() => {
-    const getAllEvents = async () => {
+    const getAllPromotions = async () => {
       setLoading(true); // Set loading to true when fetching
       try {
         const { data } = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/events/all`
+          `${process.env.NEXT_PUBLIC_API_URL}/promotions/all`
         );
-        setEventLists(data);
+        setPromotionLists(data);
         setLoading(false); // Set loading to false after data is fetched
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -32,20 +36,20 @@ export default function EventListComponent() {
         setLoading(false); // Set loading to false in case of error
       }
     };
-    getAllEvents();
-  }, [setEventLists]);
+    getAllPromotions();
+  }, [setPromotionLists]);
 
   useEffect(() => {
     // Filter products based on the search term
-    if (searchTerm && eventLists) {
-      const results = eventLists.filter((event) =>
-        event.title.toLowerCase().includes(searchTerm.toLowerCase())
+    if (searchTerm && promotionLists) {
+      const results = promotionLists.filter((promotion) =>
+        promotion.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
-      setFilteredEvents(results);
+      setFilteredPromotions(results);
     } else {
-      setFilteredEvents(eventLists || []); // Set to empty array if undefined
+      setFilteredPromotions(promotionLists || []); // Set to empty array if undefined
     }
-  }, [searchTerm, eventLists]);
+  }, [searchTerm, promotionLists]);
 
   let component;
   if (loading) {
@@ -60,8 +64,8 @@ export default function EventListComponent() {
     component = <div className="text-center text-red-500">{error}</div>; // Display error message
   }
 
-  if (searchTerm && filteredEvents.length === 0) {
-    component = <div className="text-center">ไม่พบกิจกรรม</div>; // No events found
+  if (searchTerm && filteredPromotions.length === 0) {
+    component = <div className="text-center">ไม่พบกิจกรรม</div>; // No promotions found
   }
 
   return (
@@ -83,7 +87,7 @@ export default function EventListComponent() {
         component
       ) : (
         <div className="m-0">
-          <EventList events={filteredEvents} />
+          <EventList events={filteredPromotions} />
         </div>
       )}
     </>

@@ -57,10 +57,10 @@ export default function PagePanelLayout({
           </div>
           <Separator />
           {RightActionBarComponent && (
-            <>
+            <div>
               <ActionBar>{RightActionBarComponent}</ActionBar>
               <Separator />
-            </>
+            </div>
           )}
           {RightComponent}
         </div>
