@@ -7,8 +7,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 
 import { labels, priorities, statuses } from "./data/data";
 import { Task } from "./data/schema";
-import { DataTableColumnHeader } from "../../../../features/table/DataTableColumnHeader";
-import { DataTableRowActions } from "../../../../features/table/DataTableRowActions";
+import { DataTableColumnHeader } from "@/components/shared/table/DataTableColumnHeader";
+import { DataTableRowActions } from "@/components/shared/table/DataTableRowActions";
 
 // กำหนดหัวของคอลัมน์
 export const Columns: ColumnDef<Task>[] = [

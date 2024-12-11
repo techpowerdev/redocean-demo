@@ -4,8 +4,7 @@ import { Mail, Phone, Power, UserRoundPen } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
-// import Loading from "@/components/shared/Loading";
-import { EditProfile } from "../../features/user/profile/forms/EditProfile";
+import { EditProfile } from "../../features/profile/forms/EditProfile";
 import { useCurrentUserStore } from "@/state-stores/useCurrentUserStore";
 import liff from "@line/liff";
 import LineLogin from "@/app/features/auth/LineLogin";
@@ -18,25 +17,14 @@ export default function Profile() {
     (state) => state.clearCurrentUser
   );
 
-  // const loading = useCurrentUserStore((state) => state.loading);
-
   // logout
   const logout = () => {
     if (liff.isLoggedIn()) {
       liff.logout();
       clearCurrentUser();
-      // localStorage.removeItem("LoggedInUser");
       toast.success("ออกจากระบบแล้ว");
     }
   };
-
-  // if (loading) {
-  //   return (
-  //     <div className="fixed top-0 left-0 w-full h-screen justify-center items-center">
-  //       <Loading size={40} />
-  //     </div>
-  //   );
-  // }
 
   if (!currentUser) {
     return <LineLogin />;

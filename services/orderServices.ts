@@ -1,39 +1,11 @@
+import { CartItemType } from "@/types/cartTypes";
+import { CreateOderType } from "@/types/orderTypes";
 import axios from "axios";
 
-type OrderType = {
-  orderType: string;
-  creditCardFee?: number | null;
-  shippingFee?: number | null;
-  totalAmount: number;
-  returnAmount: number;
-  trackingNumber?: string | null;
-  shippingAddress: {
-    recipient: string;
-    phoneNumber: string;
-    address: string;
-    street: string;
-    subDistrict: string;
-    district: string;
-    province: string;
-    postalCode: string;
-  };
-  orderItems: OrderItemType[];
-};
-type OrderItemType = {
-  sku: string;
-  quantity: number;
-  unitPrice: number;
-  discount?: number | null;
-  specialDiscount?: number | null;
-  total: number;
-  productId: string;
-  promotionActivityId: string;
-};
-
-export const createUserOrder = async (token: string, data: OrderType) => {
+export const createOrder = async (token: string, data: CreateOderType) => {
   try {
     const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/users/orders/all`,
+      `${process.env.NEXT_PUBLIC_API_URL}/orders`,
       data,
       {
         headers: {
@@ -77,6 +49,33 @@ export const getUserOrders = async (token: string) => {
   }
 };
 
+export const changeTrackingNumber = async (
+  token: string,
+  orderId: string,
+  trackingNumber: string
+) => {
+  try {
+    const { data } = await axios.patch(
+      `${process.env.NEXT_PUBLIC_API_URL}/orders/${orderId}/change-trackingnumber`,
+      { trackingNumber },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return data.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error("Axios error details:", error.response?.data);
+    } else {
+      console.error("Unexpected error:", error);
+    }
+    throw error; // ส่งต่อ error ไปให้ฝั่งที่เรียกใช้ function
+  }
+};
+
 export const getOneOrder = async (id: string) => {
   try {
     const { data } = await axios.get(
@@ -99,10 +98,12 @@ export const getAllOrders = async () => {
   }
 };
 
-export const getOrderSummaryOfGroupBuying = async () => {
+export const getOrderSummaryOfGroupBuying = async (
+  promotionActivityId: string | null
+) => {
   try {
     const { data } = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/orders/summary/groupbuying/today`
+      `${process.env.NEXT_PUBLIC_API_URL}/orders/summary/today/${promotionActivityId}`
     );
     return data;
   } catch (error) {
@@ -121,45 +122,45 @@ export type SearchFilters = {
   maxAmount?: number;
 };
 
-// /**
-//  * ฟังก์ชันค้นหาคำสั่งซื้อจาก API
-//  * @param {SearchFilters} filters - ตัวกรองสำหรับการค้นหา
-//  * @returns {Promise<OrderType[]>} - รายการคำสั่งซื้อ
-//  */
-// export const searchOrders = async (
-//   filters: SearchFilters = {}
-// ): Promise<OrderType[] | undefined> => {
-//   try {
-//     // สร้าง URL พร้อม Query Parameters
-//     const params = new URLSearchParams(
-//       filters as Record<string, string>
-//     ).toString();
-//     const url = `${process.env.NEXT_PUBLIC_API_URL}/orders/search?${params}`;
-
-//     // เรียก API ด้วย axios
-//     const response = await axios.get<OrderType[]>(url);
-
-//     // ส่งคืนผลลัพธ์
-//     return response.data;
-//   } catch (error) {
-//     console.error("Error fetching orders:", error);
-//   }
-// };
-export const searchOrders = async (filters: SearchFilters = {}) => {
+// get order on each promotion
+export const getPromotionOrder = async (promotionActivityId: string) => {
   try {
-    // สร้าง URL พร้อม Query Parameters
-    const params = new URLSearchParams(
-      filters as Record<string, string>
-    ).toString();
-    const url = `${process.env.NEXT_PUBLIC_API_URL}/orders/search?${params}`;
-
     // เรียก API ด้วย axios
-    const response = await axios.get(url);
-
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/orders/promotion-orders/${promotionActivityId}`
+    );
+    console.log(response);
     // ส่งคืนผลลัพธ์
     return response.data;
   } catch (error) {
     console.error("Error fetching orders:", error);
+  }
+};
+
+export const checkStockAndPromotionForCheckout = async (
+  token: string,
+  data: CartItemType[]
+) => {
+  try {
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/products/variants/stock/for-checkout`,
+      { orderItems: data },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    if (axios.isAxiosError(error)) {
+      console.error("Axios error details:", error.response?.data);
+    } else {
+      console.error("Unexpected error:", error);
+    }
+    throw error; // ส่งต่อ error ไปให้ฝั่งที่เรียกใช้ function
   }
 };
 
@@ -253,76 +254,44 @@ export async function changeOrderStatus(id: string, status: string) {
   }
 }
 
-// interface FailedOrder {
-//   order: CreateOrderFullfillmentBody;
-//   error: unknown; // หรือใช้ `Error` หากคุณคาดว่า error จะเป็น Error Object
-// }
-
-// กำหนดประเภทสำหรับผลลัพธ์ของฟังก์ชัน
-// export async function processOrders(
-//   orders: CreateOrderFullfillmentBody[],
-//   createOrderFullfillment: (order: CreateOrderFullfillmentBody) => Promise<any>
-// ): Promise<{ results: (any | null)[]; failedOrders: FailedOrder[] }> {
-//   const failedOrders: FailedOrder[] = [];
-
-//   const results = await Promise.all(
-//     orders.map(async (order) => {
-//       // กำหนดประเภทสำหรับผลลัพธ์ของฟังก์ชัน
-//       console.log("order", order);
-//       try {
-//         return await createOrderFullfillment(order);
-//       } catch (error) {
-//         failedOrders.push({ order, error }); // เก็บรายการที่ล้มเหลว
-//         return null; // หรือค่าเริ่มต้นกรณีล้มเหลว
-//       }
-//     })
-//   );
-
-//   return { results, failedOrders };
-// }
-
-// // ใช้งานฟังก์ชัน
-// const orders: CreateOrderFullfillmentBody[] = [
-//   { id: "cm46lrtmk0007kw9eadfynq8j" },
-//   // เพิ่มรายการ orders ตามโครงสร้างที่ต้องการ
-// ];
-
-// export async function createOrderFullfillment(
-//   order: CreateOrderFullfillmentBody
-// ): Promise<any> {
-//   // ฟังก์ชันที่ดำเนินการสร้าง order fulfillment
+// /**
+//  * ฟังก์ชันค้นหาคำสั่งซื้อจาก API
+//  * @param {SearchFilters} filters - ตัวกรองสำหรับการค้นหา
+//  * @returns {Promise<OrderType[]>} - รายการคำสั่งซื้อ
+//  */
+// export const searchOrders = async (
+//   filters: SearchFilters = {}
+// ): Promise<OrderType[] | undefined> => {
 //   try {
-//     // ส่ง POST request ไปยัง API
-//     const response = await axios.post(
-//       "https://ffmportal.thailandpost.com/open-api/orders/fulfillment",
-//       order,
-//       {
-//         headers: {
-//           Authorization: `Bearer ${process.env.NEXT_PUBLIC_AKITA_TOKEN}`,
-//           "Content-Type": "application/json",
-//         },
-//       }
-//     );
+//     // สร้าง URL พร้อม Query Parameters
+//     const params = new URLSearchParams(
+//       filters as Record<string, string>
+//     ).toString();
+//     const url = `${process.env.NEXT_PUBLIC_API_URL}/orders/search?${params}`;
 
-//     // แสดงผลลัพธ์จาก API
-//     console.log("Order created successfully:", response.data);
+//     // เรียก API ด้วย axios
+//     const response = await axios.get<OrderType[]>(url);
+
+//     // ส่งคืนผลลัพธ์
 //     return response.data;
 //   } catch (error) {
-//     if (axios.isAxiosError(error)) {
-//       console.error("Axios error:", error.response?.data || error.message);
-//     } else {
-//       console.error("Unexpected error:", error);
-//     }
-//     throw error;
+//     console.error("Error fetching orders:", error);
 //   }
-// }
+// };
+// export const searchOrders = async (filters: SearchFilters = {}) => {
+//   try {
+//     // สร้าง URL พร้อม Query Parameters
+//     const params = new URLSearchParams(
+//       filters as Record<string, string>
+//     ).toString();
+//     const url = `${process.env.NEXT_PUBLIC_API_URL}/orders/search?${params}`;
 
-// (async () => {
-//   const { results, failedOrders } = await processOrders(
-//     orders,
-//     createOrderFullfillment
-//   );
-
-//   console.log("Results:", results);
-//   console.log("Failed Orders:", failedOrders);
-// })();
+//     // เรียก API ด้วย axios
+//     const response = await axios.get(url);
+//     console.log(response);
+//     // ส่งคืนผลลัพธ์
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error fetching orders:", error);
+//   }
+// };

@@ -14,8 +14,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
-import axios, { AxiosResponse } from "axios";
-import toast from "react-hot-toast";
 import { signUp } from "@/services/authServices";
 
 const formSchema = z.object({

@@ -1,22 +1,13 @@
 "use client";
 import Image from "next/image";
 import { useState } from "react";
-
 interface ProductImageProps {
   images: string[] | undefined;
 }
 
 export default function PromotionProductImage({ images }: ProductImageProps) {
-  // ตรวจสอบว่า images มีค่าและไม่เป็น array ว่าง
   const [selectedImage, setSelectedImage] = useState(images?.[0] || "");
 
-  // อัปเดต selectedImage เมื่อ images เปลี่ยนแปลง
-  // useEffect(() => {
-  //   if (images?.length > 0) {
-  //     setSelectedImage(images[0]);
-  //   }
-  // }, [images]);
-  console.log(images);
   return (
     <div className="grid grid-cols-[20%_80%] gap-2 h-full max-h-[500px] min-h-[300px] sm:min-h-[400px]">
       {/* Thumbnail List */}

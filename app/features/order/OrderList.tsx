@@ -21,18 +21,19 @@ export default function OrderList() {
   const token = useCurrentUserStore((state) => state.token);
   const isTokenValid = useAuthStore((state) => state.isTokenValid);
 
-  const checkToken = () => {
-    if (token) {
-      if (!isTokenValid(token)) {
-        console.warn("Token expired or not available. Redirecting to login...");
+  useEffect(() => {
+    const checkToken = () => {
+      if (token) {
+        if (!isTokenValid(token)) {
+          console.warn(
+            "Token expired or not available. Redirecting to login..."
+          );
+          router.push("/login");
+        }
+      } else {
         router.push("/login");
       }
-    } else {
-      router.push("/login");
-    }
-  };
-
-  useEffect(() => {
+    };
     const fetchOrders = async () => {
       checkToken();
       try {
@@ -44,7 +45,7 @@ export default function OrderList() {
       }
     };
     fetchOrders();
-  }, [currentUser]);
+  }, [currentUser, isTokenValid, router, token]);
 
   if (!userOrders) {
     return <Loading size={40} />;
@@ -70,7 +71,7 @@ export default function OrderList() {
               <OrderItem key={orderItem.id} item={orderItem} />
             ))}
           </Link>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 items-center gap-2">
             <Link
               href={`/order/${order.id}`}
               className="flex justify-center items-center gap-2 mt-2 bg-white p-2 rounded-md w-full text-primary hover:underline "
@@ -78,14 +79,20 @@ export default function OrderList() {
               <Eye size={20} />
               ดูรายละเอียด
             </Link>
-            <Link
-              target="_blank"
-              href={`https://track.thailandpost.co.th/?trackNumber=${order.trackingNumber}`}
-              className="flex justify-center items-center gap-2 mt-2 bg-white p-2 rounded-md w-full text-primary hover:underline "
-            >
-              <Truck size={20} />
-              ติดตามพัสดุ
-            </Link>
+            {order.trackingNumber !== null && order.trackingNumber !== "" ? (
+              <Link
+                target="_blank"
+                href={`https://track.thailandpost.co.th/?trackNumber=${order.trackingNumber}`}
+                className="flex justify-center items-center gap-2 mt-2 bg-white p-2 rounded-md w-full text-primary hover:underline "
+              >
+                <Truck size={20} />
+                ติดตามพัสดุ
+              </Link>
+            ) : (
+              <div className="flex justify-center items-center gap-2 mt-2 bg-white p-2 rounded-md w-full text-primary">
+                อยู่ระหว่างดำเนินการ
+              </div>
+            )}
           </div>
         </div>
       </div>

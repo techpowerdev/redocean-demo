@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import React from "react";
-type Props = {
-  searchParams: { [key: string]: string | string[] | undefined };
-};
+// type Props = {
+//   searchParams: { [key: string]: string | string[] | undefined };
+// };
 export default function ProductPage() {
   const availableColors = ["แดง", "เขียว", "เหลือง"];
   const availableSizes = ["17กรัม", "20กรัม", "30กรัม"];

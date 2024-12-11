@@ -1,19 +1,73 @@
+"use client";
+
 // import "./printStyle.module.css";
 import Image from "next/image";
 import { formatPrice } from "@/utils/formatPrice";
 import { truncateText } from "@/utils/truncateText";
-import { getOneOrder } from "@/services/orderServices";
+import { changeTrackingNumber, getOneOrder } from "@/services/orderServices";
 import { formatDateTimePromotion } from "@/utils/formatDate";
 import { OrderType } from "@/types/orderTypes";
 import PrintButton from "@/components/shared/PrintButton";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import toast from "react-hot-toast";
+import { useEffect, useState } from "react";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useCurrentUserStore } from "@/state-stores/useCurrentUserStore";
 
-export default async function PrintOrderDetail({
+const FormSchema = z.object({
+  trackingNumber: z.string(),
+});
+
+export default function PrintOrderDetail({
   params,
 }: {
   params: { id: string };
 }) {
-  const data: OrderType = await getOneOrder(params.id);
+  // global state
 
+  const token = useCurrentUserStore((state) => state.token);
+
+  // local state
+  const [order, setOrder] = useState<OrderType | null>(null);
+
+  useEffect(() => {
+    const fetchOrder = async () => {
+      try {
+        const data: OrderType = await getOneOrder(params.id);
+        setOrder(data);
+        form.reset({ trackingNumber: data.trackingNumber || "" });
+      } catch (error) {
+        console.error("Error fetching order:", error);
+      }
+    };
+    fetchOrder();
+  }, [params.id]);
+
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      trackingNumber: "",
+    },
+  });
+
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    try {
+      await changeTrackingNumber(token || "", params.id, data.trackingNumber);
+      toast.success("บันทึกข้อมูลสำเร็จ");
+    } catch (error) {
+      toast.error("บันทึกข้อมูลไม่สำเร็จ");
+    }
+  }
   return (
     <div className="p-8 bg-white text-black">
       <h1 className="text-2xl font-bold mb-4 text-center">
@@ -21,12 +75,33 @@ export default async function PrintOrderDetail({
       </h1>
       <p className="flex gap-2 justify-start items-end mb-2">
         <span className="font-semibold">หมายเลขคำสั่งซื้อ: </span>
-        <span>{data?.id}</span>
+        <span>{order?.id}</span>
       </p>
-      <p className="no-print">
-        <span className="font-semibold">เลขติดตามพัสดุ: </span>{" "}
-        {data?.trackingNumber || "ไม่มีข้อมูล"}
-      </p>
+      <div className="no-print flex items-center justify-start gap-2">
+        <div className="font-semibold">เลขติดตามพัสดุ: </div>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-2">
+            <FormField
+              control={form.control}
+              name="trackingNumber"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                      placeholder="กรอกเลข tracking number"
+                      {...field}
+                      className="w-fit min-w-80 "
+                    />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type="submit">Submit</Button>
+          </form>
+        </Form>
+      </div>
 
       {/* print button */}
       <div className="flex justify-end items-center">
@@ -36,23 +111,23 @@ export default async function PrintOrderDetail({
       {/* Order Information */}
       <div className="mb-6">
         <span className="font-semibold">วันที่: </span>
-        {formatDateTimePromotion(data?.createdAt)}
-        {/* <p>สถานะ: {data?.status}</p> */}
+        {formatDateTimePromotion(order?.createdAt || "")}
+        {/* <p>สถานะ: {order?.status}</p> */}
       </div>
 
       {/* Customer Information */}
       <div className="mb-6">
         <h2 className="font-semibold">ลูกค้า:</h2>
-        <p>ชื่อ: {data?.shippingAddress?.recipient}</p>
-        <p>เบอร์โทร: {data?.shippingAddress?.phoneNumber}</p>
+        <p>ชื่อ: {order?.shippingAddress?.recipient}</p>
+        <p>เบอร์โทร: {order?.shippingAddress?.phoneNumber}</p>
         <h2 className="font-semibold mt-4">ที่อยู่ในการจัดส่ง:</h2>
         <p className="flex gap-2">
-          <span>{data?.shippingAddress?.address}</span>
-          <span>{data?.shippingAddress?.street}</span>
-          <span>{data?.shippingAddress?.subDistrict}</span>
-          <span>{data?.shippingAddress?.district}</span>
-          <span>{data?.shippingAddress?.province}</span>
-          <span>{data?.shippingAddress?.postalCode}</span>
+          <span>{order?.shippingAddress?.address}</span>
+          <span>{order?.shippingAddress?.street}</span>
+          <span>{order?.shippingAddress?.subDistrict}</span>
+          <span>{order?.shippingAddress?.district}</span>
+          <span>{order?.shippingAddress?.province}</span>
+          <span>{order?.shippingAddress?.postalCode}</span>
         </p>
       </div>
 
@@ -85,7 +160,7 @@ export default async function PrintOrderDetail({
             </tr>
           </thead>
           <tbody>
-            {data.orderItems?.map((item) => (
+            {order?.orderItems?.map((item) => (
               <tr key={item.id} className="border-b">
                 <td className="border border-gray-300 px-4 py-2">
                   <div className="flex items-center gap-4">
@@ -138,7 +213,7 @@ export default async function PrintOrderDetail({
             >
               <td colSpan={6} className="font-bold bg-gray-300 py-2 px-4">
                 <span className="mr-2">รวมเป็นเงินทั้งหมด</span>
-                {data?.totalAmount ? formatPrice(data.totalAmount) : ""}
+                {order?.totalAmount ? formatPrice(order.totalAmount) : ""}
               </td>
             </tr>
           </tbody>

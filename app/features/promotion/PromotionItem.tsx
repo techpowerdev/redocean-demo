@@ -26,16 +26,7 @@ export default function PromotionItem({ promotion }: Props) {
               endTime={formatDateTimePromotion(promotion.endAt)}
             />
           </div>
-
-          {/* <GroupBuyPromotionProductCard
-            product={activity.product}
-            productVariants={activity.product.productVariants}
-            promotion={promotion}
-            promotionActivity={activity}
-          /> */}
           <ProductContainer productId={activity.product.id} />
-
-          {/* <ProductCard2 product={activity.product} /> */}
         </div>
       ))}
     </div>

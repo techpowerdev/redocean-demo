@@ -16,10 +16,10 @@ import {
 } from "lucide-react";
 // import { z } from "zod";
 import { OrderType } from "@/types/fetchTypes";
-import ChangeStatus from "@/app/features/order/admin/ChangeStatus";
+import ChangeStatus from "@/app/features/order/admin/ChangeOrderStatus";
 import { changeOrderStatus } from "@/services/orderServices";
 import { formatPrice } from "@/utils/formatPrice";
-import { DataTableColumnHeader } from "@/app/features/table/DataTableColumnHeader";
+import { DataTableColumnHeader } from "@/components/shared/table/DataTableColumnHeader";
 // import { DataTableRowActions } from "../../components/shared/DataTableRowActions";
 
 export const labels = [

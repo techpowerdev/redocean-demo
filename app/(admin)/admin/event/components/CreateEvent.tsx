@@ -32,13 +32,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { cn } from "@/lib/utils";
-import { FormSwitcher } from "./forms/FormSwitcher";
 import { Separator } from "@/components/ui/separator";
-import { eventForms } from "./forms/eventForms";
 import { usePromotionStore } from "@/state-stores/admin/adminPromotionStore";
-import Image from "next/image";
-import { formatPrice } from "@/utils/formatPrice";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
@@ -88,9 +83,9 @@ const EventFormSchema = z.object({
 type EventFormValues = z.infer<typeof EventFormSchema>;
 
 export function CreateEvent() {
-  const selectedPromotionType = usePromotionStore(
-    (state) => state.selectedPromotionType
-  );
+  // const selectedPromotionType = usePromotionStore(
+  //   (state) => state.selectedPromotionType
+  // );
   const selectedProductInPromotion = usePromotionStore(
     (state) => state.selectedProductInPromotion
   );
@@ -219,6 +214,7 @@ export function CreateEvent() {
             discountAmount: data.discountAmount,
             limitQuantity: data.limitQuantity,
             maxQuantity: data.maxQuantity,
+            limitQuantityPerUser: data.limitQuantityPerUser,
             maxQuantityPerUser: data.maxQuantityPerUser,
             minimumPurchaseQuantity: data.minimumPurchaseQuantity,
             discountGroupAmount: data.discountGroupAmount,

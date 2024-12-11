@@ -36,7 +36,7 @@ export default function MobileMenu() {
         rel="noopener noreferrer"
       >
         <span className="absolute -top-1 right-0 rounded-full bg-primary w-6 h-6 flex justify-center items-center text-white text-[12px]">
-          {cart?.cartTotalQuantity}
+          {cart?.cartTotalQuantity ? cart?.cartTotalQuantity : 0}
         </span>
         <ShoppingCart />
         ตะกร้า

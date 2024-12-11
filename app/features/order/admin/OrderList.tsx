@@ -6,7 +6,6 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 // import { Separator } from "@/components/ui/separator";
 import { OrderType } from "@/types/fetchTypes";
-import { formatDateTimeTH } from "@/utils/formatDate";
 // import { useMail } from "@/app/(app)/examples/mail/use-mail";
 
 interface Props {

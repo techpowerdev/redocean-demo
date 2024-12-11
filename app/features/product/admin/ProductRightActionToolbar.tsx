@@ -67,12 +67,12 @@ export function ProductRightActionToolbar() {
             onClick: handleOpenDeleteForm,
           },
         ]}
-        dropdownItems={[
-          "Mark as unread",
-          "Star thread",
-          "Add label",
-          "Mute thread",
-        ]}
+        // dropdownItems={[
+        //   "Mark as unread",
+        //   "Star thread",
+        //   "Add label",
+        //   "Mute thread",
+        // ]}
       />
     </>
   );

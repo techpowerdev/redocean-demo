@@ -1,5 +1,4 @@
 import React from "react";
-import AddEvent from "./AddEvent";
 import { CreateEvent } from "./CreateEvent";
 
 export default function EventActionBarComponent() {

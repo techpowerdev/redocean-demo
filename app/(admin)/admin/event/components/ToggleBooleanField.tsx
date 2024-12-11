@@ -5,7 +5,6 @@ import { Switch } from "@/components/ui/switch";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { LucideIcon } from "lucide-react";
-import { useEventStore } from "@/state-stores/admin/adminEventStore";
 import { usePromotionStore } from "@/state-stores/admin/adminPromotionStore";
 
 interface ToggleBooleanFieldProps {
@@ -81,7 +80,4 @@ export default function ToggleBooleanField({
       />
     </div>
   );
-}
-function usePromotionsStore(arg0: (state: any) => any) {
-  throw new Error("Function not implemented.");
 }

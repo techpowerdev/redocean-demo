@@ -5,17 +5,12 @@ import NoPromotion from "../features/promotion/NoPromotion";
 import HeroBanner from "../features/banner/HeroBanner";
 import Campaign from "../features/social-share/Campaign";
 
-// export default async function Home( { params, searchParams }: Props) {
 export default async function Home() {
   const promotions = await getPromotionToday();
   return (
     <Container>
       <HeroBanner />
-      {promotions?.data?.[0] && (
-        // <SocialShare promotion={promotions?.data?.[0]} />
-        <Campaign promotion={promotions?.data?.[0]} />
-      )}
-      {/* <ProductCard product={products[0]} /> */}
+      {promotions?.data?.[0] && <Campaign promotion={promotions?.data?.[0]} />}
       {!promotions?.data || promotions.data.length === 0 ? (
         <NoPromotion />
       ) : (

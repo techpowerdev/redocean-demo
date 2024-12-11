@@ -55,7 +55,7 @@ export async function generateMetadata(
 export default function Campaign({ promotion }: Props) {
   return (
     <div>
-      <h1>Campaign : {promotion.name}</h1>
+      {/* <h1>Campaign : {promotion.name}</h1> */}
       <SocialShare promotion={promotion} />
     </div>
   );

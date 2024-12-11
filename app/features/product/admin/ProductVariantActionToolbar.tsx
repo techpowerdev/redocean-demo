@@ -1,7 +1,6 @@
 import { Eye, SquarePen, Trash2 } from "lucide-react";
 import { ProductVariantType } from "@/types/fetchTypes";
 import { useState } from "react";
-import { EditProductVariant } from "./forms/EditProductVariant";
 import { deleteProductVariant } from "@/services/productServices";
 import { DeletePopup } from "@/components/shared/DeletePopup";
 import axios from "axios";

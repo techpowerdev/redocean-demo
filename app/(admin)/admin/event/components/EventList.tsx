@@ -5,10 +5,8 @@ import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import ToggleBooleanField from "./ToggleBooleanField";
 import { CalendarClock } from "lucide-react";
-import Image from "next/image";
 import Loading from "@/components/shared/Loading";
 import { PromotionType } from "@/types/fetchTypes";
-import { useEventStore } from "@/state-stores/admin/adminEventStore";
 import { usePromotionStore } from "@/state-stores/admin/adminPromotionStore";
 
 type Props = {

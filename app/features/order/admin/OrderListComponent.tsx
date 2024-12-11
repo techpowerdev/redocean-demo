@@ -2,7 +2,6 @@ import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import React from "react";
 import { OrderList } from "./OrderList";
-import { mails } from "../../data/data";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import axios from "axios";

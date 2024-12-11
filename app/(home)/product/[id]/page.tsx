@@ -16,9 +16,7 @@ export default async function page({ params }: Props) {
   return (
     <div>
       <div>product: {product.promotionActivities?.map((item) => item.id)}</div>
-      <div>
-        product: {products?.map((item) => item.productVariants?.[0].color)}
-      </div>
+
       <ProductContainer productId={params.id} />
     </div>
   );

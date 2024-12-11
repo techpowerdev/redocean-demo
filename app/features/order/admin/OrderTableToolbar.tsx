@@ -8,8 +8,8 @@ import { Input } from "@/components/ui/input";
 
 // import { priorities, statuses } from "./data/data";
 import { statuses } from "./OrderColumn";
-import { DataTableFacetedFilter } from "@/app/features/table/DataTableFacetedFilter";
-import { DataTableViewOptions } from "@/app/features/table/DataTableViewOptions";
+import { DataTableFacetedFilter } from "@/components/shared/table/DataTableFacetedFilter";
+import { DataTableViewOptions } from "@/components/shared/table/DataTableViewOptions";
 
 interface OrderTableToolbarProps<TData> {
   table: Table<TData>;

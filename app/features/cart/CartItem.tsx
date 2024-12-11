@@ -1,47 +1,12 @@
-// "use client";
-
-// import { Button } from "@/components/ui/button";
-// import { CartProductType } from "@/state-stores/cartProductStore";
-// import React from "react";
-
-// type Props = {
-//   item: CartProductType;
-//   onRemove: (cartItemId: string) => Promise<void>;
-//   onUpdateQuantity: (cartItemId: string, newQuantity: number) => Promise<void>;
-// };
-
-// export default function CartItem({ item, onRemove, onUpdateQuantity }: Props) {
-//   return (
-//     <div className="cart-item">
-//       <h3>{item.id}</h3>
-//       <p>SKU: {item.sku}</p>
-//       <p>Price: ${item.unitPrice}</p>
-//       <p>Quantity: {item.quantity}</p>
-//       <Button onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}>
-//         -
-//       </Button>
-//       <Button onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}>
-//         +
-//       </Button>
-//       <Button onClick={() => onRemove(item.id)}>Remove</Button>
-//     </div>
-//   );
-// }
-
-// version 2
 "use client";
 import { formatPrice } from "@/utils/formatPrice";
-import Link from "next/link";
-import { truncateText } from "@/utils/truncateText";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import SetProductQuantity from "../promotion/SetProductQuantity";
+import SetProductQuantity from "./SetProductQuantity";
 import { useCurrentUserStore } from "@/state-stores/useCurrentUserStore";
-import {
-  CartItemType,
-  useCartServerStore,
-} from "@/state-stores/cartServerStore";
+import { useCartServerStore } from "@/state-stores/cartServerStore";
 import { Trash2 } from "lucide-react";
+import { CartItemType } from "@/types/cartTypes";
 
 interface Props {
   item: CartItemType;
@@ -81,6 +46,7 @@ export default function CartItem({ item }: Props) {
 
           <div>{item.variantOptions && `${item.variantOptions}`}</div>
         </div>
+
         <Button
           className="bg-white text-primary border-2 rounded-full w-9 h-9 hover:text-white"
           onClick={() => handleRemoveProductFromCart(token || "", item.id)}
@@ -88,13 +54,32 @@ export default function CartItem({ item }: Props) {
           <Trash2 />
         </Button>
       </div>
+
+      {item.discount > 0 ? (
+        <div className="flex flex-col gap-2 text-sm">
+          <span className="line-through text-red-500">
+            {formatPrice(item.unitPrice)}
+          </span>
+          <span className="text-slate-500">
+            ส่วนลด {formatPrice(item.discount)}
+          </span>
+          <span className="text-green-500">
+            เหลือเพียง {formatPrice(item.unitPrice - item.discount)}
+          </span>
+        </div>
+      ) : (
+        <span>{formatPrice(item.unitPrice)}</span>
+      )}
+      {item.warningMessage && (
+        <span className="text-sm text-primary">{item.warningMessage}</span>
+      )}
       <div className="w-full grid grid-cols-2">
         <div className="flex justify-center">
           <SetProductQuantity
             cartCounter={true}
             cartProduct={item}
             handleQtyDecrease={() =>
-              handleCartQtyDecrease(token || "", item.id, -1)
+              handleCartQtyDecrease(token || "", item.id, 1)
             }
             handleQtyIncrease={() =>
               handleCartQtyIncrease(token || "", item.id, 1)

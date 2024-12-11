@@ -21,7 +21,7 @@ interface Props {
   product: ProductType;
 }
 
-type selectedVariantType = {
+export type selectedVariantType = {
   id: string;
   productId: string;
   sku: string;
@@ -137,7 +137,7 @@ export default function ProductCard({ product }: Props) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 my-5">
-      <ProductImage
+      {/* <ProductImage
         images={
           (
             productVariants
@@ -151,6 +151,12 @@ export default function ProductCard({ product }: Props) {
             ? [product.image]
             : []
         }
+        selectedVariantImage={selectedVariant?.image || null}
+      /> */}
+      <ProductImage
+        product={product}
+        variants={productVariants}
+        selectedOption={selectedOptions}
       />
 
       <div className="flex flex-col gap-y-4 w-full p-2 md:p-8">

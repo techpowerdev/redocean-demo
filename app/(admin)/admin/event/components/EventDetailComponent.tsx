@@ -2,42 +2,13 @@
 
 // import { addDays, addHours, format, nextSaturday } from "date-fns";
 
-import {
-  Archive,
-  ArchiveX,
-  Clock,
-  Forward,
-  MoreVertical,
-  Reply,
-  ReplyAll,
-  Trash2,
-} from "lucide-react";
-
-import {
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
 // import { Calendar } from "@/components/ui/calendar";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+
 import { Separator } from "@/components/ui/separator";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+
 import Image from "next/image";
 import { formatDateTimePromotion } from "@/utils/formatDate";
 import { usePromotionStore } from "@/state-stores/admin/adminPromotionStore";
-import { PromotionCountdown } from "@/app/features/promotion/PromotionCountdown";
 import { formatPrice } from "@/utils/formatPrice";
 
 // interface Props {
@@ -63,16 +34,16 @@ export default function EventDetailComponent() {
             </div>
             {selectedPromotion.promotionActivities?.[0]
               .minimumPurchaseQuantity &&
-              selectedPromotion.promotionActivities?.[0]
-                .minimumPurchaseQuantity > 0 && (
-                <div className="text-lg font-semibold">
-                  จำนวนออเดอร์เป้าหมาย :{" "}
-                  {
-                    selectedPromotion.promotionActivities?.[0]
-                      .minimumPurchaseQuantity
-                  }
-                </div>
-              )}
+            selectedPromotion.promotionActivities?.[0].minimumPurchaseQuantity >
+              0 ? (
+              <div className="text-lg font-semibold">
+                จำนวนออเดอร์เป้าหมาย :{" "}
+                {
+                  selectedPromotion.promotionActivities?.[0]
+                    .minimumPurchaseQuantity
+                }
+              </div>
+            ) : null}
             <div className="flex-1 whitespace-pre-wrap my-6">
               รายละเอียด : {selectedPromotion.description}
             </div>

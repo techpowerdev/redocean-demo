@@ -1,5 +1,3 @@
-// import { CartProductType } from "@/types/productTypes";
-import { CartItemType } from "@/state-stores/cartServerStore";
 import { CartProductType } from "@/types/productTypes";
 import axios from "axios";
 
@@ -37,7 +35,7 @@ export const addProductItemToCart = async (
     );
     console.log(result.data);
     return result.data;
-  } catch (error: any) {
+  } catch (error) {
     if (axios.isAxiosError(error)) {
       console.error("Axios error details:", error.response?.data);
     } else {
@@ -82,14 +80,43 @@ export const clearCart = async (token: string) => {
   }
 };
 
-export const updateProductItemQty = async (
+export const increaseProductItemQty = async (
   token: string,
   id: string,
   quantity: number
 ) => {
   try {
     const result = await axios.patch(
-      `${process.env.NEXT_PUBLIC_API_URL}/users/carts/items/${id}/qty`,
+      `${process.env.NEXT_PUBLIC_API_URL}/users/carts/items/${id}/qty/increase`,
+      { quantity },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    console.log(result.data);
+    return result.data;
+  } catch (error) {
+    console.error("Error updating product item from cart:", error);
+    if (axios.isAxiosError(error)) {
+      console.error("Axios error details:", error.response?.data);
+    } else {
+      console.error("Unexpected error:", error);
+    }
+    throw error; // ส่งต่อ error ไปให้ฝั่งที่เรียกใช้ function
+  }
+};
+
+export const decreaseProductItemQty = async (
+  token: string,
+  id: string,
+  quantity: number
+) => {
+  try {
+    const result = await axios.patch(
+      `${process.env.NEXT_PUBLIC_API_URL}/users/carts/items/${id}/qty/decrease`,
       { quantity },
       {
         headers: {

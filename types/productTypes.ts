@@ -8,17 +8,39 @@ export type CartProductType = {
   quantity: number;
 };
 
-// export type CartProductType = {
-//   productId: string;
-//   productVariantId: string;
-//   promotionId?: string | null;
-//   promotionType: string;
-//   sku: string | null;
+// export type ProductType = {
+//   id: string;
+//   sku: string;
 //   name: string;
 //   description: string;
-//   color?: string | null;
-//   size?: string | null;
-//   quantity: number;
-//   unitPrice: number;
-//   discount?: number | null;
+//   image?: string;
+//   price: number;
+//   stock?: number;
+//   hasVariant: boolean;
+//   isActive: boolean;
+//   createdAt: Date;
+//   updatedAt: Date;
+
+//   // relation
+//   categoryId: string;
+//   category: CategoryType;
+//   productVariants?: ProductVariantType[] | null;
+//   promotionActivities?: PromotionActivityType[] | null;
+// };
+
+// export type VariantOption = Record<string, string>;
+
+// export type ProductVariantType = {
+//   id: string;
+//   productId: string;
+//   product?: ProductType;
+//   sku: string;
+//   variantOptions: VariantOption;
+//   price: number;
+//   stock: number;
+//   image: string;
+//   isActive: boolean;
+//   createdAt: string;
+//   updatedAt: string;
+//   OrderItem?: OrderItemType[] | null;
 // };
