@@ -34,7 +34,29 @@ export async function lineLogin(lineLoginData: LineLoginType) {
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      throw new Error(error.response?.data?.message || "เข้าสู่ระบบแล้ว");
+      throw new Error(error.response?.data?.message || "เข้าสู่ระบบไม่สำเร็จ");
+    }
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
+  }
+}
+export async function getCurrentUser() {
+  try {
+    const response = await apiClient.get(`/users/current-user`);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message || "ไม่มีสิทธิ์เข้าถึง");
+    }
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
+  }
+}
+export async function logoutUser() {
+  try {
+    const response = await apiClient.get(`/logout`);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message || "ออกจากระบบไม่สำเร็จ");
     }
     throw new Error("เกิดข้อผิดพลาดบางอย่าง");
   }

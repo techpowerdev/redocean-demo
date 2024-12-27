@@ -16,6 +16,7 @@ export default function Orders() {
   useEffect(() => {
     const fetchOrders = async () => {
       const orders: OrderType[] = await getAllOrders();
+      console.log("orders", orders);
       setOrders(orders);
     };
     fetchOrders();

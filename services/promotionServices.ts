@@ -1,18 +1,18 @@
 import { PromotionType } from "@/types/fetchTypes";
 import axios, { AxiosResponse } from "axios";
+import apiClient from "./apiClient";
 
-export const getPromotionToday = async (): Promise<AxiosResponse<
-  PromotionType[]
-> | null> => {
+export const getPromotionToday = async () => {
   try {
-    const result = await axios.get<PromotionType[]>(
-      `${process.env.NEXT_PUBLIC_API_URL}/promotions/today`
-    );
-    return result;
+    const result = await apiClient.get(`/promotions/today`);
+    return result.data;
   } catch (error) {
-    console.error("Error fetching today's promotions:", error);
-    // Return an empty array to ensure the function always returns PromotionType[]
-    return null;
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || "ไม่สามารถดึงข้อมูลโปรโมชั่นได้"
+      );
+    }
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
   }
 };
 

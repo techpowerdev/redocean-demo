@@ -9,20 +9,26 @@ import { useCurrentUserStore } from "@/state-stores/useCurrentUserStore";
 import liff from "@line/liff";
 import LineLogin from "@/app/features/auth/LineLogin";
 import Container from "@/components/shared/Container";
+import { logoutUser } from "@/services/authServices";
 
 export default function Profile() {
   const currentUser = useCurrentUserStore((state) => state.currentUser);
-
   const clearCurrentUser = useCurrentUserStore(
     (state) => state.clearCurrentUser
   );
 
   // logout
-  const logout = () => {
+  const logout = async () => {
     if (liff.isLoggedIn()) {
-      liff.logout();
-      clearCurrentUser();
-      toast.success("ออกจากระบบแล้ว");
+      try {
+        await logoutUser();
+        liff.logout();
+        clearCurrentUser();
+        toast.success("ออกจากระบบแล้ว");
+      } catch (error) {
+        console.error("Error logging out", error);
+        toast.error("เกิดข้อผิดพลาดบางอย่าง");
+      }
     }
   };
 
