@@ -7,13 +7,13 @@ interface AuthState {
 
 export type Action = {
   setIsVerified: (isVerified: boolean) => void;
-  isTokenValid: (token: string) => boolean;
+  isTokenExpired: (token: string) => boolean;
 };
 
 const useAuthStore = create<AuthState & Action>((set) => ({
   isVerified: false,
   setIsVerified: (isVerified) => set({ isVerified }),
-  isTokenValid: (token) => {
+  isTokenExpired: (token) => {
     try {
       const decoded: { exp: number } = jwtDecode(token);
       const currentTime = Math.floor(Date.now() / 1000);

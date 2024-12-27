@@ -18,8 +18,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useEffect } from "react";
-import { CirclePlus } from "lucide-react";
+import { useEffect, useState } from "react";
+import { CirclePlus, CircleX } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import toast from "react-hot-toast";
 import { Label } from "@/components/ui/label";
@@ -43,6 +43,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useDropzone } from "react-dropzone";
+import ResponsiveImage from "@/components/shared/ResponsiveImage";
 
 // Define the schema for validation using zod
 const EventFormSchema = z.object({
@@ -77,6 +79,23 @@ const EventFormSchema = z.object({
     required_error: "กรุณาระบุสูงสุดที่สั่งซื้อได้ต่อคน",
     invalid_type_error: "กรุณาระบุสูงสุดที่สั่งซื้อได้ต่อคน",
   }),
+  // images: z
+  //   .array(
+  //     z.object({
+  //       name: z.string(),
+  //       size: z.number().max(5 * 1024 * 1024, "Max file size is 5MB"),
+  //       type: z.enum([
+  //         "image/jpeg",
+  //         "image/jpg",
+  //         "image/png",
+  //         "image/gif",
+  //         "image/webp",
+  //       ]),
+  //       file: z.any(),
+  //     })
+  //   )
+  //   .optional()
+  //   .nullable(),
 });
 
 // Create form input type
@@ -92,6 +111,7 @@ export function CreateEvent() {
   const setPromotionLists = usePromotionStore(
     (state) => state.setPromotionLists
   );
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
 
   const form = useForm<EventFormValues>({
     resolver: zodResolver(EventFormSchema), // validate data with the schema
@@ -112,9 +132,37 @@ export function CreateEvent() {
       minimumPurchaseQuantity: 0,
       discountGroupAmount: 0,
       // productId: selectedProductInPromotion?.id,
+      // images: [],
     },
   });
+  // version 1
+  // const onDrop = (acceptedFiles: File[]) => {
+  //   const newImages = acceptedFiles.map((file) => ({
+  //     name: file.name,
+  //     size: file.size,
+  //     type: file.type,
+  //     file: file,
+  //   }));
 
+  //   form.setValue("images", newImages as never);
+  //   form.trigger("images");
+
+  //   const newPreviews = acceptedFiles.map((file) => URL.createObjectURL(file));
+  //   setImagePreviews((prev) => [...prev, ...newPreviews]);
+  // };
+
+  // const { getRootProps, getInputProps } = useDropzone({
+  //   onDrop,
+  //   accept: {
+  //     "image/jpeg": [],
+  //     "image/jpg": [],
+  //     "image/png": [],
+  //     "image/webp": [],
+  //   },
+  //   maxSize: 5 * 1024 * 1024, // 5MB
+  // });
+
+  // version 2
   // const onDrop = (acceptedFiles: File[]) => {
   //   const newImages = acceptedFiles.map((file) => ({
   //     name: file.name,
@@ -179,6 +227,7 @@ export function CreateEvent() {
   //   },
   //   maxSize: 5 * 1024 * 1024, // 5MB
   // });
+
   const type = useWatch({
     control: form.control,
     name: "type",
@@ -220,6 +269,7 @@ export function CreateEvent() {
             discountGroupAmount: data.discountGroupAmount,
             // individualPrice: data.individualPrice,
           },
+          // images: data.images,
         };
 
         const promotionResult = await axios.post(
@@ -234,7 +284,7 @@ export function CreateEvent() {
 
           setPromotionLists(newPromotions.data);
         }
-
+        toast.success("เพิ่มกิจกรรมแล้ว");
         // promotionId = promotionResult.data.id;
 
         // // Step 2: สร้าง Group Buy Event
@@ -257,6 +307,8 @@ export function CreateEvent() {
         // console.log(promotionResult);
         // console.log(promotionActivityResult);
       } catch (error) {
+        toast.success("เกิดข้อผิดพลาดบางอย่าง");
+
         console.error("Error occurred:", error);
 
         // Step 3: ตรวจสอบชนิดของ error
@@ -446,6 +498,72 @@ export function CreateEvent() {
                           </FormItem>
                         )}
                       />
+
+                      {/* Image */}
+                      {/* <FormField
+                        control={form.control}
+                        name="images"
+                        render={() => (
+                          <div className="grid w-full items-center gap-1.5">
+                            <FormLabel htmlFor="photo">รูปสินค้า</FormLabel>
+                            <div
+                              {...getRootProps()}
+                              className="border-2 border-dashed border-gray-300 p-2 text-center"
+                            >
+                              <Input
+                                {...getInputProps()}
+                                id="photo"
+                                type="file"
+                                className=""
+                              />
+                              <span className="text-[14px] text-center font-semibold">
+                                ลากและวางรูปภาพที่นี่, หรือคลิกเพื่อเลือก
+                              </span>
+                              <FormMessage />
+                              <div className="flex justify-start items-center gap-x-2 gap-y-4 flex-wrap my-2">
+                                {imagePreviews?.map((preview, index) => (
+                                  <div
+                                    key={index}
+                                    className="relative w-56 border-2 border-accent-800 rounded-md"
+                                  >
+                                    <ResponsiveImage
+                                      src={preview}
+                                      alt={`Preview ${index}`}
+                                    />
+                                    <CircleX
+                                      onClick={(event) => {
+                                        event.stopPropagation();
+
+                                        const currentImages =
+                                          form.getValues("images") ?? [];
+                                        const updatedImages =
+                                          currentImages.filter(
+                                            (_, i) => i !== index
+                                          );
+
+                                        form.setValue(
+                                          "images",
+                                          updatedImages as never
+                                        );
+                                        setImagePreviews((prev) =>
+                                          prev.filter((_, i) => i !== index)
+                                        );
+                                        form.trigger("images");
+                                      }}
+                                      size={20}
+                                      className="text-red-400 hover:text-red-500 cursor-pointer absolute -top-3 -right-1"
+                                    />
+                                  </div>
+                                ))}
+                              </div>
+                              <span className="text-[12px] text-gray-400 text-center">
+                                อัพโหลดได้เฉพาะไฟล์ .jpg, .png, and .webp
+                                เท่านั้น และต้องมีขนาดไม่เกิน 5MB.
+                              </span>
+                            </div>
+                          </div>
+                        )}
+                      /> */}
                     </TabsContent>
 
                     <TabsContent value="eventDetail" className="space-y-6 px-2">

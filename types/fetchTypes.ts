@@ -136,6 +136,15 @@ export type PromotionType = {
   isActive: boolean;
   promotionActivities?: PromotionActivityType[] | null;
   orderItems?: OrderItemType[] | null;
+  images: Image[] | null;
+};
+
+export type Image = {
+  id: string;
+  url: string;
+  createdAt: string;
+  updatedAt: string;
+  promotionId?: string | null;
 };
 
 export type PromotionActivityType = {

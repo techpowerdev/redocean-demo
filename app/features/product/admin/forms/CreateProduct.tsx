@@ -81,12 +81,11 @@ const ProductFormSchema = z.object({
     )
     .optional()
     .nullable(), // <--- ปรับให้เป็น optional
-  price: z.coerce
-    .number({
-      required_error: "กรุณาระบุราคาสินค้า",
-      invalid_type_error: "กรุณาระบุราคาสินค้า",
-    })
-    .gte(1, "กรุณาระบุราคาสินค้า"),
+  price: z.coerce.number({
+    required_error: "กรุณาระบุราคาสินค้า",
+    invalid_type_error: "กรุณาระบุราคาสินค้า",
+  }),
+  // .gte(1, "กรุณาระบุราคาสินค้า"),
   stock: z.coerce.number({
     required_error: "กรุณาระบุจำนวนสินค้า",
     invalid_type_error: "กรุณาระบุจำนวนสินค้า",
@@ -214,13 +213,15 @@ export function CreateProduct() {
         );
 
         if (productResult) {
-          const newProducdts = await axios.get(
+          const updatedProducts = await axios.get(
             `${process.env.NEXT_PUBLIC_API_URL}/products/all`
           );
 
-          setProductLists(newProducdts.data);
+          setProductLists(updatedProducts.data.data);
         }
+        toast.success("เพิ่มสินค้าแล้ว");
       } catch (error) {
+        toast.error("เพิ่มสินค้าไม่สำเร็จ");
         console.error("Error occurred:", error);
       }
     };

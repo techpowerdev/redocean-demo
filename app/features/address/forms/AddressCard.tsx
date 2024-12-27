@@ -42,15 +42,11 @@ export default function AddressCard({ address }: Props) {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem
-                onClick={() =>
-                  changeActiveAddress(token || "", address.id, true)
-                }
+                onClick={() => changeActiveAddress(address.id, true)}
               >
                 ตั้งเป็นที่อยู่หลัก
               </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => deleteAddress(token || "", address.id)}
-              >
+              <DropdownMenuItem onClick={() => deleteAddress(address.id)}>
                 ลบ
               </DropdownMenuItem>
             </DropdownMenuContent>

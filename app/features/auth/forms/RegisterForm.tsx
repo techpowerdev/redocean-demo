@@ -15,6 +15,8 @@ import {
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { signUp } from "@/services/authServices";
+import { SignUpResponseType } from "@/types/authTypes";
+import toast from "react-hot-toast";
 
 const formSchema = z.object({
   email: z
@@ -57,15 +59,15 @@ export function RegisterForm() {
 
   async function onSubmit(data: FormValues) {
     try {
-      const response = await signUp(data);
-      console.log(response);
-      // if (response) {
-      //   toast.success("ลงทะเบียนผู้ใช้งานแล้ว");
-      // } else {
-      //   toast.error(response.message);
-      // }
+      const response: SignUpResponseType = await signUp(data);
+      console.log(response.data);
+      toast.success(response.message || "สมัครผู้ใช้งานสำเร็จ");
     } catch (error) {
-      console.log(error);
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("เกิดข้อผิดพลาดที่บางอย่าง");
+      }
     }
   }
   return (

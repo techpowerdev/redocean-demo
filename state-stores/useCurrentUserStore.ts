@@ -25,7 +25,7 @@ export type State = {
 
 export type Action = {
   setCurrentUser: (currentUser: CurrentUser) => void;
-  setToken: (token: string) => void;
+  setToken: (token: string | null) => void;
   clearCurrentUser: () => void;
   setLoading: (status: boolean) => void;
 };

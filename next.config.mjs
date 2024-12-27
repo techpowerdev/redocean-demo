@@ -22,26 +22,26 @@ const nextConfig = {
         hostname: "cdn.nocnoc.com",
       },
       {
-        hostname: "3001-101-108-150-129.ngrok-free.app",
+        hostname: "d338-101-108-100-250.ngrok-free.app",
       },
     ],
   },
-  // async redirects() {
-  //   return [
-  //     // Basic redirect
-  //     {
-  //       source: "/campaign",
-  //       destination: "/",
-  //       permanent: true,
-  //     },
-  //     // Wildcard path matching
-  //     {
-  //       source: "/campaign/:id",
-  //       destination: "/",
-  //       permanent: true,
-  //     },
-  //   ];
-  // },
+  async redirects() {
+    return [
+      // Basic redirect
+      // {
+      //   source: "/promotion",
+      //   destination: "/",
+      //   permanent: true,
+      // },
+      // // Wildcard path matching
+      // {
+      //   source: "/promotion/:id",
+      //   destination: "/",
+      //   permanent: true,
+      // },
+    ];
+  },
 };
 
 export default nextConfig;

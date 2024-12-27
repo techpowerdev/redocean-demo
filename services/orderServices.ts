@@ -1,19 +1,11 @@
 import { CartItemType } from "@/types/cartTypes";
 import { CreateOderType } from "@/types/orderTypes";
+import apiClient from "@/services/apiClient";
 import axios from "axios";
 
-export const createOrder = async (token: string, data: CreateOderType) => {
+export const createOrder = async (data: CreateOderType) => {
   try {
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/orders`,
-      data,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await apiClient.post(`/orders`, data);
     return response.data;
   } catch (error) {
     console.log(error);
@@ -26,18 +18,10 @@ export const createOrder = async (token: string, data: CreateOderType) => {
   }
 };
 
-export const getUserOrders = async (token: string) => {
+export const getUserOrders = async () => {
   try {
-    const { data } = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/users/orders/all`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    return data.data;
+    const { data } = await apiClient.get(`/users/orders/all`);
+    return data;
   } catch (error) {
     console.log(error);
     if (axios.isAxiosError(error)) {
@@ -50,20 +34,13 @@ export const getUserOrders = async (token: string) => {
 };
 
 export const changeTrackingNumber = async (
-  token: string,
   orderId: string,
   trackingNumber: string
 ) => {
   try {
-    const { data } = await axios.patch(
-      `${process.env.NEXT_PUBLIC_API_URL}/orders/${orderId}/change-trackingnumber`,
-      { trackingNumber },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
+    const { data } = await apiClient.patch(
+      `/orders/${orderId}/change-trackingnumber`,
+      { trackingNumber }
     );
     return data.data;
   } catch (error) {
@@ -78,9 +55,7 @@ export const changeTrackingNumber = async (
 
 export const getOneOrder = async (id: string) => {
   try {
-    const { data } = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/orders/${id}`
-    );
+    const { data } = await apiClient.get(`/orders/${id}`);
     return data.data;
   } catch (error) {
     console.log(error);
@@ -89,9 +64,7 @@ export const getOneOrder = async (id: string) => {
 
 export const getAllOrders = async () => {
   try {
-    const { data } = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/orders/all`
-    );
+    const { data } = await apiClient.get(`/orders/all`);
     return data;
   } catch (error) {
     console.log(error);
@@ -102,8 +75,8 @@ export const getOrderSummaryOfGroupBuying = async (
   promotionActivityId: string | null
 ) => {
   try {
-    const { data } = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/orders/summary/today/${promotionActivityId}`
+    const { data } = await apiClient.get(
+      `/orders/summary/today/${promotionActivityId}`
     );
     return data;
   } catch (error) {
@@ -126,8 +99,8 @@ export type SearchFilters = {
 export const getPromotionOrder = async (promotionActivityId: string) => {
   try {
     // เรียก API ด้วย axios
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/orders/promotion-orders/${promotionActivityId}`
+    const response = await apiClient.get(
+      `/orders/promotion-orders/${promotionActivityId}`
     );
     console.log(response);
     // ส่งคืนผลลัพธ์
@@ -138,23 +111,15 @@ export const getPromotionOrder = async (promotionActivityId: string) => {
 };
 
 export const checkStockAndPromotionForCheckout = async (
-  token: string,
   data: CartItemType[]
 ) => {
   try {
-    const response = await axios.post(
+    const response = await apiClient.post(
       `${process.env.NEXT_PUBLIC_API_URL}/products/variants/stock/for-checkout`,
-      { orderItems: data },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
+      { orderItems: data }
     );
     return response.data;
   } catch (error) {
-    console.log(error);
     if (axios.isAxiosError(error)) {
       console.error("Axios error details:", error.response?.data);
     } else {
@@ -242,15 +207,17 @@ export async function createOrderFullfillment(
 
 export async function changeOrderStatus(id: string, status: string) {
   try {
-    const result = await axios.patch(
-      `${process.env.NEXT_PUBLIC_API_URL}/orders/${id}/change-status`,
-      { status }
-    );
-    if (result) {
-      window.location.reload();
-    }
+    const result = await apiClient.patch(`/orders/${id}/change-status`, {
+      status,
+    });
+    return result.data;
   } catch (error) {
-    console.log(error);
+    if (axios.isAxiosError(error)) {
+      console.error("Axios error:", error.response?.data || error.message);
+    } else {
+      console.error("Unexpected error:", error);
+    }
+    throw error;
   }
 }
 

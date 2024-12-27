@@ -1,39 +1,25 @@
 import { CartProductType } from "@/types/productTypes";
 import axios from "axios";
+import apiClient from "@/services/apiClient";
 
-export const fetchCart = async (token: string) => {
+export const fetchCart = async () => {
   try {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/users/carts`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await apiClient.get(`/users/carts`);
     return response.data;
   } catch (error) {
-    console.error("Failed to fetch cart:", error);
+    if (axios.isAxiosError(error)) {
+      console.error("Axios error details:", error.response?.data);
+    } else {
+      console.error("Unexpected error:", error);
+    }
+    throw error; // ส่งต่อ error ไปให้ฝั่งที่เรียกใช้ function
   }
 };
 
-export const addProductItemToCart = async (
-  token: string,
-  cartItem: CartProductType
-) => {
+export const addProductItemToCart = async (cartItem: CartProductType) => {
   try {
-    const result = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/users/carts`,
-      cartItem,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    console.log(result.data);
+    const result = await apiClient.post(`/users/carts`, cartItem);
+
     return result.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -45,95 +31,78 @@ export const addProductItemToCart = async (
   }
 };
 
-export const removeProductItemFormCart = async (token: string, id: string) => {
+export const removeProductItemFormCart = async (id: string) => {
   try {
-    const result = await axios.delete(
-      `${process.env.NEXT_PUBLIC_API_URL}/users/carts/items/${id}`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    console.log(result);
+    const result = await apiClient.delete(`/users/carts/items/${id}`);
     return result.data;
   } catch (error) {
-    console.error("Error deleting product item from cart:", error);
-  }
-};
-export const clearCart = async (token: string) => {
-  try {
-    const result = await axios.delete(
-      `${process.env.NEXT_PUBLIC_API_URL}/users/carts`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    console.log(result);
-    return result.data;
-  } catch (error) {
-    console.error("Error clearing cart:", error);
-  }
-};
-
-export const increaseProductItemQty = async (
-  token: string,
-  id: string,
-  quantity: number
-) => {
-  try {
-    const result = await axios.patch(
-      `${process.env.NEXT_PUBLIC_API_URL}/users/carts/items/${id}/qty/increase`,
-      { quantity },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    console.log(result.data);
-    return result.data;
-  } catch (error) {
-    console.error("Error updating product item from cart:", error);
     if (axios.isAxiosError(error)) {
       console.error("Axios error details:", error.response?.data);
     } else {
       console.error("Unexpected error:", error);
     }
-    throw error; // ส่งต่อ error ไปให้ฝั่งที่เรียกใช้ function
+    throw error;
   }
 };
-
-export const decreaseProductItemQty = async (
-  token: string,
-  id: string,
-  quantity: number
-) => {
+export const clearCart = async () => {
   try {
-    const result = await axios.patch(
-      `${process.env.NEXT_PUBLIC_API_URL}/users/carts/items/${id}/qty/decrease`,
-      { quantity },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    console.log(result.data);
+    const result = await apiClient.delete(`/users/carts`);
     return result.data;
   } catch (error) {
-    console.error("Error updating product item from cart:", error);
     if (axios.isAxiosError(error)) {
       console.error("Axios error details:", error.response?.data);
     } else {
       console.error("Unexpected error:", error);
     }
-    throw error; // ส่งต่อ error ไปให้ฝั่งที่เรียกใช้ function
+    throw error;
+  }
+};
+
+// export const increaseProductItemQty = async (id: string, quantity: number) => {
+//   try {
+//     const result = await apiClient.patch(
+//       `/users/carts/items/${id}/qty/increase`,
+//       { quantity }
+//     );
+//     return result.data;
+//   } catch (error) {
+//     if (axios.isAxiosError(error)) {
+//       console.error("Axios error :", error);
+//       console.error("Axios error details:", error.response?.data);
+//     } else {
+//       console.error("Unexpected error:", error);
+//     }
+//     throw error; // ส่งต่อ error ไปให้ฝั่งที่เรียกใช้ function
+//   }
+// };
+export const increaseProductItemQty = async (id: string, quantity: number) => {
+  try {
+    const result = await apiClient.patch(
+      `/users/carts/items/${id}/qty/increase`,
+      { quantity }
+    );
+    return result.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message || "เพิ่มจำนวนไม่สำเร็จ");
+    }
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
+  }
+};
+
+export const decreaseProductItemQty = async (id: string, quantity: number) => {
+  try {
+    const result = await apiClient.patch(
+      `/users/carts/items/${id}/qty/decrease`,
+      { quantity }
+    );
+    return result.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error("Axios error details:", error.response?.data);
+    } else {
+      console.error("Unexpected error:", error);
+    }
+    throw error;
   }
 };

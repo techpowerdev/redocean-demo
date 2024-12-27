@@ -389,7 +389,6 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useCurrentUserStore } from "@/state-stores/useCurrentUserStore";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { CirclePlus } from "lucide-react";
@@ -469,7 +468,6 @@ const AddressSchema = z.object({
 export default function CreateAddressForm() {
   // global state
   const createAddress = useAddressStore((state) => state.createAddress);
-  const token = useCurrentUserStore((state) => state.token);
   const [val, setVal] = useState({
     recipient: "",
     phoneNumber: "",
@@ -507,7 +505,7 @@ export default function CreateAddressForm() {
         isActive: val.isActive,
       };
 
-      await createAddress(token || "", formData);
+      await createAddress(formData);
       setVal({
         recipient: "",
         phoneNumber: "",

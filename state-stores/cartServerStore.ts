@@ -21,11 +21,11 @@ export type State = {
 
 export type Action = {
   setCart: (cart: CartType) => void;
-  clearCart: (token: string) => void;
-  handleAddProductToCart: (token: string, product: CartProductType) => void;
-  handleRemoveProductFromCart: (token: string, id: string) => void;
-  handleCartQtyIncrease: (token: string, id: string, quantity: number) => void;
-  handleCartQtyDecrease: (token: string, id: string, quantity: number) => void;
+  clearCart: () => void;
+  handleAddProductToCart: (product: CartProductType) => void;
+  handleRemoveProductFromCart: (id: string) => void;
+  handleCartQtyIncrease: (id: string, quantity: number) => void;
+  handleCartQtyDecrease: (id: string, quantity: number) => void;
   setCartTotalQty: (qty: number) => void;
   setCartTotalAmount: (totalAmount: number) => void;
 };
@@ -40,11 +40,12 @@ export const useCartServerStore = create<State & Action>()(
 
         setCart: (cart) => set({ cart }),
 
-        handleAddProductToCart: async (token, productItem) => {
+        handleAddProductToCart: async (productItem) => {
           try {
-            const response = await addProductItemToCart(token, productItem);
+            const response = await addProductItemToCart(productItem);
             toast.success(response?.message || "เพิ่มสินค้าแล้ว");
-            const updatedCart = await fetchCart(token).then((res) => res.data);
+            // const updatedCart = await fetchCart().then((res) => res.data);
+            const updatedCart = await fetchCart().then((res) => res);
             set({ cart: updatedCart });
           } catch (error) {
             if (error instanceof AxiosError) {
@@ -57,11 +58,12 @@ export const useCartServerStore = create<State & Action>()(
           }
         },
 
-        handleRemoveProductFromCart: async (token, id) => {
+        handleRemoveProductFromCart: async (id) => {
           try {
-            const response = await removeProductItemFormCart(token, id);
+            const response = await removeProductItemFormCart(id);
             toast.success(response?.message || "ลบสินค้าแล้ว");
-            const updatedCart = await fetchCart(token).then((res) => res.data);
+            // const updatedCart = await fetchCart().then((res) => res.data);
+            const updatedCart = await fetchCart().then((res) => res);
             set({ cart: updatedCart });
           } catch (error) {
             if (error instanceof AxiosError) {
@@ -74,28 +76,25 @@ export const useCartServerStore = create<State & Action>()(
           }
         },
 
-        handleCartQtyIncrease: async (token, id, quantity) => {
+        handleCartQtyIncrease: async (id, quantity) => {
           try {
-            await increaseProductItemQty(token, id, quantity);
-            // const response = await updateProductItemQty(token, id, quantity);
-            // toast.success(response?.message || "แก้ไขจำนวนสินค้าแล้ว");
-            const updatedCart = await fetchCart(token).then((res) => res.data);
+            await increaseProductItemQty(id, quantity);
+            const updatedCart = await fetchCart().then((res) => res);
             set({ cart: updatedCart });
           } catch (error) {
-            if (error instanceof AxiosError) {
-              const errorMessage =
-                error.response?.data?.message || "แก้ไขจำนวนสินค้าไม่สำเร็จ";
+            if (error instanceof Error) {
+              const errorMessage = error.message;
               toast.error(errorMessage);
             } else {
-              toast.error("เกิดข้อผิดพลาดบางอย่าง");
+              toast.error("เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ");
             }
           }
         },
 
-        handleCartQtyDecrease: async (token, id, quantity) => {
+        handleCartQtyDecrease: async (id, quantity) => {
           try {
-            await decreaseProductItemQty(token, id, quantity);
-            const updatedCart = await fetchCart(token).then((res) => res.data);
+            await decreaseProductItemQty(id, quantity);
+            const updatedCart = await fetchCart().then((res) => res);
             set({ cart: updatedCart });
           } catch (error) {
             if (error instanceof AxiosError) {
@@ -103,7 +102,7 @@ export const useCartServerStore = create<State & Action>()(
                 error.response?.data?.message || "แก้ไขจำนวนสินค้าไม่สำเร็จ";
               toast.error(errorMessage);
             } else {
-              toast.error("เกิดข้อผิดพลาดบางอย่าง");
+              console.error("เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ");
             }
           }
         },
@@ -112,10 +111,10 @@ export const useCartServerStore = create<State & Action>()(
         setCartTotalAmount: (totalAmount) =>
           set({ cartTotalAmount: totalAmount }),
 
-        clearCart: async (token) => {
+        clearCart: async () => {
           try {
-            await clearCart(token);
-            const updatedCart = await fetchCart(token).then((res) => res.data);
+            await clearCart();
+            const updatedCart = await fetchCart().then((res) => res);
             set({ cart: updatedCart });
           } catch (error) {
             if (error instanceof AxiosError) {

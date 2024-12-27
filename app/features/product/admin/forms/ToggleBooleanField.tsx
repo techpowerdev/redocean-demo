@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Switch } from "@/components/ui/switch";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { LucideIcon } from "lucide-react";
 import { useProductStore } from "@/state-stores/admin/adminProductStore";
+import { getAllProducts } from "@/services/productServices";
 
 interface ToggleBooleanFieldProps {
   initialStatus: boolean;
@@ -27,8 +28,8 @@ export default function ToggleBooleanField({
   const [isActive, setIsActive] = useState(initialStatus);
   const [isLoading, setIsLoading] = useState(false);
 
+  const selectProduct = useProductStore((state) => state.selectProduct);
   const setProductLists = useProductStore((state) => state.setProductLists);
-  const productLists = useProductStore((state) => state.productLists) || [];
 
   const handleToggle = async () => {
     setIsLoading(true);
@@ -40,20 +41,18 @@ export default function ToggleBooleanField({
         id,
         [fieldName]: newStatus, // ใช้ fieldName เป็นกุญแจในการอัปเดต
       });
-      console.log(response.data);
+      selectProduct(response.data);
 
       if (response.status === 200) {
         // ถ้าอัปเดตสำเร็จ เปลี่ยนสถานะใน UI
         setIsActive(newStatus);
 
-        const updatedProducts = productLists.map((item) =>
-          item.id === id ? { ...item, [fieldName]: newStatus } : item
-        );
+        const updatedProducts = await getAllProducts().then((res) => res.data);
 
         setProductLists(updatedProducts);
 
         const notification = `${newStatus ? "Active" : "Inactive"}!`;
-        toast.success(notification);
+        // toast.success(notification);
       } else {
         throw new Error("อัปเดตไม่สำเร็จ");
       }
@@ -63,6 +62,10 @@ export default function ToggleBooleanField({
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    setIsActive(initialStatus);
+  }, [initialStatus]);
 
   return (
     <div className="flex items-center gap-2">

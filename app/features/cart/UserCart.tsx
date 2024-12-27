@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import EmptyCart from "./EmptyCart";
 import { fetchCart } from "@/services/cartServices";
-import { useCurrentUserStore } from "@/state-stores/useCurrentUserStore";
 import CartItem from "./CartItem";
 import { useCartServerStore } from "@/state-stores/cartServerStore";
 import { ShoppingCart } from "lucide-react";
@@ -16,7 +15,6 @@ import toast from "react-hot-toast";
 import axios from "axios";
 
 export default function CartClient() {
-  const token = useCurrentUserStore((state) => state.token);
   const setCart = useCartServerStore((state) => state.setCart);
   const cart = useCartServerStore((state) => state.cart);
   const clearCart = useCartServerStore((state) => state.clearCart);
@@ -26,18 +24,13 @@ export default function CartClient() {
   const handleCheckout = async () => {
     try {
       const isStockSufficient = await checkStockAndPromotionForCheckout(
-        token || "",
         cart?.cartItems || []
       );
 
       if (isStockSufficient) {
-        // return toast.error(
-        //   `${cartItem.name} มีจำนวนสินค้าเกินที่สามารถสั่งซื้อได้`
-        // );
         router.push("/checkout");
       }
     } catch (error) {
-      console.log(error);
       if (axios.isAxiosError(error)) {
         console.error("Axios error details:", error.response?.data);
         toast.error(error.response?.data.message);
@@ -50,9 +43,8 @@ export default function CartClient() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetchCart(token || "");
-        console.log("response", response.data);
-        setCart(response.data);
+        const response = await fetchCart();
+        setCart(response);
       } catch (error) {
         console.log(error);
       }
@@ -82,7 +74,7 @@ export default function CartClient() {
         <div className="w-[120px]">
           <Button
             className="w-full bg-primary uppercase"
-            onClick={() => clearCart(token || "")}
+            onClick={() => clearCart()}
           >
             ล้างข้อมูลตะกร้า
           </Button>

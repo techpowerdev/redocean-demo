@@ -1,13 +1,15 @@
 import { getProductById } from "@/services/productServices";
 import ProductCard from "./ProductCard";
-import { ProductType } from "@/types/fetchTypes";
+import { ProductType } from "@/types/productTypes";
+// import { ProductType } from "@/types/fetchTypes";
 
 type Props = {
   productId: string;
 };
 
 export default async function ProductContainer({ productId }: Props) {
-  const product: ProductType = await getProductById(productId);
+  const response = await getProductById(productId);
+  const product = response.data as ProductType;
   // const [product, setProduct] = useState<ProductType | null>(null);
 
   // useEffect(() => {

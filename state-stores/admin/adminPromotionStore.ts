@@ -1,4 +1,6 @@
-import { ProductType, PromotionType } from "@/types/fetchTypes";
+// import { ProductType, PromotionType } from "@/types/fetchTypes";
+import { ProductType } from "@/types/productTypes";
+import { PromotionType } from "@/types/promotionTypes";
 import { create } from "zustand";
 
 // สร้าง Zustand store

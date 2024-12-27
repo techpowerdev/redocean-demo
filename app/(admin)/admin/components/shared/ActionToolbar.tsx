@@ -14,11 +14,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  ProductType,
-  ProductVariantType,
-  PromotionType,
-} from "@/types/fetchTypes";
+import { ProductType, ProductVariantType } from "@/types/productTypes";
+import { PromotionType } from "@/types/promotionTypes";
+// import {
+//   ProductType,
+//   ProductVariantType,
+//   PromotionType,
+// } from "@/types/fetchTypes";
 
 type ActionButton = {
   icon: React.ReactNode;

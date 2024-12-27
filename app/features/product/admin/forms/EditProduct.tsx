@@ -30,7 +30,8 @@ import {
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { useProductStore } from "@/state-stores/admin/adminProductStore";
-import { ProductType } from "@/types/fetchTypes";
+import { ProductType } from "@/types/productTypes";
+// import { ProductType } from "@/types/fetchTypes";
 
 // Define the schema for validation using zod
 const EditProductFormSchema = z.object({
@@ -63,12 +64,11 @@ const EditProductFormSchema = z.object({
     )
     .optional()
     .nullable(), // <--- ปรับให้เป็น optional
-  price: z.coerce
-    .number({
-      required_error: "กรุณาระบุราคาสินค้า",
-      invalid_type_error: "กรุณาระบุราคาสินค้า",
-    })
-    .gte(1, "กรุณาระบุราคาสินค้า"),
+  price: z.coerce.number({
+    required_error: "กรุณาระบุราคาสินค้า",
+    invalid_type_error: "กรุณาระบุราคาสินค้า",
+  }),
+  // .gte(1, "กรุณาระบุราคาสินค้า"),
   stock: z.coerce.number({
     required_error: "กรุณาระบุจำนวนสินค้า",
     invalid_type_error: "กรุณาระบุจำนวนสินค้า",
@@ -192,14 +192,16 @@ export function EditProduct({
             `${process.env.NEXT_PUBLIC_API_URL}/products/all`
           );
 
-          const updateSelectedProduct = newProducdts.data.find(
+          const updateSelectedProduct = newProducdts.data.data.find(
             (item: ProductType) => item.id === selectedProduct?.id
           );
 
           selectProduct(updateSelectedProduct);
-          setProductLists(newProducdts.data);
+          setProductLists(newProducdts.data.data);
+          toast.success("บันทึกการแก้ไขแล้ว");
         }
       } catch (error) {
+        toast.error("เกิดข้อผิดพลาดบางอย่าง!");
         console.error("Error occurred:", error);
       }
     };

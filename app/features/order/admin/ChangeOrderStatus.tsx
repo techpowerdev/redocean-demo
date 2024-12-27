@@ -5,20 +5,19 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useAdminOrderStore } from "@/state-stores/admin/adminOrderStore";
 import { MoreVertical } from "lucide-react";
 import React from "react";
 
 type Props = {
   statuses: string[];
   id: string;
-  handleStatus: (status: string, id: string) => void;
 };
 
-export default function ChangeOrderStatus({
-  statuses,
-  id,
-  handleStatus,
-}: Props) {
+export default function ChangeOrderStatus({ statuses, id }: Props) {
+  const changeOrderStatus = useAdminOrderStore(
+    (state) => state.changeOrderStatus
+  );
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -31,7 +30,7 @@ export default function ChangeOrderStatus({
         {statuses.map((status, idx) => (
           <DropdownMenuItem
             key={idx}
-            onClick={() => handleStatus(id, status)} // เรียกฟังก์ชันเมื่อคลิก
+            onClick={() => changeOrderStatus(id, status)} // เรียกฟังก์ชันเมื่อคลิก
           >
             {status.charAt(0).toUpperCase() + status.slice(1)}
           </DropdownMenuItem>

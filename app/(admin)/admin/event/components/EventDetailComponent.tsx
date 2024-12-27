@@ -1,21 +1,11 @@
 "use client";
 
-// import { addDays, addHours, format, nextSaturday } from "date-fns";
-
-// import { Calendar } from "@/components/ui/calendar";
-
 import { Separator } from "@/components/ui/separator";
 
 import Image from "next/image";
 import { formatDateTimePromotion } from "@/utils/formatDate";
 import { usePromotionStore } from "@/state-stores/admin/adminPromotionStore";
-import { formatPrice } from "@/utils/formatPrice";
 
-// interface Props {
-//   product: Product | null;
-// }
-
-// export default function ProductDetailComponent({ product }: Props) {
 export default function EventDetailComponent() {
   const selectedPromotion = usePromotionStore(
     (state) => state.selectedPromotion
@@ -60,14 +50,8 @@ export default function EventDetailComponent() {
                   new Date(selectedPromotion.endAt).toISOString()
                 )}
               </div>
-              {/* <PromotionCountdown
-                startTime={formatDateTimePromotion(selectedPromotion.startAt)}
-                endTime={formatDateTimePromotion(selectedPromotion.endAt)}
-              /> */}
             </div>
           </div>
-          {/* </div> */}
-          {/* end header */}
 
           <Separator />
 
@@ -80,25 +64,27 @@ export default function EventDetailComponent() {
                 <h1>{item.product?.name}</h1>
                 <p className="text-sm my-2">{item.product?.description}</p>
                 <div className="grid grid-cols-[30%_1fr]">
-                  {item.product?.image && (
-                    <div className="relative w-full aspect-square">
-                      <Image
-                        fill
-                        src={`${
-                          process.env.NEXT_PUBLIC_IMAGE_HOST_URL +
-                          item.product.image
-                        }`}
-                        alt={item.product.id}
-                        className="object-contain"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      />
-                    </div>
-                  )}
+                  <div className="relative w-full aspect-square">
+                    <Image
+                      fill
+                      src={
+                        item.product?.image
+                          ? `${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}${item.product.image}`
+                          : item.product?.productVariants?.[0]?.image
+                          ? `${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}${item.product.productVariants[0].image}`
+                          : "/no-image.png" // A fallback image path
+                      }
+                      alt={item.product.id}
+                      className="object-contain"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    />
+                  </div>
                   {selectedPromotion.type === "groupbuying" && (
                     <div className="p-4 text-lg">
-                      <div>
+                      <div className="font-semibold">รายละเอียดโปรโมชั่น :</div>
+                      {/* <div>
                         ราคาขายตั้งต้น {formatPrice(item.product.price)}
-                      </div>
+                      </div> */}
                       <div>
                         <span>{"ส่วนลดเริ่มต้น " + item.discountAmount}</span>
                         <span>

@@ -22,13 +22,13 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useProductStore } from "@/state-stores/admin/adminProductStore";
 import { usePromotionStore } from "@/state-stores/admin/adminPromotionStore";
-import { ProductType } from "@/types/fetchTypes";
+// import { ProductType } from "@/types/fetchTypes";
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
-import { formatPrice } from "@/utils/formatPrice";
+import { ProductType } from "@/types/productTypes";
 
 type Props = {
-  initialProduct?: ProductType;
+  initialProduct?: ProductType | null;
 };
 export function SearchProductInEventForm({ initialProduct }: Props) {
   //  global state
@@ -51,7 +51,7 @@ export function SearchProductInEventForm({ initialProduct }: Props) {
         const { data } = await axios.get(
           `${process.env.NEXT_PUBLIC_API_URL}/products/all`
         );
-        setProductLists(data);
+        setProductLists(data.data);
       } catch (error) {
         console.error("Error fetching products:", error);
       }
@@ -136,14 +136,6 @@ export function SearchProductInEventForm({ initialProduct }: Props) {
             <div>
               <span className="font-semibold">ชื่อสินค้า :</span>
               {selectedProductInPromotion.name}
-            </div>
-            <div>
-              <span className="font-semibold">รายละเอียด : </span>
-              {selectedProductInPromotion.description}
-            </div>
-            <div>
-              <span className="font-semibold">ราคาตั้งต้น :</span>
-              {formatPrice(selectedProductInPromotion.price)}
             </div>
           </div>
         )}

@@ -6,8 +6,8 @@ import React, { useEffect, useState } from "react";
 import { ProductList } from "./ProductList";
 import { useProductStore } from "@/state-stores/admin/adminProductStore";
 import Loading from "@/components/shared/Loading";
-import { ProductType } from "@/types/fetchTypes";
 import { getAllProducts } from "@/services/productServices";
+import { ProductType } from "@/types/productTypes";
 
 export default function ProductListComponent() {
   const productLists = useProductStore((state) => state.productLists);
@@ -21,10 +21,10 @@ export default function ProductListComponent() {
     const fetchAllProducts = async () => {
       setLoading(true); // Set loading to true when fetching
       try {
-        const products: ProductType[] = await getAllProducts();
+        const products = await getAllProducts();
         console.log("products=>", products);
         if (products) {
-          setProductLists(products);
+          setProductLists(products.data);
         }
         setLoading(false); // Set loading to false after data is fetched
       } catch (error) {

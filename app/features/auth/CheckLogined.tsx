@@ -2,7 +2,7 @@
 import { useEffect } from "react";
 import { useCurrentUserStore } from "@/state-stores/useCurrentUserStore";
 import liff from "@line/liff";
-import axios from "axios";
+import { lineLogin } from "@/services/authServices";
 
 export default function CheckLogined() {
   const setCurrentUser = useCurrentUserStore((state) => state.setCurrentUser);
@@ -19,26 +19,24 @@ export default function CheckLogined() {
 
         // If already logged in, retrieve the user profile
         if (liff.isLoggedIn()) {
-          // console.log("Home Logined..");
           const profile = await liff.getProfile();
-          const response = await axios.post(
-            `${process.env.NEXT_PUBLIC_API_URL}/login/line`,
-            {
-              lineUid: profile.userId,
-              displayName: profile.displayName,
-              email: liff.getDecodedIDToken()?.email || null,
-              pictureUrl: profile.pictureUrl || null, // Add profile picture URL
-            }
-          );
-          console.log(response);
+          // try {
+          const response = await lineLogin({
+            lineUid: profile.userId,
+            displayName: profile.displayName,
+            email: liff.getDecodedIDToken()?.email || null,
+            pictureUrl: profile.pictureUrl || null, // Add profile picture URL
+          });
           setCurrentUser(response.data.user);
           setToken(response.data.accessToken);
+          // } catch (error) {
+          //   console.log(error);
+          // }
         } else {
           clearCurrentUser();
-          // console.log("Not logined");
         }
-      } catch (err) {
-        console.error("Home Failed to initialize LIFF", err);
+      } catch (error) {
+        console.error("Home Failed to initialize LIFF", error);
       }
     };
 

@@ -1,129 +1,69 @@
 import { CreateAddressType, UpdateAddressType } from "@/types/addressTypes";
 import axios from "axios";
+import apiClient from "./apiClient";
 
-export const createAddress = async (token: string, data: CreateAddressType) => {
+export const createAddress = async (data: CreateAddressType) => {
   try {
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/users/addresses`,
-      data,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    console.log(response.data);
+    const response = await apiClient.post(`/users/addresses`, data);
     return response.data;
   } catch (error) {
-    console.log(error);
     if (axios.isAxiosError(error)) {
-      console.error("Axios error details:", error.response?.data);
-    } else {
-      console.error("Unexpected error:", error);
+      throw new Error(error.response?.data?.message || "เพิ่มที่อยู่ไม่สำเร็จ");
     }
-    throw error; // ส่งต่อ error ไปให้ฝั่งที่เรียกใช้ function
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
   }
 };
 
-export const updateAddress = async (
-  token: string,
-  id: string,
-  data: UpdateAddressType
-) => {
+export const updateAddress = async (id: string, data: UpdateAddressType) => {
   try {
-    const response = await axios.put(
-      `${process.env.NEXT_PUBLIC_API_URL}/users/addresses/${id}`,
-      data,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await apiClient.put(`/users/addresses/${id}`, data);
     return response.data;
   } catch (error) {
-    console.log(error);
     if (axios.isAxiosError(error)) {
-      console.error("Axios error details:", error.response?.data);
-    } else {
-      console.error("Unexpected error:", error);
+      throw new Error(error.response?.data?.message || "แก้ไขที่อยู่ไม่สำเร็จ");
     }
-    throw error; // ส่งต่อ error ไปให้ฝั่งที่เรียกใช้ function
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
   }
 };
 
-export const changeActiveAddress = async (
-  token: string,
-  id: string,
-  isActive: boolean
-) => {
+export const changeActiveAddress = async (id: string, isActive: boolean) => {
   try {
-    const response = await axios.patch(
-      `${process.env.NEXT_PUBLIC_API_URL}/users/addresses/${id}`,
-      { isActive },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await apiClient.patch(`/users/addresses/${id}`, {
+      isActive,
+    });
     return response.data;
   } catch (error) {
-    console.log(error);
     if (axios.isAxiosError(error)) {
-      console.error("Axios error details:", error.response?.data);
-    } else {
-      console.error("Unexpected error:", error);
+      throw new Error(
+        error.response?.data?.message || "แก้ไขที่อยู่หลักไม่สำเร็จ"
+      );
     }
-    throw error; // ส่งต่อ error ไปให้ฝั่งที่เรียกใช้ function
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
   }
 };
 
-export const deleteAddress = async (token: string, id: string) => {
+export const deleteAddress = async (id: string) => {
   try {
-    const response = await axios.delete(
-      `${process.env.NEXT_PUBLIC_API_URL}/users/addresses/${id}`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await apiClient.delete(`/users/addresses/${id}`);
     return response.data;
   } catch (error) {
-    console.log(error);
     if (axios.isAxiosError(error)) {
-      console.error("Axios error details:", error.response?.data);
-    } else {
-      console.error("Unexpected error:", error);
+      throw new Error(error.response?.data?.message || "ลบที่อยู่ไม่สำเร็จ");
     }
-    throw error; // ส่งต่อ error ไปให้ฝั่งที่เรียกใช้ function
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
   }
 };
 
-export const getAddress = async (token: string) => {
+export const getAddress = async () => {
   try {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/users/addresses`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await apiClient.get(`/users/addresses`);
     return response.data;
   } catch (error) {
-    console.log(error);
     if (axios.isAxiosError(error)) {
-      console.error("Axios error details:", error.response?.data);
-    } else {
-      console.error("Unexpected error:", error);
+      throw new Error(
+        error.response?.data?.message || "ดึงข้อมูลที่อยู่ไม่สำเร็จ"
+      );
     }
-    throw error; // ส่งต่อ error ไปให้ฝั่งที่เรียกใช้ function
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
   }
 };

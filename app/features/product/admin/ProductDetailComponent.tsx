@@ -1,7 +1,4 @@
 "use client";
-
-// import { addDays, addHours, format, nextSaturday } from "date-fns";
-
 import { Separator } from "@/components/ui/separator";
 
 import { useProductStore } from "@/state-stores/admin/adminProductStore";
@@ -13,11 +10,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import ToggleBooleanField from "./forms/ToggleBooleanField";
 import { ListPlus } from "lucide-react";
 
-// interface Props {
-//   product: Product | null;
-// }
-
-// export default function ProductDetailComponent({ product }: Props) {
 export default function ProductDetailComponent() {
   const selectedProduct = useProductStore((state) => state.selectedProduct);
 
@@ -64,12 +56,6 @@ export default function ProductDetailComponent() {
                 <span className="font-semibold"> จำนวนคงเหลือ : </span>
                 <span className="text-primary">{selectedProduct.stock}</span>
               </div>
-
-              {/* {selectedProduct.inStock ? (
-                <div className="font-semibold">มีสินค้าพร้อมส่ง</div>
-              ) : (
-                <div className="text-end font-semibold">สินค้าหมด</div>
-              )} */}
             </div>
           </div>
           {/* end header */}
@@ -88,8 +74,6 @@ export default function ProductDetailComponent() {
             <div className="px-4 py-2">
               <div className="flex justify-between items-center gap-2 ">
                 <div className="text-xl font-bold">ตัวเลือกสินค้า</div>
-                {/* <AddProductVariant /> */}
-
                 <AddVariantOptions />
               </div>
 

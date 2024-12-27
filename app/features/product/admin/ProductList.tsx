@@ -8,9 +8,10 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import Image from "next/image";
 import { useProductStore } from "@/state-stores/admin/adminProductStore";
 import Loading from "@/components/shared/Loading";
-import { ProductType } from "@/types/fetchTypes";
+// import { ProductType } from "@/types/fetchTypes";
 import ToggleBooleanField from "./forms/ToggleBooleanField";
 import { Eye } from "lucide-react";
+import { ProductType } from "@/types/productTypes";
 
 interface Props {
   items: ProductType[] | null;

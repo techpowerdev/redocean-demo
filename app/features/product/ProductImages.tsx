@@ -78,7 +78,8 @@
 //
 
 "use client";
-import { ProductType, ProductVariantType } from "@/types/fetchTypes";
+import { ProductType, ProductVariantType } from "@/types/productTypes";
+// import { ProductType, ProductVariantType } from "@/types/fetchTypes";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
@@ -94,11 +95,6 @@ export default function ProductImage({
   selectedOption,
 }: Props) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-
-  // const images =
-  //   variants
-  //     ?.filter((variant) => variant.image) // กรองเฉพาะ variant ที่มี image
-  //     .map((variant) => variant.image) || product.image; // กรณีไม่มี variant ให้ใช้รูปจาก product
 
   // หาภาพที่ตรงกับ selectedOption (match ทุก key-value ที่เลือก)
   useEffect(() => {

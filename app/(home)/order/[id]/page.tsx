@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import { formatPrice } from "@/utils/formatPrice";
 import { truncateText } from "@/utils/truncateText";
@@ -5,13 +7,23 @@ import { getOneOrder } from "@/services/orderServices";
 import { formatDateTimePromotion } from "@/utils/formatDate";
 import { OrderType } from "@/types/orderTypes";
 import Container from "@/components/shared/Container";
+import { useEffect, useState } from "react";
+import Loading from "@/components/shared/Loading";
 
-export default async function OrderDetail({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const data: OrderType = await getOneOrder(params.id);
+export default function OrderDetail({ params }: { params: { id: string } }) {
+  const [order, setOrder] = useState<OrderType | null>(null);
+
+  useEffect(() => {
+    const fetchOrder = async () => {
+      const orders: OrderType = await getOneOrder(params.id);
+      setOrder(orders);
+    };
+    fetchOrder();
+  }, [params.id]);
+
+  if (!order) {
+    return <Loading />;
+  }
 
   return (
     <Container>
@@ -25,19 +37,19 @@ export default async function OrderDetail({
         <div className="mb-4 space-y-2">
           <p className="flex flex-wrap gap-2 items-end">
             <span className="font-semibold">หมายเลขคำสั่งซื้อ:</span>
-            <span>{data?.id}</span>
+            <span>{order?.id}</span>
           </p>
           <p>
             <span className="font-semibold">วันที่:</span>{" "}
-            {formatDateTimePromotion(data?.createdAt)}
+            {formatDateTimePromotion(order?.createdAt || "")}
           </p>
           <p className="flex flex-wrap gap-2">
             <span className="font-semibold">เลขติดตามพัสดุ:</span>
-            <span>{data?.trackingNumber || "ไม่มีข้อมูล"}</span>
+            <span>{order?.trackingNumber || "ไม่มีข้อมูล"}</span>
           </p>
           <p className="flex flex-wrap gap-2">
             <span className="font-semibold">สถานะ:</span>
-            <span>{data?.status || "ไม่มีข้อมูล"}</span>
+            <span>{order?.status || "ไม่มีข้อมูล"}</span>
           </p>
         </div>
         {/* Order Items Table */}
@@ -68,7 +80,7 @@ export default async function OrderDetail({
                 </tr>
               </thead>
               <tbody>
-                {data.orderItems?.map((item) => (
+                {order?.orderItems?.map((item) => (
                   <tr key={item.id} className="border-b">
                     <td className="border border-gray-300 px-2 py-2 md:px-4">
                       <div className="flex items-center gap-2 md:gap-4">
@@ -116,7 +128,7 @@ export default async function OrderDetail({
                 ))}
                 <tr className="bg-gray-300 text-right font-bold">
                   <td colSpan={6} className="py-2 px-4">
-                    รวมเป็นเงินทั้งหมด: {formatPrice(data?.totalAmount)}
+                    รวมเป็นเงินทั้งหมด: {formatPrice(order?.totalAmount || 0)}
                   </td>
                 </tr>
               </tbody>

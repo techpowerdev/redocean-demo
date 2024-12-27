@@ -16,7 +16,7 @@
 //   const token = useCurrentUserStore((state) => state.token);
 //   useEffect(() => {
 //     const fetchAddreses = async () => {
-//       const addresses = await getAddress(token || "");
+//       const addresses = await getAddress();
 //       setAddresses(addresses.data);
 //     };
 //     fetchAddreses();
@@ -55,9 +55,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import AddressCard from "./AddressCard";
 import { getAddress } from "@/services/addressServices";
-import { useCurrentUserStore } from "@/state-stores/useCurrentUserStore";
 import { useAddressStore } from "@/state-stores/addressStore";
-import { AddressType } from "@/types/fetchTypes";
+import { AddressType } from "@/types/addressTypes";
 
 export default function AddressSelector() {
   // global state
@@ -65,25 +64,23 @@ export default function AddressSelector() {
   const addresses = useAddressStore((state) => state.addresses);
   const selectAddress = useAddressStore((state) => state.selectAddress);
   const selectedAddress = useAddressStore((state) => state.selectedAddress);
-  const token = useCurrentUserStore((state) => state.token);
 
-  useEffect(() => {
-    const fetchAddresses = async () => {
-      const response = await getAddress(token || "");
-      const fetchedAddresses = response.data;
+  // useEffect(() => {
+  //   const fetchAddresses = async () => {
+  //     const addresses: AddressType[] = await getAddress();
+  //     console.log(addresses);
+  //     // // ค้นหาที่อยู่ที่ isActive = true และตั้งค่าเริ่มต้น
+  //     // const activeAddress = addresses?.find(
+  //     //   (address: AddressType) => address.isActive
+  //     // );
+  //     // if (activeAddress) {
+  //     //   selectAddress(activeAddress); // เลือกที่อยู่เริ่มต้น
+  //     // }
+  //     // setAddresses(addresses);
+  //   };
 
-      // ค้นหาที่อยู่ที่ isActive = true และตั้งค่าเริ่มต้น
-      const activeAddress = await fetchedAddresses.find(
-        (address: AddressType) => address.isActive
-      );
-      if (activeAddress) {
-        selectAddress(activeAddress); // เลือกที่อยู่เริ่มต้น
-        setAddresses(fetchedAddresses);
-      }
-    };
-
-    fetchAddresses();
-  }, [addresses]);
+  //   fetchAddresses();
+  // }, [selectAddress, setAddresses]);
 
   return (
     <div>

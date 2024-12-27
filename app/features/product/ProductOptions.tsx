@@ -623,7 +623,8 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { ProductVariantType } from "@/types/fetchTypes";
+import { ProductVariantType } from "@/types/productTypes";
+// import { ProductVariantType } from "@/types/fetchTypes";
 import { CircleCheckBig, X } from "lucide-react";
 import React from "react";
 

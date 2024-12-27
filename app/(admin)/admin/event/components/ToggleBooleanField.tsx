@@ -56,7 +56,7 @@ export default function ToggleBooleanField({
         setPromotionLists(updated);
 
         const notification = `${newStatus ? "เปิดกิจกรรม" : "ปิดกิจกรรม"}`;
-        toast.success(notification);
+        // toast.success(notification);
       } else {
         throw new Error("อัปเดตไม่สำเร็จ");
       }

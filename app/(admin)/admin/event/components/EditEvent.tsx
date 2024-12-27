@@ -32,7 +32,7 @@ import { Separator } from "@/components/ui/separator";
 import { usePromotionStore } from "@/state-stores/admin/adminPromotionStore";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { PromotionType } from "@/types/fetchTypes";
+// import { PromotionType } from "@/types/fetchTypes";
 import { DiscountType } from "@/utils/calculateDiscountedPrice";
 import {
   Select,
@@ -44,6 +44,7 @@ import {
 import { formatDateToDatetimeLocal } from "@/utils/formatDate";
 import { Label } from "@/components/ui/label";
 import { SearchProductInEventForm } from "./forms/SearhProductInEventForm";
+import { PromotionType } from "@/types/promotionTypes";
 
 // Define the schema for validation using zod
 const EventFormSchema = z.object({
@@ -240,7 +241,10 @@ export function EditEvent({
           selectPromotion(updateSelectedPromotion);
           setPromotionLists(newPromotions.data);
         }
+        toast.success("แก้ไขกิจกรรมแล้ว");
       } catch (error) {
+        toast.error("แก้ไขกิจกรรมไม่สำเร็จ");
+
         console.error("Error occurred:", error);
       }
     };

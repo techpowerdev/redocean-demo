@@ -12,26 +12,14 @@ import toast from "react-hot-toast";
 type Props = {
   product: CartProductType;
   stock: number;
-  // quantity: number;
 };
-
-// type CartProductType = {
-//   productId: string;
-//   promotionActivityId: string;
-//   sku: string;
-//   quantity: number;
-//   unitPrice: number;
-//   discount: number;
-// };
 
 export default function AddProductToCart({ product, stock }: Props) {
   // global state
   const currentUser = useCurrentUserStore((state) => state.currentUser);
-  const token = useCurrentUserStore((state) => state.token);
   const handleAddProductToCart = useCartServerStore(
     (state) => state.handleAddProductToCart
   );
-  // const cart = useCartServerStore((state) => state.cart);
 
   // other
   const router = useRouter();
@@ -47,9 +35,8 @@ export default function AddProductToCart({ product, stock }: Props) {
       return;
     }
     try {
-      handleAddProductToCart(token || "", product);
+      handleAddProductToCart(product);
     } catch (error) {
-      console.error("Error add product to cart=>", error);
       if (axios.isAxiosError(error)) {
         console.error(
           "Error add product to cart=> Axios error details:",

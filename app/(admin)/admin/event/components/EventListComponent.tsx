@@ -31,8 +31,8 @@ export default function EventListComponent() {
         setPromotionLists(data);
         setLoading(false); // Set loading to false after data is fetched
       } catch (error) {
-        console.error("Error fetching products:", error);
-        setError("ไม่สามารถโหลดสินค้าได้"); // Set error message
+        console.error("Error fetching promotions:", error);
+        setError("ไม่สามารถโหลดโปรโมชั่นได้"); // Set error message
         setLoading(false); // Set loading to false in case of error
       }
     };

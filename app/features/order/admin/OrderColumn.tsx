@@ -16,10 +16,9 @@ import {
 } from "lucide-react";
 // import { z } from "zod";
 import { OrderType } from "@/types/fetchTypes";
-import ChangeStatus from "@/app/features/order/admin/ChangeOrderStatus";
-import { changeOrderStatus } from "@/services/orderServices";
 import { formatPrice } from "@/utils/formatPrice";
 import { DataTableColumnHeader } from "@/components/shared/table/DataTableColumnHeader";
+import ChangeOrderStatus from "@/app/features/order/admin/ChangeOrderStatus";
 // import { DataTableRowActions } from "../../components/shared/DataTableRowActions";
 
 export const labels = [
@@ -173,10 +172,9 @@ export const OrderColumn: ColumnDef<Order>[] = [
             )}
             <span>{status.label}</span>
           </div>
-          <ChangeStatus
+          <ChangeOrderStatus
             statuses={statuses.map((status) => status.value)}
             id={row.getValue("id")}
-            handleStatus={changeOrderStatus}
           />
         </div>
       );

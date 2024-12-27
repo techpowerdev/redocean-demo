@@ -22,7 +22,7 @@ import {
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCurrentUserStore } from "@/state-stores/useCurrentUserStore";
+import Loading from "@/components/shared/Loading";
 
 const FormSchema = z.object({
   trackingNumber: z.string(),
@@ -33,12 +33,24 @@ export default function PrintOrderDetail({
 }: {
   params: { id: string };
 }) {
-  // global state
-
-  const token = useCurrentUserStore((state) => state.token);
-
   // local state
   const [order, setOrder] = useState<OrderType | null>(null);
+
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      trackingNumber: "",
+    },
+  });
+
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    try {
+      await changeTrackingNumber(params.id, data.trackingNumber);
+      toast.success("บันทึกข้อมูลสำเร็จ");
+    } catch (error) {
+      toast.error("บันทึกข้อมูลไม่สำเร็จ");
+    }
+  }
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -51,23 +63,12 @@ export default function PrintOrderDetail({
       }
     };
     fetchOrder();
-  }, [params.id]);
+  }, [form, params.id]);
 
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
-    defaultValues: {
-      trackingNumber: "",
-    },
-  });
-
-  async function onSubmit(data: z.infer<typeof FormSchema>) {
-    try {
-      await changeTrackingNumber(token || "", params.id, data.trackingNumber);
-      toast.success("บันทึกข้อมูลสำเร็จ");
-    } catch (error) {
-      toast.error("บันทึกข้อมูลไม่สำเร็จ");
-    }
+  if (!order) {
+    return <Loading />;
   }
+
   return (
     <div className="p-8 bg-white text-black">
       <h1 className="text-2xl font-bold mb-4 text-center">
@@ -98,7 +99,7 @@ export default function PrintOrderDetail({
                 </FormItem>
               )}
             />
-            <Button type="submit">Submit</Button>
+            <Button type="submit">บันทึก</Button>
           </form>
         </Form>
       </div>

@@ -1,55 +1,63 @@
-import { ProductType, ProductVariantType } from "@/types/fetchTypes";
+import { ProductVariantType } from "@/types/fetchTypes";
 import axios, { AxiosResponse } from "axios";
+import apiClient from "./apiClient";
+import { CreateProductType } from "@/types/productTypes";
 
-// export const getAllProducts = async (): Promise<AxiosResponse<
-//   ProductType[]
-// > | null> => {
-//   try {
-//     const result = await axios.get<ProductType[]>(
-//       `${process.env.NEXT_PUBLIC_API_URL}/products/all`
-//     );
-//     return result;
-//   } catch (error) {
-//     console.log(error);
-//     return null;
-//   }
-// };
+export const createProduct = async (ProductData: CreateProductType) => {
+  try {
+    const result = await apiClient.post(`/products`, ProductData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return result.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message || "เพิ่มสินค้าแล้ว");
+    }
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
+  }
+};
 
 export const getAllProducts = async () => {
   try {
-    const result = await axios.get(
+    const result = await apiClient.get(
       `${process.env.NEXT_PUBLIC_API_URL}/products/all`
     );
-    console.log("product data=>", result);
     return result.data;
   } catch (error) {
-    console.log(error);
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || "ดึงข้อมูลสินค้าไม่สำเร็จ"
+      );
+    }
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
   }
 };
 
 export const getProductById = async (productId: string) => {
   try {
-    const result = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/products/${productId}`
-    );
-    console.log(result);
+    const result = await apiClient.get(`/products/${productId}`);
     return result.data;
   } catch (error) {
-    console.log(error);
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || "ดึงข้อมูลสินค้าไม่สำเร็จ"
+      );
+    }
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
   }
 };
 
-export const deleteProduct = async (
-  productId: string
-): Promise<AxiosResponse<ProductType> | null> => {
+export const deleteProduct = async (productId: string) => {
   try {
-    const result = await axios.delete<ProductType>(
-      `${process.env.NEXT_PUBLIC_API_URL}/products/${productId}`
-    );
-    return result;
+    const result = await apiClient.delete(`/products/${productId}`);
+    return result.data;
   } catch (error) {
-    console.log(error);
-    return null;
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message || "ลบสินค้าไม่สำเร็จ");
+    }
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
   }
 };
 
@@ -66,49 +74,6 @@ export const deleteProductVariant = async (
     return null;
   }
 };
-
-// export const getProductVariantStock = async (variantId: string) => {
-//   try {
-//     const { data } = await axios.get(
-//       `${process.env.NEXT_PUBLIC_API_URL}/products/variants/stock/${variantId}`
-//     );
-//     return data.stock;
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
-
-// export const searchProductVariant = async (
-//   productId: string,
-//   selectedOptions: Record<string, string | undefined>
-// ) => {
-//   try {
-//     const isSelectedOptionsEmpty = Object.values(selectedOptions).every(
-//       (value) => typeof value === "string" && value === ""
-//     );
-
-//     if (isSelectedOptionsEmpty) {
-//       const data = await getProductById(productId);
-//       return data;
-//     }
-
-//     // search variant
-//     const query = new URLSearchParams();
-
-//     if (selectedOptions?.color) query.append("color", selectedOptions.color);
-//     if (selectedOptions?.size) query.append("size", selectedOptions.size);
-
-//     const { data } = await axios.get(
-//       `${
-//         process.env.NEXT_PUBLIC_API_URL
-//       }/products/${productId}/variants/search/q?${query.toString()}`
-//     );
-
-//     return data;
-//   } catch (error) {
-//     console.error(error);
-//   }
-// };
 
 export const searchProductVariant = async (
   productId: string,

@@ -36,8 +36,9 @@ import {
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { useProductStore } from "@/state-stores/admin/adminProductStore";
-import { ProductType, ProductVariantType } from "@/types/fetchTypes";
+// import { ProductType, ProductVariantType } from "@/types/fetchTypes";
 import { getProductById } from "@/services/productServices";
+import { ProductType, ProductVariantType } from "@/types/productTypes";
 
 // Define the schema for validation using zod
 const ProductVariantFormSchema = z.object({
@@ -176,7 +177,9 @@ export default function EditVariantOptions({
 
   const fetchSavedOptions = async (id: string) => {
     try {
-      const response: ProductType = await getProductById(id);
+      const response: ProductType = await getProductById(id).then(
+        (res) => res.data
+      );
       const variantKeys = Array.from(
         new Set(
           response.productVariants?.flatMap((product) =>
@@ -262,12 +265,12 @@ export default function EditVariantOptions({
             `${process.env.NEXT_PUBLIC_API_URL}/products/all`
           );
 
-          const updateSelectedProduct = newProducts.data.find(
+          const updateSelectedProduct = newProducts.data.data.find(
             (item: ProductType) => item.id === selectedProduct?.id
           );
 
           selectProduct(updateSelectedProduct);
-          setProductLists(newProducts.data);
+          setProductLists(newProducts.data.data);
 
           // รีเซ็ตค่าฟอร์มหลังจากบันทึกสำเร็จ
           form.reset();

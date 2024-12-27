@@ -3,8 +3,7 @@ import { useProductStore } from "@/state-stores/admin/adminProductStore";
 import { EditProduct } from "./forms/EditProduct";
 import { DeletePopup } from "@/components/shared/DeletePopup";
 import { useState } from "react";
-import axios from "axios";
-import { deleteProduct } from "@/services/productServices";
+import { deleteProduct, getAllProducts } from "@/services/productServices";
 import ActionToolbar from "@/app/(admin)/admin/components/shared/ActionToolbar";
 
 export function ProductRightActionToolbar() {
@@ -26,13 +25,13 @@ export function ProductRightActionToolbar() {
   };
 
   const handleDelete = async () => {
-    const result = await deleteProduct(selectedProduct?.id || "");
-    if (result) {
-      const newProducts = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/products/all`
-      );
+    try {
+      await deleteProduct(selectedProduct?.id || "");
+      const newProducts = await getAllProducts();
       selectProduct(null);
       setProductLists(newProducts.data);
+    } catch (error) {
+      console.error("error", error);
     }
   };
 

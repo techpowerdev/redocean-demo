@@ -1,76 +1,41 @@
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
+import apiClient from "./apiClient";
+import { LineLoginType, LoginType, SignUpType } from "@/types/authTypes";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL; // URL API ของคุณ
-
-type SignUpData = {
-  email: string;
-  password: string;
-};
-
-type ApiResponse = {
-  message: string;
-  accessToken: string;
-  refreshToken: string;
-  user: {
-    id: string;
-    email: string;
-    lineUid: string;
-    displayName: string;
-    pictureUrl: string;
-    phoneNumber: string;
-    phoneVerified: boolean;
-    role: string;
-  };
-};
-
-type ApiErrorResponse = {
-  message: string;
-};
-
-/**
- * ฟังก์ชันสำหรับสมัครใช้งาน
- * @param signUpData ข้อมูลที่ใช้ในการสมัคร
- * @returns Promise<ApiResponse>
- */
-export async function signUp(signUpData: SignUpData): Promise<ApiResponse> {
+export async function signUp(signUpData: SignUpType) {
   try {
-    // ส่งคำขอไปยัง API
-    const response: AxiosResponse<ApiResponse> = await axios.post<ApiResponse>(
-      `${API_URL}/register`,
-      signUpData
-    );
+    const response = await apiClient.post(`/register`, signUpData);
     return response.data; // ส่งเฉพาะข้อมูลที่ได้รับจาก API
   } catch (error) {
-    // ตรวจสอบว่าข้อผิดพลาดเป็น AxiosError
     if (axios.isAxiosError(error)) {
-      const apiError: ApiErrorResponse | undefined = error.response?.data;
-      throw new Error(apiError?.message || "An error occurred during sign-up.");
+      throw new Error(
+        error.response?.data?.message || "สมัครผู้ใช้งานไม่สำเร็จ"
+      );
     }
-    // ข้อผิดพลาดที่ไม่ใช่ AxiosError
-    throw new Error("Unexpected error occurred during sign-up.");
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
   }
 }
 
-/**
- * ฟังก์ชันสำหรับสมัครใช้งาน
- * @param signUpData ข้อมูลที่ใช้ในการสมัคร
- * @returns Promise<ApiResponse>
- */
-export async function Login(signUpData: SignUpData): Promise<ApiResponse> {
+export async function login(loginData: LoginType) {
   try {
-    // ส่งคำขอไปยัง API
-    const response: AxiosResponse<ApiResponse> = await axios.post<ApiResponse>(
-      `${API_URL}/login`,
-      signUpData
-    );
-    return response.data; // ส่งเฉพาะข้อมูลที่ได้รับจาก API
+    const response = await apiClient.post(`/login`, loginData);
+    return response.data;
   } catch (error) {
-    // ตรวจสอบว่าข้อผิดพลาดเป็น AxiosError
     if (axios.isAxiosError(error)) {
-      const apiError: ApiErrorResponse | undefined = error.response?.data;
-      throw new Error(apiError?.message || "An error occurred during login.");
+      throw new Error(error.response?.data?.message || "เข้าสู่ระบบไม่สำเร็จ");
     }
-    // ข้อผิดพลาดที่ไม่ใช่ AxiosError
-    throw new Error("Unexpected error occurred during login.");
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
+  }
+}
+
+export async function lineLogin(lineLoginData: LineLoginType) {
+  try {
+    const response = await apiClient.post(`/login/line`, lineLoginData);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message || "เข้าสู่ระบบแล้ว");
+    }
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
   }
 }

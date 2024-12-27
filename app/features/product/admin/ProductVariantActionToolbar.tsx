@@ -1,5 +1,5 @@
 import { Eye, SquarePen, Trash2 } from "lucide-react";
-import { ProductVariantType } from "@/types/fetchTypes";
+// import { ProductVariantType } from "@/types/fetchTypes";
 import { useState } from "react";
 import { deleteProductVariant } from "@/services/productServices";
 import { DeletePopup } from "@/components/shared/DeletePopup";
@@ -8,6 +8,7 @@ import { useProductStore } from "@/state-stores/admin/adminProductStore";
 import ActionToolbar from "@/app/(admin)/admin/components/shared/ActionToolbar";
 import ToggleBooleanField from "./forms/ToggleBooleanField";
 import EditVariantOptions from "./forms/EditVariantOptions";
+import { ProductVariantType } from "@/types/productTypes";
 
 type Props = {
   productVariant: ProductVariantType;
@@ -37,12 +38,12 @@ export function ProductVariantActionToolbar({ productVariant }: Props) {
         `${process.env.NEXT_PUBLIC_API_URL}/products/all`
       );
 
-      const updateSelectedProduct = newProducts.data.find(
+      const updateSelectedProduct = newProducts.data.data.find(
         (item: ProductVariantType) => item.id === productVariant?.productId
       );
 
       selectProduct(updateSelectedProduct);
-      setProductLists(newProducts.data);
+      setProductLists(newProducts.data.data);
     }
   };
 

@@ -14,7 +14,7 @@ import { OrderType } from "@/types/orderTypes";
 import Loading from "@/components/shared/Loading";
 import OrderSummaryOfPromotionToday from "./OrderSummaryOfPromotionToday";
 import { Separator } from "@/components/ui/separator";
-import PromotionProductCard from "../promotion/PromotionProductCard";
+import Image from "next/image";
 
 interface Props {
   promotion: PromotionType;
@@ -84,7 +84,9 @@ export default function ShowEventCard({ promotion }: Props) {
             note: "Test",
             payment: {
               state: "paid",
-              amount: 320,
+              amount: summary
+                ? summary.totalAmount - summary.discountTotal
+                : order.totalAmount,
             },
           };
           if (orderBody) {
@@ -144,7 +146,67 @@ export default function ShowEventCard({ promotion }: Props) {
             </Button>
           </div>
           <OrderSummaryOfPromotionToday promotionActivityId={activity.id} />
-          <PromotionProductCard PromotionActivity={activity} />
+          <div className="my-4">
+            <div className="grid grid-cols-[30%_1fr]">
+              {activity.product?.image && (
+                <div className="relative w-full aspect-square">
+                  <Image
+                    fill
+                    src={`${
+                      process.env.NEXT_PUBLIC_IMAGE_HOST_URL +
+                      activity.product.image
+                    }`}
+                    alt={activity.product.id}
+                    className="object-contain"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  />
+                </div>
+              )}
+              <div className="p-4 text-lg">
+                <div className="my-4">
+                  <h1 className="font-semibold"> สินค้า :</h1>
+                  <p>รหัสสินค้า : {activity.product?.sku}</p>
+                  <p>ชื่อสินค้า : {activity.product?.name}</p>
+                  <p>รายละเอียด : {activity.product?.description}</p>
+                </div>
+                <div className="font-semibold">รายละเอียดโปรโมชั่น :</div>
+                <div>
+                  <span>{"ส่วนลด " + activity.discountAmount}</span>
+                  <span>
+                    {activity.discountType === "fixed" ? " บาท" : " %"}
+                  </span>
+                </div>
+                {activity.discountGroupAmount &&
+                  activity.discountGroupAmount > 0 && (
+                    <div>
+                      <span>
+                        {"จำนวนส่วนลดสูงสุด " + activity.discountGroupAmount}
+                      </span>
+                      <span>
+                        {activity.discountType === "fixed" ? " บาท" : " %"}
+                      </span>
+                    </div>
+                  )}
+
+                {activity.limitQuantity && activity.maxQuantity && (
+                  <div>
+                    {"สินค้ามีจำนวนจำกัดแค่ " +
+                      activity.maxQuantity +
+                      " ชิ้นเท่านั้น"}
+                  </div>
+                )}
+                {activity.limitQuantityPerUser &&
+                  activity?.maxQuantityPerUser && (
+                    <div>
+                      {"จำกัดจำนวนไม่เกิน " +
+                        activity.maxQuantityPerUser +
+                        " ชิ้นต่อคน"}
+                    </div>
+                  )}
+              </div>
+            </div>
+          </div>
+          {/* <PromotionProductCard PromotionActivity={activity} /> */}
         </div>
       ))}
     </div>

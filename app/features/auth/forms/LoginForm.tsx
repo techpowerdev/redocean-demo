@@ -14,20 +14,16 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
+import { login } from "@/services/authServices";
+import { LoginResponseType } from "@/types/authTypes";
+import toast from "react-hot-toast";
 
 const formSchema = z.object({
   email: z
     .string()
-    .optional()
-    .refine(
-      (val) =>
-        val === undefined ||
-        val === "" ||
-        z.string().email().safeParse(val).success,
-      {
-        message: "กรุณาระบุอีเมลให้ถูกต้อง",
-      }
-    ),
+    .refine((val) => val === "" || z.string().email().safeParse(val).success, {
+      message: "กรุณาระบุอีเมลให้ถูกต้อง",
+    }),
   password: z
     .string()
     .min(6, { message: "รหัสผ่านต้องมีความยาวอย่างน้อย 6 ตัวอักษร" })
@@ -55,8 +51,18 @@ export function LoginForm() {
     },
   });
 
-  function onSubmit(data: FormValues) {
-    console.log(data);
+  async function onSubmit(data: FormValues) {
+    try {
+      const response: LoginResponseType = await login(data);
+      console.log(response.data);
+      toast.success(response.message || "เข้าสู่ระบบแล้ว");
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("เกิดข้อผิดพลาดที่บางอย่าง");
+      }
+    }
   }
   return (
     <Card className="mx-auto min-w-80 max-w-sm">

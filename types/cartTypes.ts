@@ -1,8 +1,11 @@
-import { VariantOption } from "./fetchTypes";
-
 export type CartType = {
   id: string;
+  createdAt: Date;
+  updatedAt: Date;
+
+  userId: string;
   cartItems: CartItemType[];
+
   cartTotalAmount: number;
   cartTotalQuantity: number;
 };
@@ -10,15 +13,21 @@ export type CartType = {
 export type CartItemType = {
   id: string;
   sku: string;
-  name: string;
-  description: string;
-  image: string;
-  variantOptions?: VariantOption;
   quantity: number;
-  unitPrice: number;
-  discount: number;
-  specialDiscount: number;
+  createdAt: Date;
+  updatedAt: Date;
+
+  cartId: string;
   productId: string;
   promotionActivityId?: string | null;
-  warningMessage?: string | null;
 };
+
+// export type CartProductType = {
+//   productId: string;
+//   promotionActivityId?: string;
+//   sku: string;
+//   unitPrice: number;
+//   discount?: number;
+//   specialDiscount?: number;
+//   quantity: number;
+// };

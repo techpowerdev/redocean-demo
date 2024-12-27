@@ -3,7 +3,7 @@
 import { formatPrice } from "@/utils/formatPrice";
 import { useCallback, useEffect, useState } from "react";
 
-import { ProductType, VariantOption } from "@/types/fetchTypes";
+// import { ProductType, VariantOption } from "@/types/fetchTypes";
 import toast from "react-hot-toast";
 import {
   calculateDiscountedPrice,
@@ -14,9 +14,11 @@ import SetProductQuantity from "./SetProductQuantity";
 import { searchProductVariant } from "@/services/productServices";
 import ProductOptions from "./ProductOptions";
 import AddProductToCart from "./AddProductToCart";
-import { CartProductType } from "@/types/productTypes";
-// import { isEmptyObject } from "@/utils/objectArrayHelpers";
-
+import {
+  CartProductType,
+  ProductType,
+  VariantOption,
+} from "@/types/productTypes";
 interface Props {
   product: ProductType;
 }
@@ -33,12 +35,14 @@ export type selectedVariantType = {
 export default function ProductCard({ product }: Props) {
   const productVariants = product.productVariants;
   const promotionActivity = product.promotionActivities?.[0];
+  const defaultOption = product.hasVariant
+    ? productVariants?.[0]?.variantOptions
+    : {};
 
   // local state
   const [selectedOptions, setSelectedOptions] = useState<
     Record<string, string | undefined>
-  >(productVariants?.[0]?.variantOptions || {}); // default selected one
-  // >({});
+  >(defaultOption || {});
 
   const handleResetOptions = () => {
     setSelectedOptions({});
@@ -58,14 +62,6 @@ export default function ProductCard({ product }: Props) {
   });
 
   const handleQtyIncrease = useCallback(async () => {
-    // if (
-    //   productVariants &&
-    //   productVariants.length > 0 &&
-    //   isEmptyObject(selectedOptions)
-    // ) {
-    //   toast.error("กรุณาเลืิอกตัวเลือก");
-    //   return;
-    // }
     if (selectedVariant) {
       if (cartProduct.quantity + 1 > selectedVariant.stock) {
         toast.error("จำนวนสินค้าไม่เพียงพอ");
@@ -97,11 +93,10 @@ export default function ProductCard({ product }: Props) {
 
   useEffect(() => {
     const fetchData = async () => {
-      const productVariant: selectedVariantType = await searchProductVariant(
-        product.id,
-        selectedOptions
-      );
-      console.log("productVariant", productVariant);
+      const response = await searchProductVariant(product.id, selectedOptions);
+      const productVariant: selectedVariantType = response.data;
+      console.log("productVariant::", productVariant);
+
       if (productVariant) {
         setSelectedVariant(productVariant);
         setCartProduct({

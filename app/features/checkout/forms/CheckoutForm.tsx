@@ -9,7 +9,6 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { formatPrice } from "@/utils/formatPrice";
 import { useCartServerStore } from "@/state-stores/cartServerStore";
-import { useCurrentUserStore } from "@/state-stores/useCurrentUserStore";
 import AddressSelector from "../../address/forms/AddressSelector";
 import Container from "@/components/shared/Container";
 import { useAddressStore } from "@/state-stores/addressStore";
@@ -39,7 +38,6 @@ type CheckoutFormData = z.infer<typeof checkoutSchema>;
 
 export default function CheckoutForm() {
   // global state
-  const token = useCurrentUserStore((state) => state.token);
   const cart = useCartServerStore((state) => state.cart);
   const clearCart = useCartServerStore((state) => state.clearCart);
   const selectedAddress = useAddressStore((state) => state.selectedAddress);
@@ -104,11 +102,11 @@ export default function CheckoutForm() {
           orderItems: orderItemsData,
         };
 
-        await createOrder(token || "", createOrderData);
+        await createOrder(createOrderData);
 
         toast.success("ชำระเงินสำเร็จ");
         router.push("/orders");
-        clearCart(token || ""); // test order
+        clearCart(); // test order
       }
     } catch (error) {
       console.error("Error creating order data:", error); // เพิ่มการจัดการข้อผิดพลาด

@@ -3,7 +3,6 @@ import { formatPrice } from "@/utils/formatPrice";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import SetProductQuantity from "./SetProductQuantity";
-import { useCurrentUserStore } from "@/state-stores/useCurrentUserStore";
 import { useCartServerStore } from "@/state-stores/cartServerStore";
 import { Trash2 } from "lucide-react";
 import { CartItemType } from "@/types/cartTypes";
@@ -13,8 +12,6 @@ interface Props {
 }
 
 export default function CartItem({ item }: Props) {
-  const token = useCurrentUserStore((state) => state.token);
-
   const handleRemoveProductFromCart = useCartServerStore(
     (state) => state.handleRemoveProductFromCart
   );
@@ -49,7 +46,7 @@ export default function CartItem({ item }: Props) {
 
         <Button
           className="bg-white text-primary border-2 rounded-full w-9 h-9 hover:text-white"
-          onClick={() => handleRemoveProductFromCart(token || "", item.id)}
+          onClick={() => handleRemoveProductFromCart(item.id)}
         >
           <Trash2 />
         </Button>
@@ -78,12 +75,8 @@ export default function CartItem({ item }: Props) {
           <SetProductQuantity
             cartCounter={true}
             cartProduct={item}
-            handleQtyDecrease={() =>
-              handleCartQtyDecrease(token || "", item.id, 1)
-            }
-            handleQtyIncrease={() =>
-              handleCartQtyIncrease(token || "", item.id, 1)
-            }
+            handleQtyDecrease={() => handleCartQtyDecrease(item.id, 1)}
+            handleQtyIncrease={() => handleCartQtyIncrease(item.id, 1)}
           />
         </div>
         <div className="text-end">

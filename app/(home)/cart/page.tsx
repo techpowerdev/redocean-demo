@@ -6,9 +6,9 @@ import LineLogin from "../../features/auth/LineLogin";
 import UserCart from "@/app/features/cart/UserCart";
 
 export default function Cart() {
-  const currentUser = useCurrentUserStore((state) => state.currentUser);
+  const token = useCurrentUserStore((state) => state.token);
 
-  if (!currentUser) {
+  if (!token) {
     return <LineLogin />;
   }
 

@@ -6,8 +6,9 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import ToggleBooleanField from "./ToggleBooleanField";
 import { CalendarClock } from "lucide-react";
 import Loading from "@/components/shared/Loading";
-import { PromotionType } from "@/types/fetchTypes";
+// import { PromotionType } from "@/types/fetchTypes";
 import { usePromotionStore } from "@/state-stores/admin/adminPromotionStore";
+import { PromotionType } from "@/types/promotionTypes";
 
 type Props = {
   events: PromotionType[];
@@ -22,7 +23,7 @@ export function EventList({ events }: Props) {
   if (events.length === 0) {
     return (
       <div className="w-full flex justify-center items-center">
-        ยังไม่มีกิจกกรม
+        ยังไม่มีกิจกรรม
       </div>
     );
   }

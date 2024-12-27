@@ -8,7 +8,6 @@ import { formatDateTimePromotion } from "@/utils/formatDate";
 import NoOrder from "./NoOrder";
 import OrderItem from "./OrderItem";
 import { getUserOrders } from "@/services/orderServices";
-import useAuthStore from "@/state-stores/useAuthStore";
 import { useRouter } from "next/navigation";
 import { OrderType } from "@/types/orderTypes";
 import { Eye, Truck } from "lucide-react";
@@ -18,34 +17,20 @@ export default function OrderList() {
 
   const [userOrders, setUserOrders] = useState<OrderType[] | null>(null);
   const currentUser = useCurrentUserStore((state) => state.currentUser);
-  const token = useCurrentUserStore((state) => state.token);
-  const isTokenValid = useAuthStore((state) => state.isTokenValid);
 
   useEffect(() => {
-    const checkToken = () => {
-      if (token) {
-        if (!isTokenValid(token)) {
-          console.warn(
-            "Token expired or not available. Redirecting to login..."
-          );
-          router.push("/login");
-        }
-      } else {
-        router.push("/login");
-      }
-    };
     const fetchOrders = async () => {
-      checkToken();
       try {
-        const userOrders: OrderType[] = await getUserOrders(token || "");
-        console.log("userOrders", userOrders);
+        const userOrders: OrderType[] = await getUserOrders().then(
+          (res) => res.data
+        );
         setUserOrders(userOrders);
       } catch (error) {
         console.log(error);
       }
     };
     fetchOrders();
-  }, [currentUser, isTokenValid, router, token]);
+  }, [currentUser, router]);
 
   if (!userOrders) {
     return <Loading size={40} />;
