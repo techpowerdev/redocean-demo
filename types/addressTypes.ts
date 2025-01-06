@@ -1,3 +1,6 @@
+import { UserType } from "./userTypes";
+
+// types based on the prisma schema
 export type AddressType = {
   id: string;
   recipient: string;
@@ -11,9 +14,15 @@ export type AddressType = {
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
+
   userId: string;
+
+  user?: UserType | null;
 };
 
+// end of types based on the prisma schema
+
+// types for the client side
 export type CreateAddressType = Omit<
   AddressType,
   "id" | "userId" | "createdAt" | "updatedAt"

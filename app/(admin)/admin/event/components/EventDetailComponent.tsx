@@ -60,9 +60,11 @@ export default function EventDetailComponent() {
             <h1 className="font-bold text-lg mb-2">สินค้าในกิจกรรม</h1>
             {selectedPromotion.promotionActivities?.map((item) => (
               <div key={item.id}>
-                <h1>{item.product?.sku}</h1>
-                <h1>{item.product?.name}</h1>
-                <p className="text-sm my-2">{item.product?.description}</p>
+                <h1>รหัสสินค้า: {item.product?.sku}</h1>
+                <h1>ชื่อสินค้า : {item.product?.name}</h1>
+                <p className="text-sm my-2">
+                  รายละเอียด : {item.product?.description}
+                </p>
                 <div className="grid grid-cols-[30%_1fr]">
                   <div className="relative w-full aspect-square">
                     <Image
@@ -74,7 +76,7 @@ export default function EventDetailComponent() {
                           ? `${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}${item.product.productVariants[0].image}`
                           : "/no-image.png" // A fallback image path
                       }
-                      alt={item.product.id}
+                      alt={item.product?.id || ""}
                       className="object-contain"
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
@@ -91,14 +93,14 @@ export default function EventDetailComponent() {
                           {item.discountType === "fixed" ? " บาท" : " %"}
                         </span>
                       </div>
-                      <div>
+                      {/* <div>
                         <span>
                           {"จำนวนส่วนลดสูงสุด " + item.discountGroupAmount}
                         </span>
                         <span>
                           {item.discountType === "fixed" ? " บาท" : " %"}
                         </span>
-                      </div>
+                      </div> */}
                       {item.limitQuantity && item.maxQuantity && (
                         <div>
                           {"สินค้ามีจำนวนจำกัดแค่ " +

@@ -6,7 +6,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import axios from "axios";
 
 import {
   Form,
@@ -32,6 +31,11 @@ import {
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { useProductStore } from "@/state-stores/admin/adminProductStore";
+import {
+  CreateProductResponseType,
+  FetchAllProductResponseType,
+} from "@/types/productTypes";
+import { addProduct, getAllProducts } from "@/services/productServices";
 
 // Define the schema for validation using zod
 const ProductFormSchema = z.object({
@@ -47,23 +51,6 @@ const ProductFormSchema = z.object({
     .string({ required_error: "กรุณาระบุคำอธิบาย" })
     .trim()
     .min(5, "กรุณาระบุคำอธิบายอย่างน้อย 5 ตัวอักษร"),
-  // images: z
-  //   .array(
-  //     z.object({
-  //       name: z.string(),
-  //       size: z.number().max(5 * 1024 * 1024, "Max file size is 5MB"),
-  //       type: z.enum([
-  //         "image/jpeg",
-  //         "image/jpg",
-  //         "image/png",
-  //         "image/gif",
-  //         "image/webp",
-  //       ]),
-  //       file: z.any(),
-  //     }),
-  //     { required_error: "กรุณาเลือกรูปสินค้า" }
-  //   )
-  //   .nonempty("กรุณาเลือกรูปสินค้า"),
   images: z
     .array(
       z.object({
@@ -85,7 +72,6 @@ const ProductFormSchema = z.object({
     required_error: "กรุณาระบุราคาสินค้า",
     invalid_type_error: "กรุณาระบุราคาสินค้า",
   }),
-  // .gte(1, "กรุณาระบุราคาสินค้า"),
   stock: z.coerce.number({
     required_error: "กรุณาระบุจำนวนสินค้า",
     invalid_type_error: "กรุณาระบุจำนวนสินค้า",
@@ -97,8 +83,11 @@ const ProductFormSchema = z.object({
 type ProductFormValues = z.infer<typeof ProductFormSchema>;
 
 export function CreateProduct() {
-  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  // global state
   const setProductLists = useProductStore((state) => state.setProductLists);
+
+  // local state
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
 
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(ProductFormSchema), // validate data with the schema
@@ -179,11 +168,8 @@ export function CreateProduct() {
   //   maxSize: 5 * 1024 * 1024, // 5MB
   // });
 
-  function onSubmit(data: ProductFormValues) {
+  async function onSubmit(data: ProductFormValues) {
     const ProductFormData = new FormData();
-
-    // data.images.forEach((image: any) => {
-    // });
 
     if (data.images && data.images.length > 0) {
       ProductFormData.append("image", data.images[0].file);
@@ -199,34 +185,24 @@ export function CreateProduct() {
       console.log(key, value);
     });
 
-    const createProduct = async () => {
-      try {
-        // Step 1: สร้าง Event ก่อน
-        const productResult = await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL}/products`,
-          ProductFormData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
+    try {
+      const productResult: CreateProductResponseType = await addProduct(
+        ProductFormData
+      );
 
-        if (productResult) {
-          const updatedProducts = await axios.get(
-            `${process.env.NEXT_PUBLIC_API_URL}/products/all`
-          );
+      if (productResult) {
+        const updatedProducts: FetchAllProductResponseType =
+          await getAllProducts();
 
-          setProductLists(updatedProducts.data.data);
-        }
-        toast.success("เพิ่มสินค้าแล้ว");
-      } catch (error) {
-        toast.error("เพิ่มสินค้าไม่สำเร็จ");
-        console.error("Error occurred:", error);
+        setProductLists(updatedProducts.data);
       }
-    };
-
-    createProduct();
+      toast.success("เพิ่มสินค้าแล้ว");
+    } catch (error) {
+      if (error instanceof Error) {
+        const errorMessage = error.message;
+        toast.error(errorMessage);
+      }
+    }
   }
 
   useEffect(() => {
@@ -235,11 +211,6 @@ export function CreateProduct() {
       toast.error("กรุณาตรวจสอบข้อมูลอีกครั้ง");
     }
   }, [form.formState.errors]);
-
-  // const hasVariant = useWatch({
-  //   control: form.control,
-  //   name: "hasVariant",
-  // });
 
   return (
     <Dialog>

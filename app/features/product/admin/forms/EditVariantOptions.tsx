@@ -5,7 +5,6 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import axios from "axios";
 import {
   Form,
   FormControl,
@@ -36,9 +35,16 @@ import {
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { useProductStore } from "@/state-stores/admin/adminProductStore";
-// import { ProductType, ProductVariantType } from "@/types/fetchTypes";
-import { getProductById } from "@/services/productServices";
-import { ProductType, ProductVariantType } from "@/types/productTypes";
+import {
+  getAllProducts,
+  getProductById,
+  updateProductVariant,
+} from "@/services/productServices";
+import {
+  FetchAllProductResponseType,
+  FetchOneProductResponseType,
+  ProductVariantType,
+} from "@/types/productTypes";
 
 // Define the schema for validation using zod
 const ProductVariantFormSchema = z.object({
@@ -177,19 +183,20 @@ export default function EditVariantOptions({
 
   const fetchSavedOptions = async (id: string) => {
     try {
-      const response: ProductType = await getProductById(id).then(
-        (res) => res.data
-      );
+      const response: FetchOneProductResponseType = await getProductById(id);
       const variantKeys = Array.from(
         new Set(
-          response.productVariants?.flatMap((product) =>
+          response.data.productVariants?.flatMap((product) =>
             Object.keys(product.variantOptions)
           )
         )
       );
       setSavedOptionNames(variantKeys);
     } catch (error) {
-      toast.error("ไม่สามารถโหลดข้อมูลตัวเลือกสินค้า");
+      if (error instanceof Error) {
+        const errorMessage = error.message;
+        toast.error(errorMessage);
+      }
     }
   };
 
@@ -222,14 +229,13 @@ export default function EditVariantOptions({
     form.setValue("options", updatedOptions);
   };
 
-  function onSubmit(data: ProductFormValues) {
+  async function onSubmit(data: ProductFormValues) {
     const ProductVariantFormData = new FormData();
     const variantOptions = data.options.reduce((acc, option) => {
       acc[option.name] = option.value;
       return acc;
     }, {} as Record<string, string>);
 
-    ProductVariantFormData.append("id", productVariant?.id || "");
     ProductVariantFormData.append("sku", data.sku || "");
     ProductVariantFormData.append(
       "variantOptions",
@@ -246,48 +252,38 @@ export default function EditVariantOptions({
       console.log(key, value);
     });
 
-    const updateProductVariant = async () => {
-      try {
-        setLoading(true);
+    try {
+      setLoading(true);
 
-        const productResult = await axios.put(
-          `${process.env.NEXT_PUBLIC_API_URL}/products/variants/${productVariant?.id}`,
-          ProductVariantFormData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
+      const productResult = await updateProductVariant(
+        productVariant.id,
+        ProductVariantFormData
+      );
 
-        if (productResult) {
-          const newProducts = await axios.get(
-            `${process.env.NEXT_PUBLIC_API_URL}/products/all`
-          );
+      if (productResult) {
+        const updateSelectedProduct: FetchOneProductResponseType =
+          await getProductById(productResult.data.productId);
+        selectProduct(updateSelectedProduct.data);
 
-          const updateSelectedProduct = newProducts.data.data.find(
-            (item: ProductType) => item.id === selectedProduct?.id
-          );
+        const newProducts: FetchAllProductResponseType = await getAllProducts();
+        setProductLists(newProducts.data);
+        toast.success("บันทึกการแก้ไขแล้ว");
 
-          selectProduct(updateSelectedProduct);
-          setProductLists(newProducts.data.data);
-
-          // รีเซ็ตค่าฟอร์มหลังจากบันทึกสำเร็จ
-          form.reset();
-          setImagePreviews([]);
-          setSavedOptionNames([]);
-          setOptions([]);
-          toast.success("บันทึกการแก้ไขแล้ว");
-          setOpen(false);
-        }
-      } catch (error) {
-        toast.error("เกิดข้อผิดพลาดบางอย่าง!");
-      } finally {
-        setLoading(false);
+        // รีเซ็ตค่าฟอร์มหลังจากบันทึกสำเร็จ
+        form.reset();
+        setImagePreviews([]);
+        setSavedOptionNames([]);
+        setOptions([]);
+        setOpen(false);
       }
-    };
-
-    updateProductVariant();
+    } catch (error) {
+      if (error instanceof Error) {
+        const errorMessage = error.message;
+        toast.error(errorMessage);
+      }
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {

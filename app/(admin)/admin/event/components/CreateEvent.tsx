@@ -6,7 +6,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import axios from "axios";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -45,6 +44,7 @@ import {
 } from "@/components/ui/select";
 import { useDropzone } from "react-dropzone";
 import ResponsiveImage from "@/components/shared/ResponsiveImage";
+import { addPromotion, getAllPromotions } from "@/services/promotionServices";
 
 // Define the schema for validation using zod
 const EventFormSchema = z.object({
@@ -61,56 +61,57 @@ const EventFormSchema = z.object({
     required_error: "กรุณาระบุจำนวนส่วนลด",
     invalid_type_error: "กรุณาระบุจำนวนส่วนลด",
   }),
-  discountGroupAmount: z.coerce.number({
-    required_error: "กรุณาระบุจำนวนส่วนลดสูงสุด",
-    invalid_type_error: "กรุณาระบุจำนวนส่วนลดสูงสุด",
-  }),
+  // discountGroupAmount: z.coerce.number({
+  //   required_error: "กรุณาระบุจำนวนส่วนลดสูงสุด",
+  //   invalid_type_error: "กรุณาระบุจำนวนส่วนลดสูงสุด",
+  // }),
   minimumPurchaseQuantity: z.coerce.number({
     required_error: "กรุณาระบุจำนวนออเดอร์เป้าหมาย",
     invalid_type_error: "กรุณาระบุจำนวนออเดอร์เป้าหมาย",
   }),
-  limitQuantity: z.boolean().default(false).optional(),
+  limitQuantity: z.boolean().default(false),
   maxQuantity: z.coerce.number({
     required_error: "กรุณาระบุจำนวนสินค้า",
     invalid_type_error: "กรุณาระบุจำนวนสินค้า",
   }),
-  limitQuantityPerUser: z.boolean().default(false).optional(),
+  limitQuantityPerUser: z.boolean().default(false),
   maxQuantityPerUser: z.coerce.number({
     required_error: "กรุณาระบุสูงสุดที่สั่งซื้อได้ต่อคน",
     invalid_type_error: "กรุณาระบุสูงสุดที่สั่งซื้อได้ต่อคน",
   }),
-  // images: z
-  //   .array(
-  //     z.object({
-  //       name: z.string(),
-  //       size: z.number().max(5 * 1024 * 1024, "Max file size is 5MB"),
-  //       type: z.enum([
-  //         "image/jpeg",
-  //         "image/jpg",
-  //         "image/png",
-  //         "image/gif",
-  //         "image/webp",
-  //       ]),
-  //       file: z.any(),
-  //     })
-  //   )
-  //   .optional()
-  //   .nullable(),
+  images: z
+    .array(
+      z.object({
+        name: z.string(),
+        size: z.number().max(5 * 1024 * 1024, "Max file size is 5MB"),
+        type: z.enum([
+          "image/jpeg",
+          "image/jpg",
+          "image/png",
+          "image/gif",
+          "image/webp",
+        ]),
+        file: z.any(),
+      })
+    )
+    .nonempty("เลือกอย่างน้อย 1 รูป"),
+  // .optional() // <--- ปรับให้เป็น optional
+  // .nullable() // <--- ปรับให้เป็น optional
 });
 
 // Create form input type
 type EventFormValues = z.infer<typeof EventFormSchema>;
 
 export function CreateEvent() {
-  // const selectedPromotionType = usePromotionStore(
-  //   (state) => state.selectedPromotionType
-  // );
+  // global state
   const selectedProductInPromotion = usePromotionStore(
     (state) => state.selectedProductInPromotion
   );
   const setPromotionLists = usePromotionStore(
     (state) => state.setPromotionLists
   );
+
+  // local state
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
 
   const form = useForm<EventFormValues>({
@@ -123,6 +124,7 @@ export function CreateEvent() {
       startAt: "",
       endAt: "",
       // promotion activity data
+      // productId: selectedProductInPromotion?.id,
       discountType: "fixed",
       discountAmount: 0,
       limitQuantity: false,
@@ -130,37 +132,41 @@ export function CreateEvent() {
       limitQuantityPerUser: false,
       maxQuantityPerUser: 0,
       minimumPurchaseQuantity: 0,
-      discountGroupAmount: 0,
-      // productId: selectedProductInPromotion?.id,
-      // images: [],
+      // discountGroupAmount: 0,
+      images: [],
     },
   });
-  // version 1
-  // const onDrop = (acceptedFiles: File[]) => {
-  //   const newImages = acceptedFiles.map((file) => ({
-  //     name: file.name,
-  //     size: file.size,
-  //     type: file.type,
-  //     file: file,
-  //   }));
 
-  //   form.setValue("images", newImages as never);
-  //   form.trigger("images");
+  const onDrop = (acceptedFiles: File[]) => {
+    const newImages = acceptedFiles.map((file) => ({
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      file: file,
+    }));
 
-  //   const newPreviews = acceptedFiles.map((file) => URL.createObjectURL(file));
-  //   setImagePreviews((prev) => [...prev, ...newPreviews]);
-  // };
+    // Clear previous images and set the new image
+    form.setValue("images", newImages as never);
+    form.trigger("images");
 
-  // const { getRootProps, getInputProps } = useDropzone({
-  //   onDrop,
-  //   accept: {
-  //     "image/jpeg": [],
-  //     "image/jpg": [],
-  //     "image/png": [],
-  //     "image/webp": [],
-  //   },
-  //   maxSize: 5 * 1024 * 1024, // 5MB
-  // });
+    // Update image previews to show the latest image
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreviews([reader.result as string]); // Only keep the latest image preview
+    };
+    reader.readAsDataURL(newImages[0].file);
+  };
+
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    accept: {
+      "image/jpeg": [],
+      "image/jpg": [],
+      "image/png": [],
+      "image/webp": [],
+    },
+    maxSize: 5 * 1024 * 1024, // 5MB
+  });
 
   // version 2
   // const onDrop = (acceptedFiles: File[]) => {
@@ -248,99 +254,74 @@ export function CreateEvent() {
     name: "discountType",
   });
 
-  function onSubmit(data: EventFormValues) {
-    const createEvent = async () => {
-      try {
-        const promotionData = {
-          type: data.type,
-          name: data.name,
-          description: data.description,
-          startAt: data.startAt,
-          endAt: data.endAt,
-          promotionActivities: {
-            productId: selectedProductInPromotion?.id,
-            discountType: data.discountType,
-            discountAmount: data.discountAmount,
-            limitQuantity: data.limitQuantity,
-            maxQuantity: data.maxQuantity,
-            limitQuantityPerUser: data.limitQuantityPerUser,
-            maxQuantityPerUser: data.maxQuantityPerUser,
-            minimumPurchaseQuantity: data.minimumPurchaseQuantity,
-            discountGroupAmount: data.discountGroupAmount,
-            // individualPrice: data.individualPrice,
-          },
-          // images: data.images,
-        };
+  async function onSubmit(data: EventFormValues) {
+    const PromotionFormData = new FormData();
+    if (data.images && data.images.length > 0) {
+      PromotionFormData.append("image", data.images[0].file);
+    }
 
-        const promotionResult = await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL}/promotions`,
-          promotionData
-        );
+    PromotionFormData.append("type", data.type);
+    PromotionFormData.append("name", data.name);
+    PromotionFormData.append("description", data.description);
+    PromotionFormData.append("startAt", data.startAt);
+    PromotionFormData.append("endAt", data.endAt);
 
-        if (promotionResult) {
-          const newPromotions = await axios.get(
-            `${process.env.NEXT_PUBLIC_API_URL}/promotions/all`
-          );
+    // promotion activity data
+    PromotionFormData.append("productId", selectedProductInPromotion?.id || "");
+    PromotionFormData.append("discountType", data.discountType);
+    PromotionFormData.append("discountAmount", data.discountAmount.toFixed(2));
+    PromotionFormData.append("limitQuantity", data.limitQuantity.toString());
+    PromotionFormData.append("maxQuantity", data.maxQuantity.toFixed(0));
+    PromotionFormData.append(
+      "limitQuantityPerUser",
+      data.limitQuantityPerUser.toString()
+    );
+    PromotionFormData.append(
+      "maxQuantityPerUser",
+      data.maxQuantityPerUser.toFixed(0)
+    );
+    PromotionFormData.append(
+      "minimumPurchaseQuantity",
+      data.minimumPurchaseQuantity.toFixed(0)
+    );
+    // PromotionFormData.append(
+    //   "discountGroupAmount",
+    //   data.discountGroupAmount.toFixed(2)
+    // );
 
-          setPromotionLists(newPromotions.data);
-        }
-        toast.success("เพิ่มกิจกรรมแล้ว");
-        // promotionId = promotionResult.data.id;
+    try {
+      // const promotionData = {
+      //   type: data.type,
+      //   name: data.name,
+      //   description: data.description,
+      //   startAt: data.startAt,
+      //   endAt: data.endAt,
+      //   promotionActivities: {
+      //     productId: selectedProductInPromotion?.id,
+      //     discountType: data.discountType,
+      //     discountAmount: data.discountAmount,
+      //     limitQuantity: data.limitQuantity,
+      //     maxQuantity: data.maxQuantity,
+      //     limitQuantityPerUser: data.limitQuantityPerUser,
+      //     maxQuantityPerUser: data.maxQuantityPerUser,
+      //     minimumPurchaseQuantity: data.minimumPurchaseQuantity,
+      //     discountGroupAmount: data.discountGroupAmount,
+      //     // individualPrice: data.individualPrice,
+      //   },
+      //   // image: data.images,
+      // };
 
-        // // Step 2: สร้าง Group Buy Event
-        // const promotionActivity = {
-        //   promotionId,
-        //   productId: data.productId,
-        //   discountType: data.discountType,
-        //   discountAmount: data.discountAmount,
-        //   limitQuantity: data.limitQuantity,
-        //   maxQuantity: data.maxQuantity,
-        //   maxQuantityPerUser: data.maxQuantityPerUser,
-        //   minimumPurchaseQuantity: data.minimumPurchaseQuantity,
-        //   groupPrice: data.groupPrice,
-        //   individualPrice: data.individualPrice,
-        // };
-        // const promotionActivityResult = await axios.post(
-        //   `${process.env.NEXT_PUBLIC_API_URL}/promotions/activity`,
-        //   promotionActivity
-        // );
-        // console.log(promotionResult);
-        // console.log(promotionActivityResult);
-      } catch (error) {
-        toast.success("เกิดข้อผิดพลาดบางอย่าง");
+      const promotionResult = await addPromotion(PromotionFormData);
 
-        console.error("Error occurred:", error);
-
-        // Step 3: ตรวจสอบชนิดของ error
-        // if (axios.isAxiosError(error)) {
-        //   console.error("Error message:", error.message);
-        //   console.error("Error response data:", error.response?.data);
-
-        //   // Step 4: หากการบันทึก Group Buy Event ล้มเหลว ให้ลบ Event ที่สร้างขึ้นไปแล้ว
-        //   if (error.response && error.response.status !== 200) {
-        //     try {
-        //       await axios.delete(
-        //         `${process.env.NEXT_PUBLIC_API_URL}/promotions/${promotionId}`
-        //       );
-        //       console.log(
-        //         "Rolled back promotion creation due to failure in promotion activity creation."
-        //       );
-        //     } catch (rollbackError) {
-        //       console.error(
-        //         "Failed to rollback promotion creation:",
-        //         rollbackError
-        //       );
-        //     }
-        //   }
-        // } else {
-        //   // หาก error ไม่ใช่ AxiosError
-        //   console.error("Unexpected error:", error);
-        // }
+      if (promotionResult) {
+        const newPromotions = await getAllPromotions();
+        setPromotionLists(newPromotions.data);
       }
-    };
-
-    createEvent();
-    console.log(data);
+      toast.success("เพิ่มกิจกรรมแล้ว");
+    } catch (error) {
+      toast.success("เกิดข้อผิดพลาดบางอย่าง");
+      console.error("Error occurred:", error);
+    }
   }
 
   useEffect(() => {
@@ -348,13 +329,6 @@ export function CreateEvent() {
       toast.error("กรุณาตรวจสอบข้อมูลอีกครั้ง");
     }
   }, [form.formState.errors]);
-
-  // useEffect(() => {
-  //   // ดึงค่าจาก product ที่เลือก มาใช้เลย
-  //   if (selectedProductInPromotion) {
-  //     form.setValue(`productId`, selectedProductInPromotion.id);
-  //   }
-  // }, [form, selectedProductInPromotion]);
 
   return (
     <Dialog>
@@ -429,28 +403,6 @@ export function CreateEvent() {
                         )}
                       />
 
-                      {/* <FormField
-                control={form.control}
-                name="startTime"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>วันเวลาเริ่มต้น</FormLabel>
-                    <FormControl>
-                      <DatePicker
-                        selected={
-                          field.value ? new Date(field.value) : new Date()
-                        } // Handle the case where the value might be null
-                        onChange={(date: Date | null) => field.onChange(date)} // Ensure the type is Date | null
-                        showTimeSelect
-                        dateFormat="Pp"
-                        className="border" // Optional, for custom styling
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              /> */}
-
                       {/* End At */}
                       <FormField
                         control={form.control}
@@ -500,12 +452,12 @@ export function CreateEvent() {
                       />
 
                       {/* Image */}
-                      {/* <FormField
+                      <FormField
                         control={form.control}
                         name="images"
                         render={() => (
                           <div className="grid w-full items-center gap-1.5">
-                            <FormLabel htmlFor="photo">รูปสินค้า</FormLabel>
+                            <FormLabel htmlFor="photo">รูปกิจกรรม</FormLabel>
                             <div
                               {...getRootProps()}
                               className="border-2 border-dashed border-gray-300 p-2 text-center"
@@ -563,7 +515,7 @@ export function CreateEvent() {
                             </div>
                           </div>
                         )}
-                      /> */}
+                      />
                     </TabsContent>
 
                     <TabsContent value="eventDetail" className="space-y-6 px-2">
@@ -572,33 +524,24 @@ export function CreateEvent() {
                         เลือกสินค้า
                       </Label>
                       <SearchProductInEventForm />
-                      {/* {selectedProductInPromotion &&
-                        selectedProductInPromotion.image && (
-                          <div className="relative w-20 aspect-square">
-                            <Image
-                              fill
-                              src={`${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}${selectedProductInPromotion.image}`}
-                              alt={selectedProductInPromotion.sku}
-                              className="object-contain"
-                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                            />
-                          </div>
-                        )}
-                      {selectedProductInPromotion && (
-                        <>
-                          <div>{selectedProductInPromotion.sku}</div>
-                          <div>{selectedProductInPromotion.name}</div>
-                          <div>{selectedProductInPromotion.description}</div>
-                          <div>
-                            ราคาตั้งต้น{" "}
-                            {formatPrice(selectedProductInPromotion.price)}
-                          </div>
-                        </>
-                      )}
-                      <Separator /> */}
+
                       {/* discount type */}
                       <h1 className="text-lg font-bold">ตั้งค่ากิจกรรม</h1>
-
+                      {/* <FormField
+                        control={form.control}
+                        name={`productId`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>
+                              รหัสสินค้า
+                            </FormLabel>
+                            <FormControl>
+                              <Input placeholder="กรอกรหัสสินค้า" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      /> */}
                       <FormField
                         control={form.control}
                         name="discountType"
@@ -659,27 +602,6 @@ export function CreateEvent() {
                       {/* show if promotion type is groupbuying */}
                       {type === "groupbuying" && (
                         <>
-                          {/* <FormField
-                            control={form.control}
-                            name={`individualPrice`}
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>
-                                  จำนวนส่วนลดเริ่มต้น
-                                  {`(${discountType})`}
-                                </FormLabel>
-                                <FormControl>
-                                  <Input
-                                    type="number"
-                                    min={0}
-                                    placeholder="กรอกจำนวนส่วนลดเริ่มต้น"
-                                    {...field}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          /> */}
                           <FormField
                             control={form.control}
                             name={`minimumPurchaseQuantity`}
@@ -698,7 +620,7 @@ export function CreateEvent() {
                               </FormItem>
                             )}
                           />
-                          <FormField
+                          {/* <FormField
                             control={form.control}
                             name={`discountGroupAmount`}
                             render={({ field }) => (
@@ -718,7 +640,7 @@ export function CreateEvent() {
                                 <FormMessage />
                               </FormItem>
                             )}
-                          />
+                          /> */}
                         </>
                       )}
 

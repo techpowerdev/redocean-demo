@@ -3,11 +3,14 @@
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import Loading from "@/components/shared/Loading";
 import { EventList } from "./EventList";
-import { PromotionType } from "@/types/fetchTypes";
 import { usePromotionStore } from "@/state-stores/admin/adminPromotionStore";
+import {
+  FetchAllPromotionResponseType,
+  PromotionType,
+} from "@/types/promotionTypes";
+import { getAllPromotions } from "@/services/promotionServices";
 
 export default function EventListComponent() {
   const promotionLists = usePromotionStore((state) => state.promotionLists);
@@ -22,13 +25,12 @@ export default function EventListComponent() {
   const [error, setError] = useState<string | null>(null); // State for error message
 
   useEffect(() => {
-    const getAllPromotions = async () => {
+    const fetchAllPromotions = async () => {
       setLoading(true); // Set loading to true when fetching
       try {
-        const { data } = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/promotions/all`
-        );
-        setPromotionLists(data);
+        const promotions: FetchAllPromotionResponseType =
+          await getAllPromotions();
+        setPromotionLists(promotions.data);
         setLoading(false); // Set loading to false after data is fetched
       } catch (error) {
         console.error("Error fetching promotions:", error);
@@ -36,7 +38,7 @@ export default function EventListComponent() {
         setLoading(false); // Set loading to false in case of error
       }
     };
-    getAllPromotions();
+    fetchAllPromotions();
   }, [setPromotionLists]);
 
   useEffect(() => {

@@ -3,23 +3,13 @@
 import React, { useEffect, useState, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import ResponsiveImage from "@/components/shared/ResponsiveImage";
+import { BannerType } from "@/types/bannerTypes";
 
-const banners = [
-  {
-    id: 1,
-    href: "https://img.lazcdn.com/us/domino/d568a9cb-0dbe-4b2b-a156-65ee1ea43f14_TH-1976-688.jpg_2200x2200q80.jpg_.avif",
-  },
-  {
-    id: 2,
-    href: "https://img.lazcdn.com/us/domino/ecb0c2e6-9e69-4279-af7e-df587bb8464d_TH-1976-688.jpg_2200x2200q80.jpg_.avif",
-  },
-  {
-    id: 3,
-    href: "https://img.lazcdn.com/us/domino/d61099c7-adc8-4e98-9285-ee52b1f062a0_TH-1976-688.jpg_2200x2200q80.jpg_.avif",
-  },
-];
+type Props = {
+  banners: BannerType[];
+};
 
-export default function HeroBanner() {
+export default function HeroBanner({ banners }: Props) {
   const [currentBanner, setCurrentBanner] = useState(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -62,8 +52,16 @@ export default function HeroBanner() {
       onMouseEnter={stopAutoplay}
       onMouseLeave={startAutoplay}
     >
-      <div className="relative ">
-        <ResponsiveImage alt="Banner" src={banners[currentBanner].href} />
+      <div className="relative">
+        <ResponsiveImage
+          alt="Banner"
+          src={`${
+            banners[currentBanner].image
+              ? process.env.NEXT_PUBLIC_IMAGE_HOST_URL +
+                banners[currentBanner].image.url
+              : "/no-image.png"
+          }`}
+        />
         <span
           className="absolute top-1/2 transform -translate-y-1/2 left-2 cursor-pointer flex justify-center items-center rounded-full bg-border w-4 h-4 md:w-8 md:h-8"
           onClick={prevContent}

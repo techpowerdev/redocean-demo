@@ -8,28 +8,26 @@ export const createOrder = async (data: CreateOderType) => {
     const response = await apiClient.post(`/orders`, data);
     return response.data;
   } catch (error) {
-    console.log(error);
     if (axios.isAxiosError(error)) {
-      console.error("Axios error details:", error.response?.data);
-    } else {
-      console.error("Unexpected error:", error);
+      throw new Error(
+        error.response?.data?.message || "สร้างคำสั่งซื้อไม่สำเร็จ"
+      );
     }
-    throw error; // ส่งต่อ error ไปให้ฝั่งที่เรียกใช้ function
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
   }
 };
 
 export const getUserOrders = async () => {
   try {
-    const { data } = await apiClient.get(`/users/orders/all`);
-    return data;
+    const response = await apiClient.get(`/users/orders/all`);
+    return response.data;
   } catch (error) {
-    console.log(error);
     if (axios.isAxiosError(error)) {
-      console.error("Axios error details:", error.response?.data);
-    } else {
-      console.error("Unexpected error:", error);
+      throw new Error(
+        error.response?.data?.message || "ดึงข้อมูลคำสั่งซื้อไม่สำเร็จ"
+      );
     }
-    throw error; // ส่งต่อ error ไปให้ฝั่งที่เรียกใช้ function
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
   }
 };
 
@@ -38,36 +36,46 @@ export const changeTrackingNumber = async (
   trackingNumber: string
 ) => {
   try {
-    const { data } = await apiClient.patch(
+    const response = await apiClient.patch(
       `/orders/${orderId}/change-trackingnumber`,
       { trackingNumber }
     );
-    return data.data;
+    return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      console.error("Axios error details:", error.response?.data);
-    } else {
-      console.error("Unexpected error:", error);
+      throw new Error(
+        error.response?.data?.message || "แก้ไขเลข tracking no. ไม่สำเร็จ"
+      );
     }
-    throw error; // ส่งต่อ error ไปให้ฝั่งที่เรียกใช้ function
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
   }
 };
 
 export const getOneOrder = async (id: string) => {
   try {
-    const { data } = await apiClient.get(`/orders/${id}`);
-    return data.data;
+    const response = await apiClient.get(`/orders/${id}`);
+    return response.data;
   } catch (error) {
-    console.log(error);
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || "ดึงข้อมูลคำสั่งซื้อไม่สำเร็จ"
+      );
+    }
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
   }
 };
 
 export const getAllOrders = async () => {
   try {
-    const { data } = await apiClient.get(`/orders/all`);
-    return data;
+    const response = await apiClient.get(`/orders/all`);
+    return response.data;
   } catch (error) {
-    console.log(error);
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || "ดึงข้อมูลคำสั่งซื้อไม่สำเร็จ"
+      );
+    }
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
   }
 };
 
@@ -75,12 +83,17 @@ export const getOrderSummaryOfGroupBuying = async (
   promotionActivityId: string | null
 ) => {
   try {
-    const { data } = await apiClient.get(
+    const response = await apiClient.get(
       `/orders/summary/today/${promotionActivityId}`
     );
-    return data;
+    return response.data;
   } catch (error) {
-    console.log(error);
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || "ดึงข้อมูลคำสั่งซื้อไม่สำเร็จ"
+      );
+    }
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
   }
 };
 
@@ -102,11 +115,13 @@ export const getPromotionOrder = async (promotionActivityId: string) => {
     const response = await apiClient.get(
       `/orders/promotion-orders/${promotionActivityId}`
     );
-    console.log(response);
     // ส่งคืนผลลัพธ์
     return response.data;
   } catch (error) {
-    console.error("Error fetching orders:", error);
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message || "ดึงข้อมูลไม่สำเร็จ");
+    }
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
   }
 };
 
@@ -115,17 +130,17 @@ export const checkStockAndPromotionForCheckout = async (
 ) => {
   try {
     const response = await apiClient.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/products/variants/stock/for-checkout`,
+      `/products/variants/stock/for-checkout`,
       { orderItems: data }
     );
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      console.error("Axios error details:", error.response?.data);
-    } else {
-      console.error("Unexpected error:", error);
+      throw new Error(
+        error.response?.data?.message || "เกิดผิดพลาดเกี่ยวกับโปรโมชั่น"
+      );
     }
-    throw error; // ส่งต่อ error ไปให้ฝั่งที่เรียกใช้ function
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
   }
 };
 
@@ -192,73 +207,29 @@ export async function createOrderFullfillment(
       }
     );
 
-    // แสดงผลลัพธ์จาก API
-    console.log("Order created successfully:", response.data);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      console.error("Axios error:", error.response?.data || error.message);
-    } else {
-      console.error("Unexpected error:", error);
+      throw new Error(
+        error.response?.data?.message || "สร้างคำสั่งซื้อไม่สำเร็จ"
+      );
     }
-    throw error;
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
   }
 }
 
 export async function changeOrderStatus(id: string, status: string) {
   try {
-    const result = await apiClient.patch(`/orders/${id}/change-status`, {
+    const response = await apiClient.patch(`/orders/${id}/change-status`, {
       status,
     });
-    return result.data;
+    return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      console.error("Axios error:", error.response?.data || error.message);
-    } else {
-      console.error("Unexpected error:", error);
+      throw new Error(
+        error.response?.data?.message || "แก้ไขสถานะคำสั่งซื้อไม่สำเร็จ"
+      );
     }
-    throw error;
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
   }
 }
-
-// /**
-//  * ฟังก์ชันค้นหาคำสั่งซื้อจาก API
-//  * @param {SearchFilters} filters - ตัวกรองสำหรับการค้นหา
-//  * @returns {Promise<OrderType[]>} - รายการคำสั่งซื้อ
-//  */
-// export const searchOrders = async (
-//   filters: SearchFilters = {}
-// ): Promise<OrderType[] | undefined> => {
-//   try {
-//     // สร้าง URL พร้อม Query Parameters
-//     const params = new URLSearchParams(
-//       filters as Record<string, string>
-//     ).toString();
-//     const url = `${process.env.NEXT_PUBLIC_API_URL}/orders/search?${params}`;
-
-//     // เรียก API ด้วย axios
-//     const response = await axios.get<OrderType[]>(url);
-
-//     // ส่งคืนผลลัพธ์
-//     return response.data;
-//   } catch (error) {
-//     console.error("Error fetching orders:", error);
-//   }
-// };
-// export const searchOrders = async (filters: SearchFilters = {}) => {
-//   try {
-//     // สร้าง URL พร้อม Query Parameters
-//     const params = new URLSearchParams(
-//       filters as Record<string, string>
-//     ).toString();
-//     const url = `${process.env.NEXT_PUBLIC_API_URL}/orders/search?${params}`;
-
-//     // เรียก API ด้วย axios
-//     const response = await axios.get(url);
-//     console.log(response);
-//     // ส่งคืนผลลัพธ์
-//     return response.data;
-//   } catch (error) {
-//     console.error("Error fetching orders:", error);
-//   }
-// };

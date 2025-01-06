@@ -3,14 +3,14 @@
 import { Button } from "@/components/ui/button";
 import { useCartServerStore } from "@/state-stores/cartServerStore";
 import { useCurrentUserStore } from "@/state-stores/useCurrentUserStore";
-import { CartProductType } from "@/types/productTypes";
+import { AddProductToCardInputType } from "@/types/cartTypes";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import React from "react";
 import toast from "react-hot-toast";
 
 type Props = {
-  product: CartProductType;
+  product: AddProductToCardInputType;
   stock: number;
 };
 

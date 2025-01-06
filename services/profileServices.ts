@@ -1,6 +1,6 @@
 import axios from "axios";
 import apiClient from "./apiClient";
-import { EditProfileType } from "@/types/profileTypes";
+import { EditProfileType } from "@/types/userTypes";
 
 export async function editProfile(profileData: EditProfileType) {
   try {

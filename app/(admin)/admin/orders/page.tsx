@@ -5,7 +5,8 @@ import Loading from "@/components/shared/Loading";
 import { DataTable } from "@/components/shared/table/DataTable";
 import { getAllOrders } from "@/services/orderServices";
 import { useAdminOrderStore } from "@/state-stores/admin/adminOrderStore";
-import { OrderType } from "@/types/fetchTypes";
+import { FetchAllOrderResponseType } from "@/types/orderTypes";
+// import { OrderType } from "@/types/fetchTypes";
 import { useEffect } from "react";
 
 export default function Orders() {
@@ -15,9 +16,8 @@ export default function Orders() {
 
   useEffect(() => {
     const fetchOrders = async () => {
-      const orders: OrderType[] = await getAllOrders();
-      console.log("orders", orders);
-      setOrders(orders);
+      const orders: FetchAllOrderResponseType = await getAllOrders();
+      setOrders(orders?.data);
     };
     fetchOrders();
   }, []);

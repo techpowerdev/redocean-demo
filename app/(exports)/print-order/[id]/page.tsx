@@ -6,7 +6,7 @@ import { formatPrice } from "@/utils/formatPrice";
 import { truncateText } from "@/utils/truncateText";
 import { changeTrackingNumber, getOneOrder } from "@/services/orderServices";
 import { formatDateTimePromotion } from "@/utils/formatDate";
-import { OrderType } from "@/types/orderTypes";
+import { FetchOneOrderResponseType, OrderType } from "@/types/orderTypes";
 import PrintButton from "@/components/shared/PrintButton";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -55,9 +55,9 @@ export default function PrintOrderDetail({
   useEffect(() => {
     const fetchOrder = async () => {
       try {
-        const data: OrderType = await getOneOrder(params.id);
-        setOrder(data);
-        form.reset({ trackingNumber: data.trackingNumber || "" });
+        const result: FetchOneOrderResponseType = await getOneOrder(params.id);
+        setOrder(result.data);
+        form.reset({ trackingNumber: result.data.trackingNumber || "" });
       } catch (error) {
         console.error("Error fetching order:", error);
       }
@@ -112,7 +112,8 @@ export default function PrintOrderDetail({
       {/* Order Information */}
       <div className="mb-6">
         <span className="font-semibold">วันที่: </span>
-        {formatDateTimePromotion(order?.createdAt || "")}
+        {/* {formatDateTimePromotion(order?.createdAt.toString() || "")} */}
+        {formatDateTimePromotion(order?.createdAt.toString())}
         {/* <p>สถานะ: {order?.status}</p> */}
       </div>
 
@@ -191,10 +192,10 @@ export default function PrintOrderDetail({
                   {formatPrice(item.unitPrice)}
                 </td>
                 <td className="border border-gray-300 px-4 py-2 text-right">
-                  {formatPrice(item.discount)}
+                  {formatPrice(item.discount || 0)}
                 </td>
                 <td className="border border-gray-300 px-4 py-2 text-right">
-                  {formatPrice(item.unitPrice - item.discount)}
+                  {formatPrice(item.unitPrice - (item.discount || 0))}
                 </td>
                 <td className="border border-gray-300 px-4 py-2 text-center">
                   {item.quantity}
@@ -203,7 +204,7 @@ export default function PrintOrderDetail({
                   {/* {formatPrice(item.total)} */}
                   {formatPrice(
                     item.unitPrice * item.quantity -
-                      item.discount * item.quantity
+                      (item.discount || 0) * item.quantity
                   )}
                 </td>
               </tr>

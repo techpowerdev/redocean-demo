@@ -9,7 +9,7 @@ import { useCurrentUserStore } from "@/state-stores/useCurrentUserStore";
 import liff from "@line/liff";
 import LineLogin from "@/app/features/auth/LineLogin";
 import Container from "@/components/shared/Container";
-import { logoutUser } from "@/services/authServices";
+// import { logoutUser } from "@/services/authServices";
 
 export default function Profile() {
   const currentUser = useCurrentUserStore((state) => state.currentUser);
@@ -21,7 +21,7 @@ export default function Profile() {
   const logout = async () => {
     if (liff.isLoggedIn()) {
       try {
-        await logoutUser();
+        // await logoutUser();
         liff.logout();
         clearCurrentUser();
         toast.success("ออกจากระบบแล้ว");

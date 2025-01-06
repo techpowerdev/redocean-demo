@@ -11,13 +11,11 @@ import EditAddressForm from "./EditAddressForm";
 import { AddressType } from "@/types/addressTypes";
 import { Badge } from "@/components/ui/badge";
 import { useAddressStore } from "@/state-stores/addressStore";
-import { useCurrentUserStore } from "@/state-stores/useCurrentUserStore";
 
 type Props = {
   address: AddressType;
 };
 export default function AddressCard({ address }: Props) {
-  const token = useCurrentUserStore((state) => state.token);
   const deleteAddress = useAddressStore((state) => state.deleteAddress);
   const changeActiveAddress = useAddressStore(
     (state) => state.changeActiveAddress

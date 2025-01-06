@@ -52,7 +52,7 @@ export default function CartItem({ item }: Props) {
         </Button>
       </div>
 
-      {item.discount > 0 ? (
+      {item.discount && item.discount > 0 ? (
         <div className="flex flex-col gap-2 text-sm">
           <span className="line-through text-red-500">
             {formatPrice(item.unitPrice)}
@@ -81,7 +81,8 @@ export default function CartItem({ item }: Props) {
         </div>
         <div className="text-end">
           {formatPrice(
-            item.unitPrice * item.quantity - item.discount * item.quantity
+            item.unitPrice * item.quantity -
+              (item.discount || 0) * item.quantity
           )}
         </div>
       </div>

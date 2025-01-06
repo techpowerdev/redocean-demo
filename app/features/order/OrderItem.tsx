@@ -1,4 +1,5 @@
 import { OrderItemType } from "@/types/orderTypes";
+import { calculateDiscountedPrice } from "@/utils/calculateDiscountedPrice";
 import { formatPrice } from "@/utils/formatPrice";
 import { truncateText } from "@/utils/truncateText";
 import Image from "next/image";
@@ -31,12 +32,17 @@ export default function OrderItem({ item }: ItemContentProps) {
         </div>
         <div className="mt-4">
           <div className="flex justify-between items-center">
-            <span>{formatPrice(item.unitPrice)}</span>
+            <div className="flex flex-col gap-2">
+              <span className="line-through text-red-500">
+                {formatPrice(item.unitPrice)}
+              </span>
+              <span className="text-green-500">
+                {formatPrice(item.unitPrice - (item.discount || 0))}
+              </span>
+            </div>
             <span>จำนวน : {item.quantity}</span>
           </div>
-          <div className="mt-4 text-end">
-            รวมทั้งสิ้น : {formatPrice(item.unitPrice * item.quantity)}
-          </div>
+          <div className="mt-4 text-end">รวม : {formatPrice(item.total)}</div>
         </div>
       </div>
     </div>

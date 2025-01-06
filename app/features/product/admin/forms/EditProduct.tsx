@@ -5,7 +5,6 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import axios from "axios";
 
 import {
   Form,
@@ -30,8 +29,17 @@ import {
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { useProductStore } from "@/state-stores/admin/adminProductStore";
-import { ProductType } from "@/types/productTypes";
-// import { ProductType } from "@/types/fetchTypes";
+import {
+  EditProductResponseType,
+  FetchAllProductResponseType,
+  FetchOneProductResponseType,
+  ProductType,
+} from "@/types/productTypes";
+import {
+  getAllProducts,
+  getProductById,
+  updateProduct,
+} from "@/services/productServices";
 
 // Define the schema for validation using zod
 const EditProductFormSchema = z.object({
@@ -156,7 +164,7 @@ export function EditProduct({
     maxSize: 5 * 1024 * 1024, // 5MB
   });
 
-  function onSubmit(data: EditProductFormValues) {
+  async function onSubmit(data: EditProductFormValues) {
     const ProductFormData = new FormData();
 
     // ส่งเฉพาะ image ถ้ามีการเลือก
@@ -174,39 +182,29 @@ export function EditProduct({
       console.log(key, value);
     });
 
-    const updateProduct = async () => {
-      try {
-        // Step 1: สร้าง Event ก่อน
-        const productResult = await axios.put(
-          `${process.env.NEXT_PUBLIC_API_URL}/products/${selectedProduct?.id}`,
-          ProductFormData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
+    try {
+      // Step 1: สร้าง Event ก่อน
+      const updatedResult: EditProductResponseType = await updateProduct(
+        selectedProduct?.id || "",
+        ProductFormData
+      );
 
-        if (productResult) {
-          const newProducdts = await axios.get(
-            `${process.env.NEXT_PUBLIC_API_URL}/products/all`
-          );
+      if (updatedResult) {
+        const updatedSelectedProduct: FetchOneProductResponseType =
+          await getProductById(updatedResult.data.id);
+        selectProduct(updatedSelectedProduct.data);
 
-          const updateSelectedProduct = newProducdts.data.data.find(
-            (item: ProductType) => item.id === selectedProduct?.id
-          );
-
-          selectProduct(updateSelectedProduct);
-          setProductLists(newProducdts.data.data);
-          toast.success("บันทึกการแก้ไขแล้ว");
-        }
-      } catch (error) {
-        toast.error("เกิดข้อผิดพลาดบางอย่าง!");
-        console.error("Error occurred:", error);
+        const newProducdts: FetchAllProductResponseType =
+          await getAllProducts();
+        setProductLists(newProducdts.data);
       }
-    };
-
-    updateProduct();
+      toast.success("บันทึกการแก้ไขแล้ว");
+    } catch (error) {
+      if (error instanceof Error) {
+        const errorMessage = error.message;
+        toast.error(errorMessage);
+      }
+    }
   }
 
   useEffect(() => {
@@ -308,24 +306,6 @@ export function EditProduct({
                                     src={preview}
                                     alt={`Preview ${index}`}
                                   />
-                                  {/* <CircleX
-                                    onClick={(event) => {
-                                      event.stopPropagation();
-                                      const updatedImages = form
-                                        .getValues("images")
-                                        .filter((_, i) => i !== index);
-                                      form.setValue(
-                                        "images",
-                                        updatedImages as never
-                                      );
-                                      setImagePreviews((prev) =>
-                                        prev.filter((_, i) => i !== index)
-                                      );
-                                      form.trigger("images");
-                                    }}
-                                    size={20}
-                                    className="text-red-400 hover:text-red-500 cursor-pointer absolute -top-3 -right-1"
-                                  /> */}
 
                                   <CircleX
                                     onClick={(event) => {

@@ -7,7 +7,7 @@ import { ProductList } from "./ProductList";
 import { useProductStore } from "@/state-stores/admin/adminProductStore";
 import Loading from "@/components/shared/Loading";
 import { getAllProducts } from "@/services/productServices";
-import { ProductType } from "@/types/productTypes";
+import { FetchAllProductResponseType, ProductType } from "@/types/productTypes";
 
 export default function ProductListComponent() {
   const productLists = useProductStore((state) => state.productLists);
@@ -21,14 +21,12 @@ export default function ProductListComponent() {
     const fetchAllProducts = async () => {
       setLoading(true); // Set loading to true when fetching
       try {
-        const products = await getAllProducts();
-        console.log("products=>", products);
+        const products: FetchAllProductResponseType = await getAllProducts();
         if (products) {
           setProductLists(products.data);
         }
         setLoading(false); // Set loading to false after data is fetched
       } catch (error) {
-        console.error("Error fetching products:", error);
         setError("ไม่สามารถโหลดสินค้าได้"); // Set error message
         setLoading(false); // Set loading to false in case of error
       }

@@ -19,6 +19,7 @@ import { z } from "zod";
 import { convertPhoneNumber } from "@/utils/convertPhoneNumber";
 import { useRouter } from "next/navigation";
 import { useCurrentUserStore } from "@/state-stores/useCurrentUserStore";
+import { verifyUser } from "@/services/authServices";
 
 const otpSchema = z.object({
   phoneNumber: z
@@ -107,18 +108,20 @@ const OTPDialog = () => {
 
       if (response.data.code == 0 && response.data.msg == "Verify Success") {
         try {
-          const response = await axios.put(
-            `${process.env.NEXT_PUBLIC_API_URL}/verify-user`,
-            {
-              phoneNumber,
-              phoneVerified: true,
-            },
-            {
-              headers: {
-                Authorization: `Bearer ${token}`, // Attach the token here
-              },
-            }
-          );
+          // const response = await axios.put(
+          //   `${process.env.NEXT_PUBLIC_API_URL}/verify-user`,
+          //   {
+          //     phoneNumber,
+          //     phoneVerified: true,
+          //   },
+          //   {
+          //     headers: {
+          //       Authorization: `Bearer ${token}`, // Attach the token here
+          //     },
+          //   }
+          // );
+          const response = await verifyUser(phoneNumber);
+          console.log(response);
           setIsVerified(true);
           setCurrentUser(response.data.user);
           router.push("/");

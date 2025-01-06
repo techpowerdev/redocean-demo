@@ -1,8 +1,8 @@
-import { PromotionType } from "@/types/fetchTypes";
 import React from "react";
-import { PromotionCountdown } from "./PromotionCountdown";
+import { PromotionCountdown } from "@/app/features/promotion/PromotionCountdown";
 import { formatDateTimePromotion } from "@/utils/formatDate";
-import ProductContainer from "../product/ProductContainer";
+import ProductContainer from "@/app/features/product/ProductContainer";
+import { PromotionType } from "@/types/promotionTypes";
 
 type Props = {
   promotion: PromotionType;
@@ -26,7 +26,7 @@ export default function PromotionItem({ promotion }: Props) {
               endTime={formatDateTimePromotion(promotion.endAt)}
             />
           </div>
-          <ProductContainer productId={activity.product.id} />
+          <ProductContainer productId={activity.product?.id || ""} />
         </div>
       ))}
     </div>

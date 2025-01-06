@@ -1,6 +1,6 @@
-import { PromotionType } from "@/types/fetchTypes";
-import PromotionItem from "./PromotionItem";
-import SocialShare from "../social-share/SocialShare";
+import PromotionItem from "@/app/features/promotion/PromotionItem";
+import SocialShare from "@/app/features/social-share/SocialShare";
+import { PromotionType } from "@/types/promotionTypes";
 
 type Props = {
   promotions: PromotionType[];

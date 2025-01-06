@@ -1,6 +1,5 @@
 "use client";
 
-import { PromotionType } from "@/types/fetchTypes";
 import { formatDateTimePromotion } from "@/utils/formatDate";
 import { PromotionCountdown } from "@/app/features/promotion/PromotionCountdown";
 import { Button } from "@/components/ui/button";
@@ -10,11 +9,12 @@ import {
   CreateOrderFullfillmentBody,
   getPromotionOrder,
 } from "@/services/orderServices";
-import { OrderType } from "@/types/orderTypes";
+import { FetchAllOrderResponseType, OrderType } from "@/types/orderTypes";
 import Loading from "@/components/shared/Loading";
 import OrderSummaryOfPromotionToday from "./OrderSummaryOfPromotionToday";
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
+import { PromotionType } from "@/types/promotionTypes";
 
 interface Props {
   promotion: PromotionType;
@@ -26,21 +26,25 @@ export default function ShowEventCard({ promotion }: Props) {
   const fetchOrders = async (promotionActivityId: string) => {
     setLoading(true);
     try {
-      const result: OrderType[] = await getPromotionOrder(promotionActivityId);
+      const result: FetchAllOrderResponseType = await getPromotionOrder(
+        promotionActivityId
+      );
+      console.log(result.data);
 
       if (result) {
         const orders: CreateOrderFullfillmentBody[] = [];
 
-        result.map((order) => {
+        result.data.map((order) => {
           // คำนวณยอดรวม
           const summary = order.orderItems?.reduce(
             (acc, item) => {
-              acc.discountTotal += item.discount * item.quantity;
-              acc.specialDiscountTotal += item.specialDiscount * item.quantity;
+              acc.discountTotal += (item.discount || 0) * item.quantity;
+              // acc.specialDiscountTotal += item.specialDiscount || 0 * item.quantity;
               acc.totalAmount += item.unitPrice * item.quantity;
               return acc;
             },
-            { discountTotal: 0, specialDiscountTotal: 0, totalAmount: 0 }
+            // { discountTotal: 0, specialDiscountTotal: 0, totalAmount: 0 }
+            { discountTotal: 0, totalAmount: 0 }
           );
 
           console.log("summary", summary);
@@ -176,7 +180,7 @@ export default function ShowEventCard({ promotion }: Props) {
                     {activity.discountType === "fixed" ? " บาท" : " %"}
                   </span>
                 </div>
-                {activity.discountGroupAmount &&
+                {/* {activity.discountGroupAmount &&
                   activity.discountGroupAmount > 0 && (
                     <div>
                       <span>
@@ -186,7 +190,7 @@ export default function ShowEventCard({ promotion }: Props) {
                         {activity.discountType === "fixed" ? " บาท" : " %"}
                       </span>
                     </div>
-                  )}
+                  )} */}
 
                 {activity.limitQuantity && activity.maxQuantity && (
                   <div>

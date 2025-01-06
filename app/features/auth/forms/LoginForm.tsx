@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { login } from "@/services/authServices";
-import { LoginResponseType } from "@/types/authTypes";
+import { LoginResponseType } from "@/types/userTypes";
 import toast from "react-hot-toast";
 
 const formSchema = z.object({

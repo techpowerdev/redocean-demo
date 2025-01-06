@@ -5,7 +5,7 @@ import { formatPrice } from "@/utils/formatPrice";
 import { truncateText } from "@/utils/truncateText";
 import { getOneOrder } from "@/services/orderServices";
 import { formatDateTimePromotion } from "@/utils/formatDate";
-import { OrderType } from "@/types/orderTypes";
+import { FetchOneOrderResponseType, OrderType } from "@/types/orderTypes";
 import Container from "@/components/shared/Container";
 import { useEffect, useState } from "react";
 import Loading from "@/components/shared/Loading";
@@ -15,8 +15,8 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
 
   useEffect(() => {
     const fetchOrder = async () => {
-      const orders: OrderType = await getOneOrder(params.id);
-      setOrder(orders);
+      const orders: FetchOneOrderResponseType = await getOneOrder(params.id);
+      setOrder(orders.data);
     };
     fetchOrder();
   }, [params.id]);
@@ -41,7 +41,7 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
           </p>
           <p>
             <span className="font-semibold">วันที่:</span>{" "}
-            {formatDateTimePromotion(order?.createdAt || "")}
+            {formatDateTimePromotion(order?.createdAt.toString())}
           </p>
           <p className="flex flex-wrap gap-2">
             <span className="font-semibold">เลขติดตามพัสดุ:</span>
@@ -110,19 +110,20 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                       {formatPrice(item.unitPrice)}
                     </td>
                     <td className="border border-gray-300 px-2 py-2 md:px-4 text-right">
-                      {formatPrice(item.discount)}
+                      {formatPrice(item.discount || 0)}
                     </td>
                     <td className="border border-gray-300 px-2 py-2 md:px-4 text-right">
-                      {formatPrice(item.unitPrice - item.discount)}
+                      {formatPrice(item.unitPrice - (item.discount || 0))}
                     </td>
                     <td className="border border-gray-300 px-2 py-2 md:px-4 text-center">
                       {item.quantity}
                     </td>
                     <td className="border border-gray-300 px-2 py-2 md:px-4 text-right">
-                      {formatPrice(
+                      {/* {formatPrice(
                         item.unitPrice * item.quantity -
-                          item.discount * item.quantity
-                      )}
+                          (item.discount || 0) * item.quantity
+                      )} */}
+                      {formatPrice(item.total)}
                     </td>
                   </tr>
                 ))}

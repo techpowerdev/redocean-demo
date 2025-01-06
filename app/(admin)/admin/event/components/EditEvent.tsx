@@ -18,7 +18,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import toast from "react-hot-toast";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -32,7 +32,6 @@ import { Separator } from "@/components/ui/separator";
 import { usePromotionStore } from "@/state-stores/admin/adminPromotionStore";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-// import { PromotionType } from "@/types/fetchTypes";
 import { DiscountType } from "@/utils/calculateDiscountedPrice";
 import {
   Select,
@@ -44,7 +43,17 @@ import {
 import { formatDateToDatetimeLocal } from "@/utils/formatDate";
 import { Label } from "@/components/ui/label";
 import { SearchProductInEventForm } from "./forms/SearhProductInEventForm";
-import { PromotionType } from "@/types/promotionTypes";
+import {
+  FetchAllPromotionResponseType,
+  PromotionType,
+} from "@/types/promotionTypes";
+import {
+  getAllPromotions,
+  updatePromotion,
+} from "@/services/promotionServices";
+import { CircleX } from "lucide-react";
+import ResponsiveImage from "@/components/shared/ResponsiveImage";
+import { useDropzone } from "react-dropzone";
 
 // Define the schema for validation using zod
 const EventFormSchema = z.object({
@@ -62,10 +71,10 @@ const EventFormSchema = z.object({
     required_error: "กรุณาระบุจำนวนส่วนลด",
     invalid_type_error: "กรุณาระบุจำนวนส่วนลด",
   }),
-  discountGroupAmount: z.coerce.number({
-    required_error: "กรุณาระบุจำนวนส่วนลดสูงสุด",
-    invalid_type_error: "กรุณาระบุจำนวนส่วนลดสูงสุด",
-  }),
+  // discountGroupAmount: z.coerce.number({
+  //   required_error: "กรุณาระบุจำนวนส่วนลดสูงสุด",
+  //   invalid_type_error: "กรุณาระบุจำนวนส่วนลดสูงสุด",
+  // }),
   minimumPurchaseQuantity: z.coerce.number({
     required_error: "กรุณาระบุจำนวนออเดอร์เป้าหมาย",
     invalid_type_error: "กรุณาระบุจำนวนออเดอร์เป้าหมาย",
@@ -80,6 +89,23 @@ const EventFormSchema = z.object({
     required_error: "กรุณาระบุสูงสุดที่สั่งซื้อได้ต่อคน",
     invalid_type_error: "กรุณาระบุสูงสุดที่สั่งซื้อได้ต่อคน",
   }),
+  images: z
+    .array(
+      z.object({
+        name: z.string(),
+        size: z.number().max(5 * 1024 * 1024, "Max file size is 5MB"),
+        type: z.enum([
+          "image/jpeg",
+          "image/jpg",
+          "image/png",
+          "image/gif",
+          "image/webp",
+        ]),
+        file: z.any(),
+      })
+    )
+    .optional()
+    .nullable(), // <--- ปรับให้เป็น optional
 });
 
 type EventFormValues = z.infer<typeof EventFormSchema>;
@@ -107,6 +133,9 @@ export function EditEvent({
   const setPromotionLists = usePromotionStore(
     (state) => state.setPromotionLists
   );
+
+  // local state
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
 
   const form = useForm<EventFormValues>({
     resolver: zodResolver(EventFormSchema), // validate data with the schema
@@ -137,9 +166,40 @@ export function EditEvent({
       minimumPurchaseQuantity:
         selectedPromotion?.promotionActivities?.[0]?.minimumPurchaseQuantity ||
         0,
-      discountGroupAmount:
-        selectedPromotion?.promotionActivities?.[0]?.discountGroupAmount || 0,
+      // discountGroupAmount:selectedPromotion?.promotionActivities?.[0]?.discountGroupAmount || 0,
+      images: [],
     },
+  });
+
+  const onDrop = (acceptedFiles: File[]) => {
+    const newImages = acceptedFiles.map((file) => ({
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      file: file,
+    }));
+
+    // Clear previous images and set the new image
+    form.setValue("images", newImages as never);
+    form.trigger("images");
+
+    // Update image previews to show the latest image
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreviews([reader.result as string]); // Only keep the latest image preview
+    };
+    reader.readAsDataURL(newImages[0].file);
+  };
+
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    accept: {
+      "image/jpeg": [],
+      "image/jpg": [],
+      "image/png": [],
+      "image/webp": [],
+    },
+    maxSize: 5 * 1024 * 1024, // 5MB
   });
 
   useEffect(() => {
@@ -170,9 +230,18 @@ export function EditEvent({
         minimumPurchaseQuantity:
           selectedPromotion?.promotionActivities?.[0]
             ?.minimumPurchaseQuantity || 0,
-        discountGroupAmount:
-          selectedPromotion?.promotionActivities?.[0]?.discountGroupAmount || 0,
+        // discountGroupAmount:selectedPromotion?.promotionActivities?.[0]?.discountGroupAmount || 0,
+        images: [],
       });
+      // แสดงรูปภาพที่มีอยู่จาก selectedPromotion ถ้ามี
+      setImagePreviews(
+        selectedPromotion.images && selectedPromotion.images.length > 0
+          ? [
+              process.env.NEXT_PUBLIC_IMAGE_HOST_URL +
+                selectedPromotion.images[0].url,
+            ]
+          : []
+      );
     }
     selectProductInPromotion(
       selectedPromotion?.promotionActivities?.[0].product || null
@@ -197,59 +266,69 @@ export function EditEvent({
     name: "discountType",
   });
 
-  function onSubmit(data: EventFormValues) {
-    const updateEvent = async () => {
-      try {
-        const promotionData = {
-          type: data.type,
-          name: data.name,
-          description: data.description,
-          startAt: data.startAt,
-          endAt: data.endAt,
-        };
+  async function onSubmit(data: EventFormValues) {
+    const PromotionFormData = new FormData();
+    if (data.images && data.images.length > 0) {
+      PromotionFormData.append("image", data.images[0].file);
+    }
 
-        const promotionActivities = {
-          productId: selectedProductInPromotion?.id,
-          discountType: data.discountType,
-          discountAmount: data.discountAmount,
-          limitQuantity: data.limitQuantity,
-          maxQuantity: data.maxQuantity,
-          limitQuantityPerUser: data.limitQuantityPerUser,
-          maxQuantityPerUser: data.maxQuantityPerUser,
-          minimumPurchaseQuantity: data.minimumPurchaseQuantity,
-          discountGroupAmount: data.discountGroupAmount,
-        };
+    PromotionFormData.append("type", data.type);
+    PromotionFormData.append("name", data.name);
+    PromotionFormData.append("description", data.description);
+    PromotionFormData.append("startAt", data.startAt);
+    PromotionFormData.append("endAt", data.endAt);
 
-        const promotionResult = await axios.put(
-          `${process.env.NEXT_PUBLIC_API_URL}/promotions/${selectedPromotion?.id}`,
-          promotionData
+    try {
+      // const promotionData = {
+      //   type: data.type,
+      //   name: data.name,
+      //   description: data.description,
+      //   startAt: data.startAt,
+      //   endAt: data.endAt,
+      //   // images: data.images,
+      // };
+
+      const promotionActivities = {
+        productId: selectedProductInPromotion?.id,
+        discountType: data.discountType,
+        discountAmount: data.discountAmount,
+        limitQuantity: data.limitQuantity,
+        maxQuantity: data.maxQuantity,
+        limitQuantityPerUser: data.limitQuantityPerUser,
+        maxQuantityPerUser: data.maxQuantityPerUser,
+        minimumPurchaseQuantity: data.minimumPurchaseQuantity,
+        // discountGroupAmount: data.discountGroupAmount,
+      };
+
+      const promotionResult = await updatePromotion(
+        selectedPromotion?.id || "",
+        PromotionFormData
+      );
+
+      const promotionActivityResult = await axios.put(
+        `${process.env.NEXT_PUBLIC_API_URL}/promotions/activities/${selectedPromotion?.promotionActivities?.[0].id}`,
+        promotionActivities
+      );
+
+      if (promotionResult || promotionActivityResult) {
+        const newPromotions: FetchAllPromotionResponseType =
+          await getAllPromotions();
+        setPromotionLists(newPromotions.data);
+
+        const updateSelectedPromotion = newPromotions.data.find(
+          (item: PromotionType) => item.id === selectedPromotion?.id
         );
 
-        const promotionActivityResult = await axios.put(
-          `${process.env.NEXT_PUBLIC_API_URL}/promotions/activities/${selectedPromotion?.promotionActivities?.[0].id}`,
-          promotionActivities
-        );
-
-        if (promotionResult || promotionActivityResult) {
-          const newPromotions = await axios.get(
-            `${process.env.NEXT_PUBLIC_API_URL}/promotions/all`
-          );
-
-          const updateSelectedPromotion = newPromotions.data.find(
-            (item: PromotionType) => item.id === selectedPromotion?.id
-          );
+        if (updateSelectedPromotion) {
           selectPromotion(updateSelectedPromotion);
-          setPromotionLists(newPromotions.data);
         }
-        toast.success("แก้ไขกิจกรรมแล้ว");
-      } catch (error) {
-        toast.error("แก้ไขกิจกรรมไม่สำเร็จ");
-
-        console.error("Error occurred:", error);
       }
-    };
+      toast.success("แก้ไขกิจกรรมแล้ว");
+    } catch (error) {
+      toast.error("แก้ไขกิจกรรมไม่สำเร็จ");
 
-    updateEvent();
+      console.error("Error occurred:", error);
+    }
   }
 
   useEffect(() => {
@@ -372,6 +451,81 @@ export function EditEvent({
                           </FormItem>
                         )}
                       />
+
+                      {/* Image */}
+                      <FormField
+                        control={form.control}
+                        name="images"
+                        render={() => (
+                          <div className="grid w-full items-center gap-1.5">
+                            <FormLabel htmlFor="photo">รูปกิจกรรม</FormLabel>
+                            <div
+                              {...getRootProps()}
+                              className="border-2 border-dashed border-gray-300 p-2 text-center"
+                            >
+                              <Input
+                                {...getInputProps()}
+                                id="photo"
+                                type="file"
+                                className=""
+                              />
+                              <span className="text-[14px] text-center font-semibold">
+                                ลากและวางรูปภาพที่นี่, หรือคลิกเพื่อเลือก
+                              </span>
+                              <FormMessage />
+                              <div className="flex justify-start items-center gap-x-2 gap-y-4 flex-wrap my-2">
+                                {imagePreviews.map((preview, index) => (
+                                  <div
+                                    key={index}
+                                    className="relative w-56 border-2 border-accent-800 rounded-md"
+                                  >
+                                    <ResponsiveImage
+                                      src={preview}
+                                      alt={`Preview ${index}`}
+                                    />
+
+                                    <CircleX
+                                      onClick={(event) => {
+                                        event.stopPropagation();
+
+                                        // ตรวจสอบว่ามี images อยู่หรือไม่
+                                        const currentImages =
+                                          form.getValues("images") ?? [];
+
+                                        // กรองข้อมูลเพื่อเอารูปภาพที่ไม่ต้องการออก
+                                        const updatedImages =
+                                          currentImages?.filter(
+                                            (_, i) => i !== index
+                                          ) ?? [];
+
+                                        // ตั้งค่า images ใหม่
+                                        form.setValue(
+                                          "images",
+                                          updatedImages as never
+                                        );
+
+                                        // อัพเดท preview images
+                                        setImagePreviews((prev) =>
+                                          prev.filter((_, i) => i !== index)
+                                        );
+
+                                        // ตรวจสอบค่าของ images ใหม่อีกครั้ง
+                                        form.trigger("images");
+                                      }}
+                                      size={20}
+                                      className="text-red-400 hover:text-red-500 cursor-pointer absolute -top-3 -right-1"
+                                    />
+                                  </div>
+                                ))}
+                              </div>
+                              <span className="text-[12px] text-gray-400 text-center">
+                                อัพโหลดได้เฉพาะไฟล์ .jpg, .png, and .webp
+                                เท่านั้น และต้องมีขนาดไม่เกิน 5MB.
+                              </span>
+                            </div>
+                          </div>
+                        )}
+                      />
                     </TabsContent>
 
                     <TabsContent value="eventDetail" className="space-y-6 px-2">
@@ -487,7 +641,7 @@ export function EditEvent({
                               </FormItem>
                             )}
                           />
-                          <FormField
+                          {/* <FormField
                             control={form.control}
                             name={`discountGroupAmount`}
                             render={({ field }) => (
@@ -507,7 +661,7 @@ export function EditEvent({
                                 <FormMessage />
                               </FormItem>
                             )}
-                          />
+                          /> */}
                         </>
                       )}
 

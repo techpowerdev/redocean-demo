@@ -79,7 +79,6 @@
 
 "use client";
 import { ProductType, ProductVariantType } from "@/types/productTypes";
-// import { ProductType, ProductVariantType } from "@/types/fetchTypes";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
@@ -125,7 +124,7 @@ export default function ProductImage({
           ?.map((variant) => (
             <div
               key={variant.id}
-              onClick={() => setSelectedImage(variant.image)}
+              onClick={() => setSelectedImage(variant.image || null)}
               className={`relative w-[80%] aspect-square rounded 
               ${
                 selectedImage === variant.image

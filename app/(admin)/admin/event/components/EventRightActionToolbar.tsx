@@ -4,10 +4,13 @@ import { SquarePen, Trash2 } from "lucide-react";
 import ActionToolbar from "../../components/shared/ActionToolbar";
 import { DeletePopup } from "@/components/shared/DeletePopup";
 import { useState } from "react";
-import axios from "axios";
-import { deletePromotion } from "@/services/promotionServices";
+import {
+  deletePromotion,
+  getAllPromotions,
+} from "@/services/promotionServices";
 import { usePromotionStore } from "@/state-stores/admin/adminPromotionStore";
 import { EditEvent } from "./EditEvent";
+import { FetchAllPromotionResponseType } from "@/types/promotionTypes";
 
 export function EventRightActionToolbar() {
   // global state
@@ -32,14 +35,11 @@ export function EventRightActionToolbar() {
   };
 
   const handleDelete = async () => {
-    const result = await deletePromotion(selectedPromotion?.id || "");
-    if (result) {
-      const newPromotions = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/promotions/all`
-      );
-      selectPromotion(null);
-      setPromotionLists(newPromotions.data);
-    }
+    await deletePromotion(selectedPromotion?.id || "");
+    const newPromotions: FetchAllPromotionResponseType =
+      await getAllPromotions();
+    selectPromotion(null);
+    setPromotionLists(newPromotions.data);
   };
 
   return (

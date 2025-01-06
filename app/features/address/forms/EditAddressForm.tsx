@@ -15,7 +15,6 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useCurrentUserStore } from "@/state-stores/useCurrentUserStore";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { Edit } from "lucide-react";
@@ -99,7 +98,6 @@ type Props = {
 };
 export default function EditAddressForm({ address }: Props) {
   // global state
-  const token = useCurrentUserStore((state) => state.token);
   const updateAddress = useAddressStore((state) => state.updateAddress);
 
   // local state
@@ -138,7 +136,7 @@ export default function EditAddressForm({ address }: Props) {
         isActive: val.isActive,
       };
 
-      updateAddress(token || "", address.id, formData);
+      updateAddress(address.id, formData);
 
       setLoading(false);
     } catch (error) {

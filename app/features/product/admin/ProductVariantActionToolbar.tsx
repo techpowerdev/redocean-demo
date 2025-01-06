@@ -1,14 +1,13 @@
 import { Eye, SquarePen, Trash2 } from "lucide-react";
-// import { ProductVariantType } from "@/types/fetchTypes";
 import { useState } from "react";
 import { deleteProductVariant } from "@/services/productServices";
 import { DeletePopup } from "@/components/shared/DeletePopup";
 import axios from "axios";
 import { useProductStore } from "@/state-stores/admin/adminProductStore";
 import ActionToolbar from "@/app/(admin)/admin/components/shared/ActionToolbar";
-import ToggleBooleanField from "./forms/ToggleBooleanField";
 import EditVariantOptions from "./forms/EditVariantOptions";
 import { ProductVariantType } from "@/types/productTypes";
+import ChangeBooleanStatusField from "@/components/shared/ChangeBooleanStatusField";
 
 type Props = {
   productVariant: ProductVariantType;
@@ -17,6 +16,9 @@ export function ProductVariantActionToolbar({ productVariant }: Props) {
   // global state
   const setProductLists = useProductStore((state) => state.setProductLists);
   const selectProduct = useProductStore((state) => state.selectProduct);
+  const changeVariantStatus = useProductStore(
+    (state) => state.changeVariantStatus
+  );
 
   // local state
   const [openEditForm, setOpenEditForm] = useState(false);
@@ -50,21 +52,14 @@ export function ProductVariantActionToolbar({ productVariant }: Props) {
   return (
     <>
       <div className="flex justify-center items-center mx-2">
-        <ToggleBooleanField
+        <ChangeBooleanStatusField
           initialStatus={productVariant.isActive}
-          fieldName="isActive"
-          icon={Eye}
-          apiEndpoint={`${process.env.NEXT_PUBLIC_API_URL}/products/variants/change-status/${productVariant.id}`} // ปรับ Endpoint ให้ตรงกับสินค้า
           id={productVariant.id} // ส่งค่า ID ที่ถูกต้อง
+          changeStatus={changeVariantStatus}
           label="Active"
+          icon={Eye}
         />
       </div>
-      {/* edit product form */}
-      {/* <EditProductVariant
-        productVariant={productVariant}
-        open={openEditForm}
-        setOpen={setOpenEditForm}
-      /> */}
 
       <EditVariantOptions
         productVariant={productVariant}

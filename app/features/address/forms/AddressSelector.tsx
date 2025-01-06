@@ -48,39 +48,19 @@
 //   );
 // }
 
-import React, { useEffect } from "react";
+import React from "react";
 import AutocompleteAddressForm from "./CreateAddressForm";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import AddressCard from "./AddressCard";
-import { getAddress } from "@/services/addressServices";
 import { useAddressStore } from "@/state-stores/addressStore";
-import { AddressType } from "@/types/addressTypes";
 
 export default function AddressSelector() {
   // global state
-  const setAddresses = useAddressStore((state) => state.setAddresses);
   const addresses = useAddressStore((state) => state.addresses);
   const selectAddress = useAddressStore((state) => state.selectAddress);
   const selectedAddress = useAddressStore((state) => state.selectedAddress);
-
-  // useEffect(() => {
-  //   const fetchAddresses = async () => {
-  //     const addresses: AddressType[] = await getAddress();
-  //     console.log(addresses);
-  //     // // ค้นหาที่อยู่ที่ isActive = true และตั้งค่าเริ่มต้น
-  //     // const activeAddress = addresses?.find(
-  //     //   (address: AddressType) => address.isActive
-  //     // );
-  //     // if (activeAddress) {
-  //     //   selectAddress(activeAddress); // เลือกที่อยู่เริ่มต้น
-  //     // }
-  //     // setAddresses(addresses);
-  //   };
-
-  //   fetchAddresses();
-  // }, [selectAddress, setAddresses]);
 
   return (
     <div>

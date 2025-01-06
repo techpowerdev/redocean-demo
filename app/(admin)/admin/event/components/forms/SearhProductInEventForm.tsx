@@ -19,13 +19,13 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { useProductStore } from "@/state-stores/admin/adminProductStore";
 import { usePromotionStore } from "@/state-stores/admin/adminPromotionStore";
 // import { ProductType } from "@/types/fetchTypes";
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
-import { ProductType } from "@/types/productTypes";
+import { FetchAllProductResponseType, ProductType } from "@/types/productTypes";
+import { getAllProducts } from "@/services/productServices";
 
 type Props = {
   initialProduct?: ProductType | null;
@@ -46,25 +46,23 @@ export function SearchProductInEventForm({ initialProduct }: Props) {
   const [value, setValue] = useState(initialProduct?.name || "");
 
   useEffect(() => {
-    const getAllProducts = async () => {
+    const fetchAllProducts = async () => {
       try {
-        const { data } = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/products/all`
-        );
-        setProductLists(data.data);
+        const products: FetchAllProductResponseType = await getAllProducts();
+        setProductLists(products.data);
       } catch (error) {
         console.error("Error fetching products:", error);
       }
     };
-    getAllProducts();
-  }, [setProductLists]);
+    fetchAllProducts();
+  }, []);
 
   useEffect(() => {
     const product = productLists?.find((product) => product.name === value);
     if (product) {
       selectProductInPromotion(product);
     }
-  }, [productLists, selectProductInPromotion, value]);
+  }, [productLists, value]);
 
   return (
     <>

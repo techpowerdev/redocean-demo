@@ -1,19 +1,48 @@
-import { ProductVariantType } from "@/types/fetchTypes";
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import apiClient from "./apiClient";
-import { CreateProductType } from "@/types/productTypes";
 
-export const createProduct = async (ProductData: CreateProductType) => {
+// specific for user
+export const getAllProductForSell = async () => {
   try {
-    const result = await apiClient.post(`/products`, ProductData, {
+    const response = await apiClient.get(`/products/for-sell/all`);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || "ดึงข้อมูลสินค้าไม่สำเร็จ"
+      );
+    }
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
+  }
+};
+
+export const getOneProductForSell = async (productId: string) => {
+  try {
+    const response = await apiClient.get(`/products/for-sell/${productId}`);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || "ดึงข้อมูลสินค้าไม่สำเร็จ"
+      );
+    }
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
+  }
+};
+
+// end of specific for user
+
+export const addProduct = async (formData: FormData) => {
+  try {
+    const response = await apiClient.post(`/products`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
     });
-    return result.data;
+    return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      throw new Error(error.response?.data?.message || "เพิ่มสินค้าแล้ว");
+      throw new Error(error.response?.data?.message || "เพิ่มสินค้าไม่สำเร็จ");
     }
     throw new Error("เกิดข้อผิดพลาดบางอย่าง");
   }
@@ -21,10 +50,8 @@ export const createProduct = async (ProductData: CreateProductType) => {
 
 export const getAllProducts = async () => {
   try {
-    const result = await apiClient.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/products/all`
-    );
-    return result.data;
+    const response = await apiClient.get(`/products/all`);
+    return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       throw new Error(
@@ -37,8 +64,8 @@ export const getAllProducts = async () => {
 
 export const getProductById = async (productId: string) => {
   try {
-    const result = await apiClient.get(`/products/${productId}`);
-    return result.data;
+    const response = await apiClient.get(`/products/${productId}`);
+    return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       throw new Error(
@@ -49,10 +76,61 @@ export const getProductById = async (productId: string) => {
   }
 };
 
+export const updateProduct = async (id: string, formData: FormData) => {
+  try {
+    const response = await apiClient.put(`/products/${id}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message || "แก้ไขสินค้าไม่สำเร็จ");
+    }
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
+  }
+};
+
+export const changeProductStatus = async (id: string, status: boolean) => {
+  try {
+    const response = await apiClient.patch(`/products/change-status/${id}`, {
+      isActive: status,
+    });
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || "แก้ไขสถานะสินค้าไม่สำเร็จ"
+      );
+    }
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
+  }
+};
+
+export const changeHasVariantStatus = async (id: string, status: boolean) => {
+  try {
+    const response = await apiClient.patch(
+      `/products/change-hasvariant-status/${id}`,
+      {
+        hasVariant: status,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || "แก้ไขสถานะสินค้าไม่สำเร็จ"
+      );
+    }
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
+  }
+};
+
 export const deleteProduct = async (productId: string) => {
   try {
-    const result = await apiClient.delete(`/products/${productId}`);
-    return result.data;
+    const response = await apiClient.delete(`/products/${productId}`);
+    return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       throw new Error(error.response?.data?.message || "ลบสินค้าไม่สำเร็จ");
@@ -61,17 +139,74 @@ export const deleteProduct = async (productId: string) => {
   }
 };
 
-export const deleteProductVariant = async (
-  productVariantId: string
-): Promise<AxiosResponse<ProductVariantType> | null> => {
+export const addProductVariant = async (formData: FormData) => {
   try {
-    const result = await axios.delete<ProductVariantType>(
-      `${process.env.NEXT_PUBLIC_API_URL}/products/variants/${productVariantId}`
-    );
-    return result;
+    const response = await apiClient.post(`/products/variants`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
   } catch (error) {
-    console.log(error);
-    return null;
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || "เพิ่มตัวเลือกสินค้าไม่สำเร็จ"
+      );
+    }
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
+  }
+};
+
+export const updateProductVariant = async (id: string, formData: FormData) => {
+  try {
+    const response = await apiClient.put(`/products/variants/${id}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || "แก้ไขตัวเลือกสินค้าไม่สำเร็จ"
+      );
+    }
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
+  }
+};
+
+export const changeVariantStatus = async (id: string, status: boolean) => {
+  try {
+    const response = await apiClient.patch(
+      `/products/variants/change-status/${id}`,
+      {
+        isActive: status,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || "แก้ไขสถานะตัวเลือกสินค้าไม่สำเร็จ"
+      );
+    }
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
+  }
+};
+
+export const deleteProductVariant = async (productVariantId: string) => {
+  try {
+    const response = await apiClient.delete(
+      `/products/variants/${productVariantId}`
+    );
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || "ลบตัวเลือกสินค้าไม่สำเร็จ"
+      );
+    }
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
   }
 };
 
@@ -100,17 +235,18 @@ export const searchProductVariant = async (
     }
 
     // ส่งคำขอ API พร้อม query string
-    const { data } = await axios.get(
-      `${
-        process.env.NEXT_PUBLIC_API_URL
-      }/products/${productId}/variants/search/q?${query.toString()}`
+    const response = await apiClient.get(
+      `/products/${productId}/variants/search/q?${query.toString()}`
     );
 
-    console.log("data", data);
     // ส่งข้อมูลที่ได้จาก API
-    return data;
+    return response.data;
   } catch (error) {
-    console.error("Error fetching product variants:", error);
-    throw error; // สามารถ throw error ไปยังตัวเรียกฟังก์ชันเพื่อจัดการได้
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || "ไม่สามารถค้นหาสินค้าได้"
+      );
+    }
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
   }
 };

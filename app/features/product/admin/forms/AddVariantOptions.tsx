@@ -5,7 +5,6 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import axios from "axios";
 import {
   Form,
   FormControl,
@@ -37,9 +36,15 @@ import {
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { useProductStore } from "@/state-stores/admin/adminProductStore";
-// import { ProductType } from "@/types/fetchTypes";
-import { getProductById } from "@/services/productServices";
-import { ProductType } from "@/types/productTypes";
+import {
+  addProductVariant,
+  getAllProducts,
+  getProductById,
+} from "@/services/productServices";
+import {
+  FetchAllProductResponseType,
+  FetchOneProductResponseType,
+} from "@/types/productTypes";
 
 // Define the schema for validation using zod
 const ProductVariantFormSchema = z.object({
@@ -141,19 +146,20 @@ export default function AddVariantOptions() {
 
   const fetchSavedOptions = async (id: string) => {
     try {
-      const response: ProductType = await getProductById(id).then(
-        (res) => res.data
-      );
+      const response: FetchOneProductResponseType = await getProductById(id);
       const variantKeys = Array.from(
         new Set(
-          response.productVariants?.flatMap((product) =>
+          response.data.productVariants?.flatMap((product) =>
             Object.keys(product.variantOptions)
           )
         )
       );
       setSavedOptionNames(variantKeys);
     } catch (error) {
-      toast.error("ไม่สามารถโหลดข้อมูลตัวเลือกสินค้า");
+      if (error instanceof Error) {
+        const errorMessage = error.message;
+        toast.error(errorMessage);
+      }
     }
   };
 
@@ -186,7 +192,7 @@ export default function AddVariantOptions() {
     form.setValue("options", updatedOptions);
   };
 
-  function onSubmit(data: ProductFormValues) {
+  async function onSubmit(data: ProductFormValues) {
     const ProductVariantFormData = new FormData();
     const variantOptions = data.options.reduce((acc, option) => {
       acc[option.name] = option.value;
@@ -210,47 +216,34 @@ export default function AddVariantOptions() {
       console.log(key, value);
     });
 
-    const addProductVariant = async () => {
-      try {
-        setLoading(true);
+    try {
+      setLoading(true);
 
-        const productResult = await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL}/products/variants`,
-          ProductVariantFormData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
+      const productResult = await addProductVariant(ProductVariantFormData);
 
-        if (productResult) {
-          const newProducts = await axios.get(
-            `${process.env.NEXT_PUBLIC_API_URL}/products/all`
-          );
+      if (productResult) {
+        const updateSelectedProduct: FetchOneProductResponseType =
+          await getProductById(productResult.data.productId);
+        selectProduct(updateSelectedProduct.data);
 
-          const updateSelectedProduct = newProducts.data.data.find(
-            (item: ProductType) => item.id === selectedProduct?.id
-          );
+        const newProducts: FetchAllProductResponseType = await getAllProducts();
+        setProductLists(newProducts.data);
+        toast.success("เพิ่มตัวเลือกสินค้าแล้ว");
 
-          selectProduct(updateSelectedProduct);
-          setProductLists(newProducts.data.data);
-
-          // รีเซ็ตค่าฟอร์มหลังจากบันทึกสำเร็จ
-          form.reset();
-          setImagePreviews([]);
-          setSavedOptionNames([]);
-          setOptions([]);
-          toast.success("เพิ่มตัวเลือกสินค้าแล้ว");
-        }
-      } catch (error) {
-        toast.error("ไม่สามารถเพิ่มตัวเลือกสินค้าได้!");
-      } finally {
-        setLoading(false);
+        // รีเซ็ตค่าฟอร์มหลังจากบันทึกสำเร็จ
+        form.reset();
+        setImagePreviews([]);
+        setSavedOptionNames([]);
+        setOptions([]);
       }
-    };
-
-    addProductVariant();
+    } catch (error) {
+      if (error instanceof Error) {
+        const errorMessage = error.message;
+        toast.error(errorMessage);
+      }
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {

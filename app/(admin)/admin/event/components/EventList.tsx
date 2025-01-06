@@ -3,23 +3,25 @@
 import { formatDistanceToNow } from "date-fns";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import ToggleBooleanField from "./ToggleBooleanField";
 import { CalendarClock } from "lucide-react";
 import Loading from "@/components/shared/Loading";
-// import { PromotionType } from "@/types/fetchTypes";
 import { usePromotionStore } from "@/state-stores/admin/adminPromotionStore";
 import { PromotionType } from "@/types/promotionTypes";
+import ChangeBooleanStatusField from "@/components/shared/ChangeBooleanStatusField";
 
 type Props = {
   events: PromotionType[];
 };
+
 export function EventList({ events }: Props) {
   // global state
   const selectedPromotion = usePromotionStore(
     (state) => state.selectedPromotion
   );
   const selectPromotion = usePromotionStore((state) => state.selectPromotion);
-  console.log(events);
+  const changePromotionStatus = usePromotionStore(
+    (state) => state.changePromotionStatus
+  );
   if (events.length === 0) {
     return (
       <div className="w-full flex justify-center items-center">
@@ -86,13 +88,20 @@ export function EventList({ events }: Props) {
                   )} */}
                 </div>
               </div>
-              <ToggleBooleanField
+              {/* <ToggleBooleanField
                 initialStatus={item.isActive}
                 fieldName="isActive"
                 icon={CalendarClock}
-                apiEndpoint={`${process.env.NEXT_PUBLIC_API_URL}/promotions/${item.id}/toggle-active`} // ปรับ Endpoint ให้ตรงกับสินค้า
+                apiEndpoint={`${process.env.NEXT_PUBLIC_API_URL}/promotions/change-status/${item.id}`} // ปรับ Endpoint ให้ตรงกับสินค้า
                 id={item.id} // ส่งค่า ID ที่ถูกต้อง
                 label="Active"
+              /> */}
+              <ChangeBooleanStatusField
+                initialStatus={item.isActive}
+                id={item.id}
+                changeStatus={changePromotionStatus}
+                label="Active"
+                icon={CalendarClock}
               />
             </div>
           ))

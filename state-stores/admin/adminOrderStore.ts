@@ -1,5 +1,6 @@
 import { changeOrderStatus, getAllOrders } from "@/services/orderServices";
-import { OrderType } from "@/types/fetchTypes";
+import { FetchAllOrderResponseType, OrderType } from "@/types/orderTypes";
+// import { OrderType } from "@/types/fetchTypes";
 import { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import { create } from "zustand";
@@ -20,8 +21,9 @@ export const useAdminOrderStore = create<State & Action>()((set) => ({
     try {
       const response = await changeOrderStatus(id, status);
       toast.success(response?.message || "แก้ไขสถานะแล้ว");
-      const updatedOrders = await getAllOrders().then((res) => res);
-      set({ orders: updatedOrders });
+      const updatedOrders: FetchAllOrderResponseType =
+        await getAllOrders().then((res) => res);
+      set({ orders: updatedOrders.data });
     } catch (error) {
       if (error instanceof AxiosError) {
         const errorMessage =

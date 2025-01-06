@@ -6,13 +6,14 @@ import Heading from "@/components/shared/Heading";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import EmptyCart from "./EmptyCart";
-import { fetchCart } from "@/services/cartServices";
+import { getUserCart } from "@/services/cartServices";
 import CartItem from "./CartItem";
 import { useCartServerStore } from "@/state-stores/cartServerStore";
 import { ShoppingCart } from "lucide-react";
 import { checkStockAndPromotionForCheckout } from "@/services/orderServices";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { FetchCartResponseType } from "@/types/cartTypes";
 
 export default function CartClient() {
   const setCart = useCartServerStore((state) => state.setCart);
@@ -43,8 +44,8 @@ export default function CartClient() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetchCart();
-        setCart(response);
+        const response: FetchCartResponseType = await getUserCart();
+        setCart(response.data);
       } catch (error) {
         console.log(error);
       }
@@ -53,7 +54,7 @@ export default function CartClient() {
     fetchData();
   }, []); // กำหนดค่าให้ดึงตะกร้าใหม่ เมื่อมีการ เพิ่ม ลบ แก้ไข ล้างตะกร้า
 
-  if (!cart || cart.cartItems.length === 0) {
+  if (!cart || cart.cartItems?.length === 0) {
     return <EmptyCart />;
   }
 

@@ -2,23 +2,22 @@
 
 import { formatPrice } from "@/utils/formatPrice";
 import { useCallback, useEffect, useState } from "react";
-
-// import { ProductType, VariantOption } from "@/types/fetchTypes";
 import toast from "react-hot-toast";
 import {
   calculateDiscountedPrice,
   DiscountType,
 } from "@/utils/calculateDiscountedPrice";
-import ProductImage from "./ProductImages";
-import SetProductQuantity from "./SetProductQuantity";
+import ProductImage from "@/app/features/product/ProductImages";
+import SetProductQuantity from "@/app/features/product/SetProductQuantity";
 import { searchProductVariant } from "@/services/productServices";
-import ProductOptions from "./ProductOptions";
-import AddProductToCart from "./AddProductToCart";
+import ProductOptions from "@/app/features/product/ProductOptions";
+import AddProductToCart from "@/app/features/product/AddProductToCart";
 import {
-  CartProductType,
+  // CartProductType,
   ProductType,
   VariantOption,
 } from "@/types/productTypes";
+import { AddProductToCardInputType } from "@/types/cartTypes";
 interface Props {
   product: ProductType;
 }
@@ -51,14 +50,11 @@ export default function ProductCard({ product }: Props) {
   const [selectedVariant, setSelectedVariant] =
     useState<selectedVariantType | null>(null);
 
-  const [cartProduct, setCartProduct] = useState<CartProductType>({
+  const [cartProduct, setCartProduct] = useState<AddProductToCardInputType>({
     productId: "",
-    promotionActivityId: "",
     sku: "",
     quantity: 1,
-    unitPrice: 0,
-    discount: 0,
-    specialDiscount: 0,
+    promotionActivityId: "",
   });
 
   const handleQtyIncrease = useCallback(async () => {
@@ -101,29 +97,17 @@ export default function ProductCard({ product }: Props) {
         setSelectedVariant(productVariant);
         setCartProduct({
           productId: product.id,
-          promotionActivityId: promotionActivity?.id || "",
           sku: productVariant.sku,
           quantity: 1,
-          unitPrice: productVariant.price,
-          discount: promotionActivity
-            ? calculateDiscountedPrice(
-                productVariant?.price,
-                promotionActivity?.discountAmount ||
-                  promotionActivity?.discountGroupAmount ||
-                  0,
-                promotionActivity?.discountType as DiscountType
-              ).discountAmount
-            : 0,
+          promotionActivityId: promotionActivity?.id || "",
         });
       } else {
         setSelectedVariant(null);
         setCartProduct({
           productId: "",
-          promotionActivityId: "",
           sku: "",
           quantity: 1,
-          unitPrice: 0,
-          discount: 0,
+          promotionActivityId: "",
         });
       }
     };
@@ -132,22 +116,6 @@ export default function ProductCard({ product }: Props) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 my-5">
-      {/* <ProductImage
-        images={
-          (
-            productVariants
-              ?.filter((variant) => variant.image !== null)
-              .map((variant) => variant.image) || []
-          ).length > 0
-            ? productVariants
-                ?.filter((variant) => variant.image !== null)
-                .map((variant) => variant.image)
-            : product?.image
-            ? [product.image]
-            : []
-        }
-        selectedVariantImage={selectedVariant?.image || null}
-      /> */}
       <ProductImage
         product={product}
         variants={productVariants}
@@ -176,25 +144,6 @@ export default function ProductCard({ product }: Props) {
                       ).discountedPrice
                     )}
                   </span>
-                ) : null}
-
-                {promotionActivity.discountGroupAmount &&
-                promotionActivity.discountGroupAmount > 0 ? (
-                  <>
-                    <span className="p-2 text-xl">หรือ</span>
-                    <div className="flex gap-1 items-center">
-                      <div className="text-2xl text-red-600 font-bold">
-                        {formatPrice(
-                          calculateDiscountedPrice(
-                            selectedVariant.price,
-                            promotionActivity.discountGroupAmount,
-                            promotionActivity.discountType as DiscountType
-                          ).discountedPrice
-                        )}
-                      </div>
-                      <div>{`(เมื่อมียอดสั่งซื้อครบ ${promotionActivity.minimumPurchaseQuantity} ชิ้น)`}</div>
-                    </div>
-                  </>
                 ) : null}
               </div>
             ) : (
@@ -226,24 +175,6 @@ export default function ProductCard({ product }: Props) {
                       ).discountedPrice
                     )}
                   </span>
-                ) : null}
-                {promotionActivity.discountGroupAmount &&
-                promotionActivity.discountGroupAmount > 0 ? (
-                  <>
-                    <span className="p-2 text-xl">หรือ</span>
-                    <div className="flex gap-1 items-center">
-                      <div className="text-2xl text-red-600 font-bold">
-                        {formatPrice(
-                          calculateDiscountedPrice(
-                            product.price,
-                            promotionActivity.discountGroupAmount,
-                            promotionActivity.discountType as DiscountType
-                          ).discountedPrice
-                        )}
-                      </div>
-                      <div>{`(เมื่อมียอดสั่งซื้อครบ ${promotionActivity.minimumPurchaseQuantity} ชิ้น)`}</div>
-                    </div>
-                  </>
                 ) : null}
               </div>
             ) : (

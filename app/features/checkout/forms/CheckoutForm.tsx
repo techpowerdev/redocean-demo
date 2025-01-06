@@ -40,6 +40,7 @@ export default function CheckoutForm() {
   // global state
   const cart = useCartServerStore((state) => state.cart);
   const clearCart = useCartServerStore((state) => state.clearCart);
+  const addresses = useAddressStore((state) => state.addresses);
   const selectedAddress = useAddressStore((state) => state.selectedAddress);
 
   const router = useRouter();
@@ -65,13 +66,13 @@ export default function CheckoutForm() {
       const orderItemsData: CreateOderItemType[] = []; // เริ่มต้นเป็น array เปล่า
 
       if (cart) {
-        cart.cartItems.forEach((item) => {
+        cart.cartItems?.forEach((item) => {
           const orderItem = {
             sku: item.sku,
             quantity: item.quantity,
             unitPrice: item.unitPrice,
             discount: item.discount || 0,
-            specialDiscount: item.specialDiscount || 0,
+            // specialDiscount: item.specialDiscount || 0,
             productId: item.productId,
             promotionActivityId: item.promotionActivityId || null,
             total: item.discount
@@ -115,6 +116,10 @@ export default function CheckoutForm() {
     }
   };
   const onSubmit = () => {
+    if (!selectedAddress || !addresses || addresses?.length === 0) {
+      toast.error("กรุณาระบุที่อยู่การจัดส่ง");
+      return;
+    }
     placeOrder();
   };
 

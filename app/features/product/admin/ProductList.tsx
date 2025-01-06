@@ -3,25 +3,23 @@
 import { formatDistanceToNow } from "date-fns";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
-// import ToggleBooleanField from "./ToggleBooleanField";
-// import { Flame } from "lucide-react";
 import Image from "next/image";
 import { useProductStore } from "@/state-stores/admin/adminProductStore";
 import Loading from "@/components/shared/Loading";
-// import { ProductType } from "@/types/fetchTypes";
-import ToggleBooleanField from "./forms/ToggleBooleanField";
 import { Eye } from "lucide-react";
 import { ProductType } from "@/types/productTypes";
+import ChangeBooleanStatusField from "@/components/shared/ChangeBooleanStatusField";
 
 interface Props {
   items: ProductType[] | null;
 }
 
-// const apiURL = process.env.NEXT_PUBLIC_IMAGE_HOST_URL;
-
 export function ProductList({ items }: Props) {
   const selectProduct = useProductStore((state) => state.selectProduct);
   const selectedProduct = useProductStore((state) => state.selectedProduct);
+  const changeProductStatus = useProductStore(
+    (state) => state.changeProductStatus
+  );
 
   if (items?.length === 0) {
     return (
@@ -86,13 +84,13 @@ export function ProductList({ items }: Props) {
                   </div>
                 </div>
               </div>
-              <ToggleBooleanField
+
+              <ChangeBooleanStatusField
                 initialStatus={item.isActive}
-                fieldName="isActive"
-                icon={Eye}
-                apiEndpoint={`${process.env.NEXT_PUBLIC_API_URL}/products/change-status/${item.id}`} // ปรับ Endpoint ให้ตรงกับสินค้า
-                id={item.id} // ส่งค่า ID ที่ถูกต้อง
+                id={item.id}
+                changeStatus={changeProductStatus}
                 label="Active"
+                icon={Eye}
               />
             </div>
           ))

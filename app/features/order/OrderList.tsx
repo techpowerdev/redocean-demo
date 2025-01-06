@@ -9,8 +9,9 @@ import NoOrder from "./NoOrder";
 import OrderItem from "./OrderItem";
 import { getUserOrders } from "@/services/orderServices";
 import { useRouter } from "next/navigation";
-import { OrderType } from "@/types/orderTypes";
+import { FetchAllOrderResponseType, OrderType } from "@/types/orderTypes";
 import { Eye, Truck } from "lucide-react";
+import { formatPrice } from "@/utils/formatPrice";
 
 export default function OrderList() {
   const router = useRouter();
@@ -21,10 +22,8 @@ export default function OrderList() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const userOrders: OrderType[] = await getUserOrders().then(
-          (res) => res.data
-        );
-        setUserOrders(userOrders);
+        const userOrders: FetchAllOrderResponseType = await getUserOrders();
+        setUserOrders(userOrders.data);
       } catch (error) {
         console.log(error);
       }
@@ -56,6 +55,9 @@ export default function OrderList() {
               <OrderItem key={orderItem.id} item={orderItem} />
             ))}
           </Link>
+          <p className="text-end font-semibold my-2">
+            รวมเป็นเงินทั้งสิ้น : {formatPrice(order.totalAmount)}
+          </p>
           <div className="grid grid-cols-2 items-center gap-2">
             <Link
               href={`/order/${order.id}`}

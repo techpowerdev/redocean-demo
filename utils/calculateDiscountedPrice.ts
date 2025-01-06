@@ -3,7 +3,7 @@ export type DiscountType = "fixed" | "percent";
 export function calculateDiscountedPrice(
   originalPrice: number,
   discountValue: number,
-  discountType: DiscountType
+  discountType: string
 ): { discountAmount: number; discountedPrice: number } {
   if (originalPrice < 0 || discountValue < 0) {
     throw new Error("Original price and discount value must be non-negative.");

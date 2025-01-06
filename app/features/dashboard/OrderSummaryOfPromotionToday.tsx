@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import DashboardCard from "./DashboardCard";
 import { getOrderSummaryOfGroupBuying } from "@/services/orderServices";
 import { CircleCheckBig, RefreshCw, ScrollText, Truck } from "lucide-react";
+import { OrderSummaryReponseType, OrderSummaryType } from "@/types/orderTypes";
 
 type orderSummaryType = {
   totalOrders: number;
@@ -17,15 +18,14 @@ type Props = {
 export default function OrderSummaryOfPromotionToday({
   promotionActivityId,
 }: Props) {
-  const [orderSummary, setOrderSummary] = useState<orderSummaryType | null>(
+  const [orderSummary, setOrderSummary] = useState<OrderSummaryType | null>(
     null
   );
   useEffect(() => {
     const fetchData = async () => {
-      const orderSummary: orderSummaryType | null =
+      const orderSummary: OrderSummaryReponseType =
         await getOrderSummaryOfGroupBuying(promotionActivityId);
-      console.log(orderSummary);
-      setOrderSummary(orderSummary);
+      setOrderSummary(orderSummary.data);
     };
     fetchData();
   }, [promotionActivityId]);

@@ -19,6 +19,8 @@ import {
   // CircleCheckBig,
   // CircleX,
   Flame,
+  GalleryVertical,
+  Images,
   // LayoutDashboard,
   LucideIcon,
   // PackageOpen,
@@ -157,18 +159,26 @@ export function AdminLayout({
       icon: ShoppingBag,
       variant: "default",
     },
-    // {
-    //   href: "/admin/hot-deal",
-    //   title: "Hot Deal",
-    //   // label: "128",
-    //   icon: Flame,
-    //   variant: "default",
-    // },
+
     {
       href: "/admin/event",
       title: "จัดการอีเวนท์",
       // label: "342",
       icon: CalendarClock,
+      variant: "default",
+    },
+    {
+      href: "/admin/banner",
+      title: " แบนเนอร์",
+      // label: "128",
+      icon: GalleryVertical,
+      variant: "default",
+    },
+    {
+      href: "/admin/media/image",
+      title: "คลังรูปภาพ",
+      // label: "128",
+      icon: Images,
       variant: "default",
     },
   ];
@@ -229,7 +239,11 @@ export function AdminLayout({
           <AdminNavbar isCollapsed={isCollapsed} links={secondLinks} />
         </ResizablePanel>
         <ResizableHandle withHandle />
-        <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
+        <ResizablePanel
+          // className="p-4"
+          defaultSize={defaultLayout[1]}
+          minSize={30}
+        >
           {children}
         </ResizablePanel>
       </ResizablePanelGroup>

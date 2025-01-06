@@ -7,11 +7,14 @@ import { ProductVariantActionToolbar } from "./ProductVariantActionToolbar";
 import { formatPrice } from "@/utils/formatPrice";
 import AddVariantOptions from "./forms/AddVariantOptions";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import ToggleBooleanField from "./forms/ToggleBooleanField";
 import { ListPlus } from "lucide-react";
+import ChangeBooleanStatusField from "@/components/shared/ChangeBooleanStatusField";
 
 export default function ProductDetailComponent() {
   const selectedProduct = useProductStore((state) => state.selectedProduct);
+  const changeHasVariantStatus = useProductStore(
+    (state) => state.changeHasVariantStatus
+  );
 
   return (
     <div className="h-full flex-1 flex flex-col justify-stretch">
@@ -60,13 +63,12 @@ export default function ProductDetailComponent() {
           </div>
           {/* end header */}
           <div className="flex justify-end items-center mx-2 p-2">
-            <ToggleBooleanField
+            <ChangeBooleanStatusField
               initialStatus={selectedProduct.hasVariant}
-              fieldName="hasVariant"
-              icon={ListPlus}
-              apiEndpoint={`${process.env.NEXT_PUBLIC_API_URL}/products/change-hasvariant-status/${selectedProduct.id}`} // ปรับ Endpoint ให้ตรงกับสินค้า
               id={selectedProduct.id} // ส่งค่า ID ที่ถูกต้อง
+              changeStatus={changeHasVariantStatus}
               label="ตั้งค่าชนิดสินค้า"
+              icon={ListPlus}
             />
           </div>
           <Separator />

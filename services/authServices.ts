@@ -1,6 +1,6 @@
 import axios from "axios";
 import apiClient from "./apiClient";
-import { LineLoginType, LoginType, SignUpType } from "@/types/authTypes";
+import { LineLoginType, LoginType, SignUpType } from "@/types/userTypes";
 
 export async function signUp(signUpData: SignUpType) {
   try {
@@ -57,6 +57,24 @@ export async function logoutUser() {
   } catch (error) {
     if (axios.isAxiosError(error)) {
       throw new Error(error.response?.data?.message || "ออกจากระบบไม่สำเร็จ");
+    }
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
+  }
+}
+
+export async function verifyUser(
+  phoneNumber: string,
+  phoneVerified: boolean = true
+) {
+  try {
+    const response = await apiClient.put(`/verify-user`, {
+      phoneNumber,
+      phoneVerified,
+    });
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message || "ยืนยันตัวตนไม่สำเร็จ");
     }
     throw new Error("เกิดข้อผิดพลาดบางอย่าง");
   }
