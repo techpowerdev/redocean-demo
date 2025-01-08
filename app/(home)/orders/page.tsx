@@ -1,6 +1,6 @@
 "use client";
 
-import OrderList from "../../features/order/OrderList";
+import OrderList from "@/app/features/order/OrderList";
 import { useCurrentUserStore } from "@/state-stores/useCurrentUserStore";
 import LineLogin from "@/app/features/auth/LineLogin";
 import Heading from "@/components/shared/Heading";

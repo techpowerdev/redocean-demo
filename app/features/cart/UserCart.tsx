@@ -5,14 +5,13 @@ import { Button } from "@/components/ui/button";
 import Heading from "@/components/shared/Heading";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import EmptyCart from "./EmptyCart";
+import EmptyCart from "@/app/features/cart/EmptyCart";
 import { getUserCart } from "@/services/cartServices";
-import CartItem from "./CartItem";
+import CartItem from "@/app/features/cart/CartItem";
 import { useCartServerStore } from "@/state-stores/cartServerStore";
 import { ShoppingCart } from "lucide-react";
 import { checkStockAndPromotionForCheckout } from "@/services/orderServices";
 import toast from "react-hot-toast";
-import axios from "axios";
 import { FetchCartResponseType } from "@/types/cartTypes";
 
 export default function CartClient() {
@@ -24,19 +23,18 @@ export default function CartClient() {
 
   const handleCheckout = async () => {
     try {
-      const isStockSufficient = await checkStockAndPromotionForCheckout(
-        cart?.cartItems || []
-      );
-
-      if (isStockSufficient) {
-        router.push("/checkout");
+      if (cart?.cartItems) {
+        const isStockSufficient = await checkStockAndPromotionForCheckout(
+          cart?.cartItems
+        );
+        if (isStockSufficient) {
+          router.push("/checkout");
+        }
       }
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error("Axios error details:", error.response?.data);
-        toast.error(error.response?.data.message);
-      } else {
-        console.error("Unexpected error:", error);
+      if (error instanceof Error) {
+        const errorMessage = error.message;
+        toast.error(errorMessage);
       }
     }
   };
@@ -45,6 +43,7 @@ export default function CartClient() {
     const fetchData = async () => {
       try {
         const response: FetchCartResponseType = await getUserCart();
+        console.log(response.data);
         setCart(response.data);
       } catch (error) {
         console.log(error);

@@ -1,7 +1,6 @@
 "use client";
 
 // import "./printStyle.module.css";
-import Image from "next/image";
 import { formatPrice } from "@/utils/formatPrice";
 import { truncateText } from "@/utils/truncateText";
 import { changeTrackingNumber, getOneOrder } from "@/services/orderServices";
@@ -23,6 +22,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Loading from "@/components/shared/Loading";
+import ResponsiveImage from "@/components/shared/ResponsiveImage";
 
 const FormSchema = z.object({
   trackingNumber: z.string(),
@@ -166,16 +166,14 @@ export default function PrintOrderDetail({
               <tr key={item.id} className="border-b">
                 <td className="border border-gray-300 px-4 py-2">
                   <div className="flex items-center gap-4">
-                    <div className="relative w-16 h-16">
-                      <Image
+                    <div className="relative w-12 h-auto md:w-16 md:h-auto">
+                      <ResponsiveImage
                         src={
                           item?.image
                             ? `${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}${item.image}`
                             : "/no-image.jpg"
                         }
                         alt={item.name || "Product image"}
-                        fill
-                        className="object-cover"
                       />
                     </div>
                     <div>

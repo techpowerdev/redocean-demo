@@ -12,8 +12,6 @@ export default function Login() {
   const setCurrentUser = useCurrentUserStore((state) => state.setCurrentUser);
   const setToken = useCurrentUserStore((state) => state.setToken);
 
-  const setLoading = useCurrentUserStore((state) => state.setLoading);
-
   // Initialize LIFF and login if necessary
   useEffect(() => {
     const initializeLiff = async () => {
@@ -41,8 +39,6 @@ export default function Login() {
         }
       } catch (err) {
         console.error("Failed to initialize LIFF", err);
-      } finally {
-        setLoading(false);
       }
     };
 

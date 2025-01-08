@@ -131,7 +131,7 @@ export const checkStockAndPromotionForCheckout = async (
   try {
     const response = await apiClient.post(
       `/products/variants/stock/for-checkout`,
-      { orderItems: data }
+      { cartItems: data }
     );
     return response.data;
   } catch (error) {

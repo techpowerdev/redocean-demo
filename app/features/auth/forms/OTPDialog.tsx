@@ -42,8 +42,6 @@ const OTPDialog = () => {
 
   // global state
   const setCurrentUser = useCurrentUserStore((state) => state.setCurrentUser);
-  const token = useCurrentUserStore((state) => state.token);
-  // const isTokenValid = useAuthStore((state) => state.isTokenValid);
   const isVerified = useAuthStore((state) => state.isVerified);
   const setIsVerified = useAuthStore((state) => state.setIsVerified);
 

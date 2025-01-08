@@ -4,13 +4,6 @@ import { getOrderSummaryOfGroupBuying } from "@/services/orderServices";
 import { CircleCheckBig, RefreshCw, ScrollText, Truck } from "lucide-react";
 import { OrderSummaryReponseType, OrderSummaryType } from "@/types/orderTypes";
 
-type orderSummaryType = {
-  totalOrders: number;
-  pendingOrders: number;
-  shippingOrders: number;
-  completedOrders: number;
-};
-
 type Props = {
   promotionActivityId: string | null;
 };

@@ -1,7 +1,7 @@
 import { Eye, SquarePen, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { deleteProductVariant } from "@/services/productServices";
-import { DeletePopup } from "@/components/shared/DeletePopup";
+import { ConfirmationPopup } from "@/components/shared/ConfirmationPopup";
 import axios from "axios";
 import { useProductStore } from "@/state-stores/admin/adminProductStore";
 import ActionToolbar from "@/app/(admin)/admin/components/shared/ActionToolbar";
@@ -67,11 +67,11 @@ export function ProductVariantActionToolbar({ productVariant }: Props) {
         setOpen={setOpenEditForm}
       />
 
-      <DeletePopup
+      <ConfirmationPopup
         title="ต้องการลบตัวเลือกนี้?"
         open={openDeleteForm}
         setOpen={handleOpenDeleteForm}
-        handleDelete={handleDelete}
+        action={handleDelete}
       />
 
       {/* actions */}

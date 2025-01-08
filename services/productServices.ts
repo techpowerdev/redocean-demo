@@ -222,8 +222,8 @@ export const searchProductVariant = async (
 
     if (isSelectedOptionsEmpty) {
       // หากไม่มีการเลือกตัวเลือกให้ดึงข้อมูลผลิตภัณฑ์
-      const data = await getProductById(productId);
-      return data;
+      const response = await getProductById(productId);
+      return response;
     }
 
     // สร้าง query string สำหรับส่งไปยัง API

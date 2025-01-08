@@ -81,67 +81,33 @@ export default function EventDetailComponent() {
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
                   </div>
-                  {selectedPromotion.type === "groupbuying" && (
-                    <div className="p-4 text-lg">
-                      <div className="font-semibold">รายละเอียดโปรโมชั่น :</div>
-                      {/* <div>
+
+                  <div className="p-4 text-lg">
+                    <div className="font-semibold">รายละเอียดโปรโมชั่น :</div>
+                    {/* <div>
                         ราคาขายตั้งต้น {formatPrice(item.product.price)}
                       </div> */}
-                      <div>
-                        <span>{"ส่วนลดเริ่มต้น " + item.discountAmount}</span>
-                        <span>
-                          {item.discountType === "fixed" ? " บาท" : " %"}
-                        </span>
-                      </div>
-                      {/* <div>
-                        <span>
-                          {"จำนวนส่วนลดสูงสุด " + item.discountGroupAmount}
-                        </span>
-                        <span>
-                          {item.discountType === "fixed" ? " บาท" : " %"}
-                        </span>
-                      </div> */}
-                      {item.limitQuantity && item.maxQuantity && (
-                        <div>
-                          {"สินค้ามีจำนวนจำกัดแค่ " +
-                            item.maxQuantity +
-                            " ชิ้นเท่านั้น"}
-                        </div>
-                      )}
-                      {item.limitQuantityPerUser &&
-                        item?.maxQuantityPerUser && (
-                          <div>
-                            {"จำกัดจำนวนไม่เกิน " +
-                              item.maxQuantityPerUser +
-                              " ชิ้นต่อคน"}
-                          </div>
-                        )}
+                    <div>
+                      <span>{"ส่วนลดเริ่มต้น " + item.discountAmount}</span>
+                      <span>
+                        {item.discountType === "fixed" ? " บาท" : " %"}
+                      </span>
                     </div>
-                  )}
-                  {selectedPromotion.type === "flashsale" && (
-                    <div className="p-4 text-lg">
+                    {item.limitQuantity && item.maxQuantity && (
                       <div>
-                        <span>{"ส่วนลด " + item.discountAmount}</span>
-                        <span>
-                          {item.discountType === "fixed" ? " บาท" : " %"}
-                        </span>
+                        {"สินค้ามีจำนวนจำกัดแค่ " +
+                          item.maxQuantity +
+                          " ชิ้นเท่านั้น"}
                       </div>
-                      {item.limitQuantity && item.maxQuantity && (
-                        <div>
-                          {"สินค้ามีจำนวนจำกัดแค่ " +
-                            item.maxQuantity +
-                            " ชิ้นเท่านั้น"}
-                        </div>
-                      )}
-                      {item.limitQuantityPerUser && item.maxQuantityPerUser && (
-                        <div>
-                          {"จำกัดจำนวนไม่เกิน " +
-                            item.maxQuantityPerUser +
-                            " ชิ้นต่อคน"}
-                        </div>
-                      )}
-                    </div>
-                  )}
+                    )}
+                    {item.limitQuantityPerUser && item?.maxQuantityPerUser && (
+                      <div>
+                        {"จำกัดจำนวนไม่เกิน " +
+                          item.maxQuantityPerUser +
+                          " ชิ้นต่อคน"}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}

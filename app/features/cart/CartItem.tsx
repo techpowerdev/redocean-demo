@@ -2,7 +2,7 @@
 import { formatPrice } from "@/utils/formatPrice";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import SetProductQuantity from "./SetProductQuantity";
+import SetProductQuantity from "@/app/features/cart/SetProductQuantity";
 import { useCartServerStore } from "@/state-stores/cartServerStore";
 import { Trash2 } from "lucide-react";
 import { CartItemType } from "@/types/cartTypes";

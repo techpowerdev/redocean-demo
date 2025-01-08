@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "../globals.css";
-import Header from "@/app/(home)/components/Header";
-import MobileMenu from "@/app/(home)/components/MobileMenu";
+import Header from "@/components/shared/Header";
+import MobileMenu from "@/components/shared/MobileMenu";
 import { Toaster } from "react-hot-toast";
 import CheckLogined from "../features/auth/CheckLogined";
 // import ResponsiveDivider from "@/components/shared/ResponsiveDivider";
@@ -43,7 +43,6 @@ export default function RootLayout({
         // }}
         />
         <CheckLogined />
-        {/* <div className="flex flex-col h-screen font-[family-name:var(--font-geist-sans)]"> */}
         <div className="flex flex-col h-screen font-[family-name:var(--font-geist-sans)]">
           {/* Header */}
           <Header />

@@ -1,7 +1,7 @@
 import { SquarePen, Trash2 } from "lucide-react";
 import { useProductStore } from "@/state-stores/admin/adminProductStore";
 import { EditProduct } from "./forms/EditProduct";
-import { DeletePopup } from "@/components/shared/DeletePopup";
+import { ConfirmationPopup } from "@/components/shared/ConfirmationPopup";
 import { useState } from "react";
 import { deleteProduct, getAllProducts } from "@/services/productServices";
 import ActionToolbar from "@/app/(admin)/admin/components/shared/ActionToolbar";
@@ -44,11 +44,11 @@ export function ProductRightActionToolbar() {
         selectedProduct={selectedProduct}
       />
 
-      <DeletePopup
+      <ConfirmationPopup
         title="ต้องการลบสินค้านี้?"
         open={openDeleteForm}
         setOpen={handleOpenDeleteForm}
-        handleDelete={handleDelete}
+        action={handleDelete}
       />
 
       {/* actions */}

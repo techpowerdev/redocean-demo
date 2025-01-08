@@ -21,6 +21,8 @@ export async function middleware(request: NextRequest) {
         },
       }
     );
+    // console.log(response.ok);
+    // console.log(response.status);
 
     if (!response.ok) {
       console.error(

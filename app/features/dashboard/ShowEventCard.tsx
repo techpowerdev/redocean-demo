@@ -5,25 +5,85 @@ import { PromotionCountdown } from "@/app/features/promotion/PromotionCountdown"
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import {
+  changeOrderStatus,
   createOrderFullfillment,
   CreateOrderFullfillmentBody,
   getPromotionOrder,
 } from "@/services/orderServices";
-import { FetchAllOrderResponseType, OrderType } from "@/types/orderTypes";
-import Loading from "@/components/shared/Loading";
+import { FetchAllOrderResponseType } from "@/types/orderTypes";
 import OrderSummaryOfPromotionToday from "./OrderSummaryOfPromotionToday";
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import { PromotionType } from "@/types/promotionTypes";
+import { sendMessageToLine } from "@/services/pushMessageService";
+import { ConfirmationPopup } from "@/components/shared/ConfirmationPopup";
 
 interface Props {
   promotion: PromotionType;
 }
 
 export default function ShowEventCard({ promotion }: Props) {
+  const [sending, setSending] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const fetchOrders = async (promotionActivityId: string) => {
+  const [openSendOrderToConfirmForm, setOpenSendOrderToConfirmForm] =
+    useState(false);
+  const [openSendOrderToFulfillment, setOpenSendOrderToFulfillment] =
+    useState(false);
+
+  const handleOpenSendOrderToConfirmForm = () => {
+    setOpenSendOrderToConfirmForm(!openSendOrderToConfirmForm);
+  };
+  const handleOpenSendOrderToFulfillment = () => {
+    setOpenSendOrderToFulfillment(!openSendOrderToFulfillment);
+  };
+
+  const sendOrdersToConfirm = async (promotionActivityId: string) => {
+    setSending(true);
+    try {
+      const result: FetchAllOrderResponseType = await getPromotionOrder(
+        promotionActivityId
+      );
+      const orders = result.data;
+
+      if (orders) {
+        const results = await Promise.all(
+          orders.map(async (order) => {
+            try {
+              // ส่งข้อความไปที่ Line
+              const messageResult = await sendMessageToLine(
+                order.user?.lineUid || "",
+                `เนื่องจากยอดรวมออเดอร์ไม่ได้ตามเป้าหมาย กรุณายืนยันการสั่งซื้อหรือยกเลิก โดยไปที่ : ${
+                  process.env.NEXT_PUBLIC_CLIENT_HOST_URL + "/order/" + order.id
+                }`
+              );
+
+              // หากส่งข้อความสำเร็จ ให้เปลี่ยนสถานะออเดอร์
+              if (messageResult) {
+                await changeOrderStatus(order.id, "awaiting_confirmation");
+              }
+
+              return messageResult;
+            } catch (error) {
+              console.error(
+                `Failed to send message for order ${order.id}:`,
+                error
+              );
+              return null; // หรือค่าเริ่มต้นกรณีล้มเหลว
+            }
+          })
+        );
+
+        console.log("results Orders:", results);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const sendOrdersToFulfillment = async (promotionActivityId: string) => {
     setLoading(true);
     try {
       const result: FetchAllOrderResponseType = await getPromotionOrder(
@@ -141,13 +201,30 @@ export default function ShowEventCard({ promotion }: Props) {
         <div key={activity.id} className="w-full">
           <div className="flex gap-2 justify-end items-center mb-6">
             <h1>เป้าหมาย: {activity.minimumPurchaseQuantity}</h1>
-            <Button>ยกเลิกและคืนเงิน</Button>
             <Button
-              onClick={() => fetchOrders(activity.id)}
+              onClick={handleOpenSendOrderToConfirmForm}
+              className="bg-orange-500 hover:bg-orange-500 hover:bg-opacity-90"
+            >
+              {sending ? "กำลังส่ง..." : "ส่งคำขอยืนยันคำสั่งซื้อ"}
+            </Button>
+            <ConfirmationPopup
+              title="ส่งคำขอยืนยันคำสั่งซื้อ?"
+              open={openSendOrderToConfirmForm}
+              setOpen={handleOpenSendOrderToConfirmForm}
+              action={() => sendOrdersToConfirm(activity.id)}
+            />
+            <Button
+              onClick={handleOpenSendOrderToFulfillment}
               className="bg-green-500 hover:bg-green-500 hover:bg-opacity-90"
             >
-              {loading ? <Loading /> : "ส่งคำสั่งซื้อให้ไปรษณีย์"}
+              {loading ? "กำลังส่ง..." : "ส่งคำสั่งซื้อให้ไปรษณีย์"}
             </Button>
+            <ConfirmationPopup
+              title="ส่งคำสั่งซื้อให้ไปรษณีย์?"
+              open={openSendOrderToFulfillment}
+              setOpen={handleOpenSendOrderToFulfillment}
+              action={() => sendOrdersToFulfillment(activity.id)}
+            />
           </div>
           <OrderSummaryOfPromotionToday promotionActivityId={activity.id} />
           <div className="my-4">
@@ -210,7 +287,6 @@ export default function ShowEventCard({ promotion }: Props) {
               </div>
             </div>
           </div>
-          {/* <PromotionProductCard PromotionActivity={activity} /> */}
         </div>
       ))}
     </div>

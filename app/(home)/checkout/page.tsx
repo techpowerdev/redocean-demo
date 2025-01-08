@@ -1,13 +1,9 @@
 "use client";
 
 import React from "react";
-// import CheckoutForm from "@/app/features/checkout/forms/CheckoutForm";
 import { useCurrentUserStore } from "@/state-stores/useCurrentUserStore";
 import LineLogin from "@/app/features/auth/LineLogin";
-// import AddressSelector, {
-//   Address,
-// } from "@/app/features/user/address/forms/AddressSelector";
-import CheckoutFormNew from "@/app/features/checkout/forms/CheckoutForm";
+import CheckoutForm from "@/app/features/checkout/forms/CheckoutForm";
 
 export default function CheckOut() {
   const currentUser = useCurrentUserStore((state) => state.currentUser);
@@ -37,22 +33,7 @@ export default function CheckOut() {
   }
   return (
     <div>
-      {/* <h1>Shipping Address</h1>
-      <AddressSelector
-        addresses={addresses}
-        onAddAddress={handleAddAddress}
-        onSelectAddress={handleSelectAddress}
-      />
-      {selectedAddress && (
-        <div>
-          <h2>Selected Address</h2>
-          <p>{selectedAddress.name}</p>
-          <p>{selectedAddress.phone}</p>
-          <p>{selectedAddress.addressLine}</p>
-        </div>
-      )} */}
-      {/* <CheckoutForm userId={currentUser.id} /> */}
-      <CheckoutFormNew />
+      <CheckoutForm />
     </div>
   );
 }

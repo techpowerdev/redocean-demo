@@ -1,14 +1,55 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import { PromotionCountdown } from "@/app/features/promotion/PromotionCountdown";
 import { formatDateTimePromotion } from "@/utils/formatDate";
-import ProductContainer from "@/app/features/product/ProductContainer";
 import { PromotionType } from "@/types/promotionTypes";
+import PromotionProductCard from "@/app/features/promotion/PromotionProductCard";
 
 type Props = {
   promotion: PromotionType;
 };
 
 export default function PromotionItem({ promotion }: Props) {
+  const { startAt, endAt } = promotion;
+  const [isActive, setIsActive] = useState(false);
+
+  useEffect(() => {
+    const now = new Date().getTime();
+    const startTime = new Date(startAt).getTime();
+    const endTime = new Date(endAt).getTime();
+
+    if (now >= startTime && now <= endTime) {
+      // Promotion is active
+      setIsActive(true);
+
+      // Schedule deactivation when the promotion ends
+      const timeUntilEnd = endTime - now;
+      const endTimeout = setTimeout(() => setIsActive(false), timeUntilEnd);
+
+      return () => clearTimeout(endTimeout); // Cleanup timeout on unmount
+    } else if (now < startTime) {
+      // Schedule activation
+      const timeUntilStart = startTime - now;
+      const startTimeout = setTimeout(() => setIsActive(true), timeUntilStart);
+
+      // Schedule deactivation when the promotion ends
+      const timeUntilEnd = endTime - startTime;
+      const endTimeout = setTimeout(
+        () => setIsActive(false),
+        timeUntilEnd + timeUntilStart
+      );
+
+      return () => {
+        clearTimeout(startTimeout);
+        clearTimeout(endTimeout); // Cleanup timeouts on unmount
+      };
+    } else {
+      // Promotion has ended
+      setIsActive(false);
+    }
+  }, [startAt, endAt]);
+
   return (
     <div>
       {promotion.promotionActivities?.map((activity) => (
@@ -26,7 +67,14 @@ export default function PromotionItem({ promotion }: Props) {
               endTime={formatDateTimePromotion(promotion.endAt)}
             />
           </div>
-          <ProductContainer productId={activity.product?.id || ""} />
+          {activity.product && (
+            <PromotionProductCard
+              promotion={promotion}
+              isActive={isActive}
+              promotionActivity={activity}
+              product={activity.product}
+            />
+          )}
         </div>
       ))}
     </div>

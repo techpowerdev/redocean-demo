@@ -38,7 +38,6 @@ export default function Profile() {
 
   return (
     <Container>
-      {/* <MobileContainer> */}
       <div className="flex flex-col items-center">
         <div className="flex flex-col gap-2">
           {currentUser?.pictureUrl && (
@@ -99,7 +98,6 @@ export default function Profile() {
           </Button>
         </div>
       </div>
-      {/* </MobileContainer> */}
     </Container>
   );
 }

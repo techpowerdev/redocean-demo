@@ -9,7 +9,7 @@ type Props = {
 export default function PromotionList({ promotions }: Props) {
   return (
     <div>
-      {promotions?.map((promotion: PromotionType) => (
+      {promotions?.map((promotion) => (
         <div key={promotion.id}>
           <PromotionItem promotion={promotion} />
           <SocialShare

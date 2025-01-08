@@ -2,22 +2,17 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { useCurrentUserStore } from "@/state-stores/useCurrentUserStore";
 import Loading from "@/components/shared/Loading";
 import { formatDateTimePromotion } from "@/utils/formatDate";
-import NoOrder from "./NoOrder";
-import OrderItem from "./OrderItem";
+import NoOrder from "@/app/features/order/NoOrder";
+import OrderItem from "@/app/features/order/OrderItem";
 import { getUserOrders } from "@/services/orderServices";
-import { useRouter } from "next/navigation";
 import { FetchAllOrderResponseType, OrderType } from "@/types/orderTypes";
 import { Eye, Truck } from "lucide-react";
 import { formatPrice } from "@/utils/formatPrice";
 
 export default function OrderList() {
-  const router = useRouter();
-
   const [userOrders, setUserOrders] = useState<OrderType[] | null>(null);
-  const currentUser = useCurrentUserStore((state) => state.currentUser);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -29,7 +24,7 @@ export default function OrderList() {
       }
     };
     fetchOrders();
-  }, [currentUser, router]);
+  }, []);
 
   if (!userOrders) {
     return <Loading size={40} />;

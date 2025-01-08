@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { formatPrice } from "@/utils/formatPrice";
 import { truncateText } from "@/utils/truncateText";
 import { getOneOrder } from "@/services/orderServices";
@@ -9,6 +8,8 @@ import { FetchOneOrderResponseType, OrderType } from "@/types/orderTypes";
 import Container from "@/components/shared/Container";
 import { useEffect, useState } from "react";
 import Loading from "@/components/shared/Loading";
+import ResponsiveImage from "@/components/shared/ResponsiveImage";
+import { Button } from "@/components/ui/button";
 
 export default function OrderDetail({ params }: { params: { id: string } }) {
   const [order, setOrder] = useState<OrderType | null>(null);
@@ -45,7 +46,7 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
           </p>
           <p className="flex flex-wrap gap-2">
             <span className="font-semibold">เลขติดตามพัสดุ:</span>
-            <span>{order?.trackingNumber || "ไม่มีข้อมูล"}</span>
+            <span>{order?.trackingNumber || "ยังไม่มีข้อมูล"}</span>
           </p>
           <p className="flex flex-wrap gap-2">
             <span className="font-semibold">สถานะ:</span>
@@ -84,16 +85,14 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                   <tr key={item.id} className="border-b">
                     <td className="border border-gray-300 px-2 py-2 md:px-4">
                       <div className="flex items-center gap-2 md:gap-4">
-                        <div className="relative w-12 h-12 md:w-16 md:h-16">
-                          <Image
+                        <div className="relative w-12 h-auto md:w-16 md:h-auto">
+                          <ResponsiveImage
                             src={
                               item?.image
                                 ? `${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}${item.image}`
                                 : "/no-image.jpg"
                             }
                             alt={item.name || "Product image"}
-                            fill
-                            className="object-cover"
                           />
                         </div>
                         <div>
@@ -134,6 +133,25 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                 </tr>
               </tbody>
             </table>
+            {order.status === "awaiting_confirmation" && (
+              <div className="flex flex-col justify-between items-center gap-4 my-2">
+                <div>
+                  <span>
+                    เนื่องจากมียอดรวมออเดอร์ไม่ถึงเป้าหมาย
+                    หากต้องการสั่งซื้อท่านจะต้องชำระเงินเพิ่มอีก
+                  </span>
+                  <span className="text-green-500">
+                    {` ${formatPrice(order.totalAmount)} `}
+                  </span>
+                </div>
+                <div className="flex gap-2">
+                  <Button className="bg-green-500 hover:bg-green-500 hover:bg-opacity-90">
+                    ชำระเพิ่ม
+                  </Button>
+                  <Button>ยกเลิกและคืนเงิน</Button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

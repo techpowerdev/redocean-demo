@@ -15,10 +15,11 @@ import {
   Users,
 } from "lucide-react";
 // import { z } from "zod";
-import { OrderType } from "@/types/fetchTypes";
+// import { OrderType } from "@/types/fetchTypes";
 import { formatPrice } from "@/utils/formatPrice";
 import { DataTableColumnHeader } from "@/components/shared/table/DataTableColumnHeader";
 import ChangeOrderStatus from "@/app/features/order/admin/ChangeOrderStatus";
+import { OrderType } from "@/types/orderTypes";
 // import { DataTableRowActions } from "../../components/shared/DataTableRowActions";
 
 export const labels = [
@@ -45,17 +46,22 @@ export const labels = [
 export const statuses = [
   {
     value: "pending",
-    label: "Pending",
+    label: "รอดำเนินการ",
+    icon: RefreshCw,
+  },
+  {
+    value: "awaiting_confirmation",
+    label: "รอยืนยันคำสั่งซื้อ",
     icon: RefreshCw,
   },
   {
     value: "shipping",
-    label: "Shipping",
+    label: "กำลังจัดส่ง",
     icon: Truck,
   },
   {
     value: "completed",
-    label: "Completed",
+    label: "สำเร็จ",
     icon: CircleCheckBig,
   },
 ];

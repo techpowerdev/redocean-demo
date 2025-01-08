@@ -1,5 +1,4 @@
 import { OrderItemType } from "@/types/orderTypes";
-import { calculateDiscountedPrice } from "@/utils/calculateDiscountedPrice";
 import { formatPrice } from "@/utils/formatPrice";
 import { truncateText } from "@/utils/truncateText";
 import Image from "next/image";

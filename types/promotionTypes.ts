@@ -49,3 +49,8 @@ export type FetchAllPromotionResponseType = {
   message?: string;
   data: PromotionType[];
 };
+
+export type FetchOnePromotionResponseType = {
+  message?: string;
+  data: PromotionType;
+};

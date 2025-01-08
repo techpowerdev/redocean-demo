@@ -1,10 +1,12 @@
 import axios from "axios";
 import apiClient from "./apiClient";
-import { EditProfileType } from "@/types/userTypes";
 
-export async function editProfile(profileData: EditProfileType) {
+export async function sendMessageToLine(userId: string, message: string) {
   try {
-    const response = await apiClient.put(`/users/change-profile`, profileData);
+    const response = await apiClient.post(`/push-message`, {
+      userId,
+      message,
+    });
     return response.data; // ส่งเฉพาะข้อมูลที่ได้รับจาก API
   } catch (error) {
     if (axios.isAxiosError(error)) {

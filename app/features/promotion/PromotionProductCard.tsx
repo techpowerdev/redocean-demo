@@ -1,110 +1,229 @@
-import React from "react";
-import PromotionProductImage from "./PromotionProductImage";
-import { PromotionActivityType } from "@/types/fetchTypes";
+"use client";
+
 import { formatPrice } from "@/utils/formatPrice";
+import { useCallback, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import {
   calculateDiscountedPrice,
   DiscountType,
 } from "@/utils/calculateDiscountedPrice";
+import ProductImage from "@/app/features/product/ProductImages";
+import SetProductQuantity from "@/app/features/product/SetProductQuantity";
+import { searchProductVariant } from "@/services/productServices";
+import ProductOptions from "@/app/features/product/ProductOptions";
+import AddProductToCart from "@/app/features/product/AddProductToCart";
+import { ProductType, VariantOption } from "@/types/productTypes";
+import { AddProductToCardInputType } from "@/types/cartTypes";
+import { PromotionActivityType, PromotionType } from "@/types/promotionTypes";
+interface Props {
+  isActive: boolean;
+  promotion: PromotionType;
+  promotionActivity: PromotionActivityType;
+  product: ProductType;
+}
 
-type Props = {
-  PromotionActivity: PromotionActivityType;
+export type selectedVariantType = {
+  id: string;
+  productId: string;
+  sku: string;
+  variantOptions: VariantOption[];
+  price: number;
+  stock: number;
 };
 
-export default function PromotionProductCard({ PromotionActivity }: Props) {
-  // ดึงตัวเลือกทั้งหมดจาก variantOptions
-  const optionsMap: Record<string, Set<string>> = {};
+export default function PromotionProductCard({
+  isActive,
+  promotion,
+  promotionActivity,
+  product,
+}: Props) {
+  const productVariants = product.productVariants;
+  const defaultOption = product.hasVariant
+    ? productVariants?.[0]?.variantOptions
+    : {};
 
-  PromotionActivity?.product.productVariants?.forEach((variant) => {
-    Object.entries(variant.variantOptions).forEach(([key, value]) => {
-      if (!optionsMap[key]) optionsMap[key] = new Set();
-      optionsMap[key].add(value as string);
-    });
+  // local state
+  const [selectedOptions, setSelectedOptions] = useState<
+    Record<string, string | undefined>
+  >(defaultOption || {});
+
+  const handleResetOptions = () => {
+    setSelectedOptions({});
+  };
+
+  const [selectedVariant, setSelectedVariant] =
+    useState<selectedVariantType | null>(null);
+
+  const [cartProduct, setCartProduct] = useState<AddProductToCardInputType>({
+    productId: "",
+    sku: "",
+    quantity: 1,
+    promotionActivityId: "",
+    promotionType: "",
   });
 
-  // แปลง Set เป็น Array สำหรับการแสดงผล
-  const options = Object.entries(optionsMap).map(([key, values]) => ({
-    key,
-    values: Array.from(values),
-  }));
+  const handleQtyIncrease = useCallback(async () => {
+    if (selectedVariant) {
+      if (cartProduct.quantity + 1 > selectedVariant.stock) {
+        toast.error("จำนวนสินค้าไม่เพียงพอ");
+        return;
+      }
+    }
+
+    setCartProduct((prev) => {
+      return { ...prev, quantity: prev.quantity + 1 };
+    });
+  }, [cartProduct.quantity, selectedVariant]);
+
+  const handleQtyDecrease = useCallback(() => {
+    if (cartProduct.quantity === 1) {
+      return;
+    }
+
+    setCartProduct((prev) => {
+      return { ...prev, quantity: prev.quantity - 1 };
+    });
+  }, [cartProduct]);
+
+  const handleOptionChange = (key: string, value: string | undefined) => {
+    setSelectedOptions((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await searchProductVariant(
+          product.id,
+          selectedOptions
+        );
+        const productVariant: selectedVariantType = response.data;
+
+        if (productVariant) {
+          setSelectedVariant(productVariant);
+          setCartProduct({
+            productId: product.id,
+            sku: productVariant.sku,
+            quantity: 1,
+            promotionActivityId: promotionActivity.id,
+            promotionType: promotion.type,
+          });
+        } else {
+          setSelectedVariant(null);
+          setCartProduct({
+            productId: "",
+            sku: "",
+            quantity: 1,
+            promotionActivityId: "",
+            promotionType: "",
+          });
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchData();
+  }, [product.id, promotionActivity, promotionActivity?.id, selectedOptions]);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 my-5">
-      <PromotionProductImage
-        images={
-          (
-            PromotionActivity.product.productVariants
-              ?.filter((variant) => variant.image !== null)
-              .map((variant) => variant.image) || []
-          ).length > 0
-            ? PromotionActivity.product.productVariants
-                ?.filter((variant) => variant.image !== null)
-                .map((variant) => variant.image)
-            : PromotionActivity.product?.image
-            ? [PromotionActivity.product.image]
-            : []
-        }
+      <ProductImage
+        product={product}
+        variants={productVariants}
+        selectedOption={selectedOptions}
       />
+
       <div className="flex flex-col gap-y-4 w-full p-2 md:p-8">
-        <h1 className="text-xl">{PromotionActivity.product.name}</h1>
+        <h1 className="text-xl font-semibold">{product.name}</h1>
         {/* Display Price and Stock */}
-        <>
-          <p className="text-xl font-bold mb-2 line-through">
-            {formatPrice(PromotionActivity.product.price)}
-          </p>
-          <div className="flex flex-col">
-            <h1>เหลือเพียง</h1>
-            {PromotionActivity.discountAmount && (
-              <span className="text-lg text-green-500">
-                {formatPrice(
-                  calculateDiscountedPrice(
-                    PromotionActivity.product.price,
-                    PromotionActivity.discountAmount,
-                    PromotionActivity.discountType as DiscountType
-                  ).discountedPrice
-                )}
-              </span>
-            )}
-            {PromotionActivity.discountGroupAmount &&
-            PromotionActivity.discountGroupAmount > 0 ? (
-              <>
-                <span className="p-2 text-xl">หรือ</span>
-                <div className="flex gap-1 items-center">
-                  <div className="text-2xl text-red-600 font-bold">
+        {selectedVariant ? (
+          <>
+            {promotionActivity ? (
+              <div className="flex flex-col">
+                <p className="text-xl font-bold mb-2 line-through">
+                  {formatPrice(selectedVariant.price)}
+                </p>
+                <h1>ลดเหลือเพียง</h1>
+                {promotionActivity.discountAmount &&
+                promotionActivity.discountAmount > 0 ? (
+                  <span className="text-lg text-green-500">
                     {formatPrice(
                       calculateDiscountedPrice(
-                        PromotionActivity.product.price,
-                        PromotionActivity.discountGroupAmount,
-                        PromotionActivity.discountType as DiscountType
+                        selectedVariant.price,
+                        promotionActivity.discountAmount,
+                        promotionActivity.discountType as DiscountType
                       ).discountedPrice
                     )}
-                  </div>
-                  <div>{`(เมื่อมียอดสั่งซื้อครบ ${PromotionActivity.minimumPurchaseQuantity} ชิ้น)`}</div>
-                </div>
-              </>
-            ) : null}
-          </div>
-        </>
-        {/* ตัวเลือก */}
-        {PromotionActivity.product.hasVariant &&
-          options.map((option) => (
-            <div key={option.key}>
-              <h2>{option.key}</h2>
-              <div className="flex gap-2 flex-wrap">
-                {option.values.map((value) => (
-                  <button
-                    className="px-4 py-2 cursor-default border rounded-md text-gray-800 bg-white"
-                    key={value}
-                  >
-                    {value}
-                  </button>
-                ))}
+                  </span>
+                ) : null}
               </div>
-            </div>
-          ))}
+            ) : (
+              <div>
+                <p className="text-xl font-bold mb-2">
+                  {formatPrice(selectedVariant.price)}
+                </p>
+              </div>
+            )}
+          </>
+        ) : (
+          <>
+            {promotionActivity ? (
+              <div className="flex flex-col">
+                <div>
+                  <p className="text-xl font-bold mb-2 line-through">
+                    {formatPrice(product.price)}
+                  </p>
+                </div>
+                <h1>ลดเหลือเพียง</h1>
+                {promotionActivity.discountAmount &&
+                promotionActivity.discountAmount > 0 ? (
+                  <span className="text-lg text-green-500">
+                    {formatPrice(
+                      calculateDiscountedPrice(
+                        product.price,
+                        promotionActivity.discountAmount,
+                        promotionActivity.discountType as DiscountType
+                      ).discountedPrice
+                    )}
+                  </span>
+                ) : null}
+              </div>
+            ) : (
+              <p className="text-xl font-bold mb-2">
+                {formatPrice(product.price)}
+              </p>
+            )}
+          </>
+        )}
+
+        {product.hasVariant && (
+          <ProductOptions
+            productVariants={productVariants}
+            selectedOptions={selectedOptions}
+            handleOptionChange={handleOptionChange}
+            handleResetOptions={handleResetOptions}
+          />
+        )}
+
         <div>
           <label className="block font-semibold mb-1">รายละเอียด:</label>{" "}
-          {PromotionActivity.product.description}
+          {product.description}
+        </div>
+
+        <div className="w-full flex flex-col gap-4">
+          <SetProductQuantity
+            cartCounter={false} // if you don't need to show "QUANTITY :"
+            cartProduct={cartProduct}
+            handleQtyIncrease={handleQtyIncrease}
+            handleQtyDecrease={handleQtyDecrease}
+          />
+          <AddProductToCart
+            isActive={isActive}
+            product={cartProduct}
+            stock={selectedVariant?.stock || 0}
+          />
         </div>
       </div>
     </div>

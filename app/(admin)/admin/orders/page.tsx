@@ -6,7 +6,6 @@ import { DataTable } from "@/components/shared/table/DataTable";
 import { getAllOrders } from "@/services/orderServices";
 import { useAdminOrderStore } from "@/state-stores/admin/adminOrderStore";
 import { FetchAllOrderResponseType } from "@/types/orderTypes";
-// import { OrderType } from "@/types/fetchTypes";
 import { useEffect } from "react";
 
 export default function Orders() {

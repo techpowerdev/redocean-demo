@@ -17,11 +17,10 @@ type Props = {
 
   open: boolean;
   setOpen: () => void;
-
-  handleDelete: () => void;
+  action: () => void;
 };
-export function DeletePopup({
-  handleDelete,
+export function ConfirmationPopup({
+  action,
   openBtn,
   title,
   description,
@@ -38,7 +37,7 @@ export function DeletePopup({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>ยกเลิก</AlertDialogCancel>
-          <AlertDialogAction onClick={handleDelete}>ยืนยัน</AlertDialogAction>
+          <AlertDialogAction onClick={action}>ยืนยัน</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

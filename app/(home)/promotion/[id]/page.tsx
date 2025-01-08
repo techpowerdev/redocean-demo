@@ -1,7 +1,10 @@
 import React from "react";
 import type { Metadata, ResolvingMetadata } from "next";
-import { PromotionType } from "@/types/fetchTypes";
 import { getPromotionById } from "@/services/promotionServices";
+import { FetchOnePromotionResponseType } from "@/types/promotionTypes";
+import ResponsiveImage from "@/components/shared/ResponsiveImage";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -16,9 +19,11 @@ export async function generateMetadata(
   const id = (await params).id;
 
   // fetch data
-  const promotion: PromotionType = await getPromotionById(id);
+  const fetchData: FetchOnePromotionResponseType = await getPromotionById(id);
+  const promotion = fetchData.data;
+
   const imageUrl =
-    promotion?.images && promotion?.images?.length > 0
+    promotion?.images && promotion.images?.length > 0
       ? `${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}${promotion?.images?.[0].url}`
       : "";
 
@@ -59,11 +64,24 @@ export async function generateMetadata(
 
 export default async function Campaign({ params }: Props) {
   // fetch data
-  const promotion: PromotionType = await getPromotionById((await params).id);
+  const promotion: FetchOnePromotionResponseType = await getPromotionById(
+    (
+      await params
+    ).id
+  );
 
   return (
-    <div>
-      <h1>Campaign : {promotion.name}</h1>
+    <div className="flex flex-col gap-4 justify-center items-center">
+      <h1 className="font-semibold">{promotion.data.name}</h1>
+      {promotion.data.images && promotion.data.images.length > 0 && (
+        <ResponsiveImage
+          src={`${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}${promotion.data.images?.[0].url}`}
+          alt="promotion-image"
+        />
+      )}
+      <Link href={"/"}>
+        <Button>สั่งซื้อสินค้า</Button>
+      </Link>
     </div>
   );
 }

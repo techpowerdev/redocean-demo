@@ -64,4 +64,5 @@ export type AddProductToCardInputType = {
   sku: string;
   quantity: number;
   promotionActivityId?: string | null;
+  promotionType?: string | null;
 };

@@ -5,6 +5,7 @@ import { AdminLayout } from "@/app/(admin)/admin/components/shared/AdminLayout";
 import { cookies } from "next/headers";
 import { Toaster } from "react-hot-toast";
 import localFont from "next/font/local";
+import CheckPermission from "@/app/features/auth/CheckPermission";
 
 const geistSans = localFont({
   src: "../fonts/GeistVF.woff",
@@ -48,6 +49,7 @@ export default function RootLayout({
         //   },
         // }}
         />
+        <CheckPermission />
         <AdminLayout
           defaultLayout={defaultLayout} // กำหนดความกว้างเริ่มต้น
           defaultCollapsed={defaultCollapsed} // กำหนดการหุบ ขยาย

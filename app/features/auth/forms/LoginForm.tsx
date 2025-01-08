@@ -17,6 +17,7 @@ import { useForm } from "react-hook-form";
 import { login } from "@/services/authServices";
 import { LoginResponseType } from "@/types/userTypes";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   email: z
@@ -51,11 +52,14 @@ export function LoginForm() {
     },
   });
 
+  const router = useRouter();
+
   async function onSubmit(data: FormValues) {
     try {
       const response: LoginResponseType = await login(data);
       console.log(response.data);
       toast.success(response.message || "เข้าสู่ระบบแล้ว");
+      router.push("/admin");
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);

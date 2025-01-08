@@ -67,3 +67,20 @@ export type EditProfileType = {
   phoneNumber: string;
   email?: string;
 };
+
+export type UserProfileType = {
+  id: string;
+  lineUid?: string;
+  displayName?: string | null;
+  pictureUrl?: string | null;
+  email?: string | null;
+  fullName?: string | null;
+  phoneNumber?: string | null;
+  phoneVerified: boolean;
+  readonly role: string;
+};
+
+export type FetchCurrentUserType = {
+  message?: string;
+  data: UserProfileType;
+};

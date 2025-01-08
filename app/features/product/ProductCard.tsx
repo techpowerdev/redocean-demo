@@ -12,11 +12,7 @@ import SetProductQuantity from "@/app/features/product/SetProductQuantity";
 import { searchProductVariant } from "@/services/productServices";
 import ProductOptions from "@/app/features/product/ProductOptions";
 import AddProductToCart from "@/app/features/product/AddProductToCart";
-import {
-  // CartProductType,
-  ProductType,
-  VariantOption,
-} from "@/types/productTypes";
+import { ProductType, VariantOption } from "@/types/productTypes";
 import { AddProductToCardInputType } from "@/types/cartTypes";
 interface Props {
   product: ProductType;
@@ -33,7 +29,8 @@ export type selectedVariantType = {
 
 export default function ProductCard({ product }: Props) {
   const productVariants = product.productVariants;
-  const promotionActivity = product.promotionActivities?.[0];
+  const promotionActivity = product.promotionActivities?.[0]; // ถ้ามีหลาย promotionActivity จัดให้กับ 1 product พร้อมกันจะไม่ได้ มันจะดึงมาแค่ index 0
+  console.log(product);
   const defaultOption = product.hasVariant
     ? productVariants?.[0]?.variantOptions
     : {};
@@ -55,6 +52,7 @@ export default function ProductCard({ product }: Props) {
     sku: "",
     quantity: 1,
     promotionActivityId: "",
+    promotionType: "",
   });
 
   const handleQtyIncrease = useCallback(async () => {
@@ -89,26 +87,34 @@ export default function ProductCard({ product }: Props) {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await searchProductVariant(product.id, selectedOptions);
-      const productVariant: selectedVariantType = response.data;
-      console.log("productVariant::", productVariant);
+      try {
+        const response = await searchProductVariant(
+          product.id,
+          selectedOptions
+        );
+        const productVariant: selectedVariantType = response.data;
 
-      if (productVariant) {
-        setSelectedVariant(productVariant);
-        setCartProduct({
-          productId: product.id,
-          sku: productVariant.sku,
-          quantity: 1,
-          promotionActivityId: promotionActivity?.id || "",
-        });
-      } else {
-        setSelectedVariant(null);
-        setCartProduct({
-          productId: "",
-          sku: "",
-          quantity: 1,
-          promotionActivityId: "",
-        });
+        if (productVariant) {
+          setSelectedVariant(productVariant);
+          setCartProduct({
+            productId: product.id,
+            sku: productVariant.sku,
+            quantity: 1,
+            promotionActivityId: promotionActivity?.id,
+            promotionType: promotionActivity?.promotion?.type,
+          });
+        } else {
+          setSelectedVariant(null);
+          setCartProduct({
+            productId: "",
+            sku: "",
+            quantity: 1,
+            promotionActivityId: "",
+            promotionType: "",
+          });
+        }
+      } catch (error) {
+        console.log(error);
       }
     };
     fetchData();

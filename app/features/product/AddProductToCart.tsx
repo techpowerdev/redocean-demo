@@ -4,17 +4,17 @@ import { Button } from "@/components/ui/button";
 import { useCartServerStore } from "@/state-stores/cartServerStore";
 import { useCurrentUserStore } from "@/state-stores/useCurrentUserStore";
 import { AddProductToCardInputType } from "@/types/cartTypes";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 import React from "react";
 import toast from "react-hot-toast";
 
 type Props = {
+  isActive?: boolean;
   product: AddProductToCardInputType;
   stock: number;
 };
 
-export default function AddProductToCart({ product, stock }: Props) {
+export default function AddProductToCart({ isActive, product, stock }: Props) {
   // global state
   const currentUser = useCurrentUserStore((state) => state.currentUser);
   const handleAddProductToCart = useCartServerStore(
@@ -37,17 +37,7 @@ export default function AddProductToCart({ product, stock }: Props) {
     try {
       handleAddProductToCart(product);
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error(
-          "Error add product to cart=> Axios error details:",
-          error.response?.data
-        );
-        if (error.response?.data.message) {
-          toast.error(error.response?.data.message);
-        }
-      } else {
-        console.error("Unexpected error:", error);
-      }
+      console.log(error);
     }
   };
 
@@ -95,8 +85,7 @@ export default function AddProductToCart({ product, stock }: Props) {
       <Button
         size={"lg"}
         className="w-full lg:w-1/2 bg-primary text-lg"
-        // disabled={!isEventTime}
-        // disabled={isProductInCart}
+        disabled={!isActive || isOutOfStock}
         onClick={handleAddToCart}
       >
         เพิ่มสินค้าลงตะกร้า
