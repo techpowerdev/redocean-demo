@@ -15,6 +15,20 @@ export const getPromotionToday = async () => {
   }
 };
 
+export const getUpcomingPromotion = async () => {
+  try {
+    const response = await apiClient.get(`/promotions/upcoming`);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || "ไม่สามารถดึงข้อมูลโปรโมชั่นได้"
+      );
+    }
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
+  }
+};
+
 export const addPromotion = async (formData: FormData) => {
   try {
     const response = await apiClient.post(`/promotions`, formData, {

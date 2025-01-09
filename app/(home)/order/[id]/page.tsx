@@ -26,6 +26,11 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
     return <Loading />;
   }
 
+  // ใช้คำนวณผลรวมของคำสั่งซื้อ
+  const extraAmount = order?.orderItems?.reduce((total, item) => {
+    return total + item.quantity * (item.discount || 0);
+  }, 0);
+
   return (
     <Container>
       {/* <MobileContainer> */}
@@ -141,7 +146,7 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                     หากต้องการสั่งซื้อท่านจะต้องชำระเงินเพิ่มอีก
                   </span>
                   <span className="text-green-500">
-                    {` ${formatPrice(order.totalAmount)} `}
+                    {` ${formatPrice(extraAmount || 0)} `}
                   </span>
                 </div>
                 <div className="flex gap-2">

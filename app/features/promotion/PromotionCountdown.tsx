@@ -100,20 +100,20 @@ export const PromotionCountdown: React.FC<CountdownProps> = ({
         </span>
       ) : hasStarted ? (
         timerComponents.length > 0 && (
-          <div className="flex flex-col items-start gap-y-1">
+          <div className="flex flex-col items-center gap-y-1">
             <span className="flex justify-center items-center gap-1 mb-1">
               <AlarmClock /> ปิด : {endTime}
             </span>
-            <div className="flex gap-x-2">เหลือเวลาอีก {timerComponents}</div>
+            <div className="flex gap-x-2">{timerComponents}</div>
           </div>
         )
       ) : (
         timerComponents.length > 0 && (
-          <div className="flex flex-col items-start gap-y-1">
+          <div className="flex flex-col items-center gap-y-1">
             <span className="flex justify-center items-center gap-1 mb-1">
               <AlarmClock /> เปิด : {startTime}
             </span>
-            <div className="flex gap-x-2">นับถอยหลังอีก {timerComponents}</div>
+            <div className="flex gap-x-2">{timerComponents}</div>
           </div>
         )
       )}

@@ -22,24 +22,24 @@ const nextConfig = {
         hostname: "cdn.nocnoc.com",
       },
       {
-        hostname: "d338-101-108-100-250.ngrok-free.app",
+        hostname: "test-api.khumkha.com",
       },
     ],
   },
   async redirects() {
     return [
       // Basic redirect
-      // {
-      //   source: "/promotion",
-      //   destination: "/",
-      //   permanent: true,
-      // },
-      // // Wildcard path matching
-      // {
-      //   source: "/promotion/:id",
-      //   destination: "/",
-      //   permanent: true,
-      // },
+      {
+        source: "/promotion",
+        destination: "/",
+        permanent: true,
+      },
+      // Wildcard path matching
+      {
+        source: "/promotion/:id",
+        destination: "/",
+        permanent: true,
+      },
     ];
   },
 };
