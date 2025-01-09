@@ -26,22 +26,22 @@ const nextConfig = {
       },
     ],
   },
-  async redirects() {
-    return [
-      // Basic redirect
-      {
-        source: "/promotion",
-        destination: "/",
-        permanent: true,
-      },
-      // Wildcard path matching
-      {
-        source: "/promotion/:id",
-        destination: "/",
-        permanent: true,
-      },
-    ];
-  },
+  // async redirects() {
+  //   return [
+  //     // Basic redirect
+  //     {
+  //       source: "/promotion",
+  //       destination: "/",
+  //       permanent: true,
+  //     },
+  //     // Wildcard path matching
+  //     {
+  //       source: "/promotion/:id",
+  //       destination: "/",
+  //       permanent: true,
+  //     },
+  //   ];
+  // },
 };
 
 export default nextConfig;
