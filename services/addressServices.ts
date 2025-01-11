@@ -1,4 +1,8 @@
-import { CreateAddressType, UpdateAddressType } from "@/types/addressTypes";
+import {
+  AddressType,
+  CreateAddressType,
+  UpdateAddressType,
+} from "@/types/addressTypes";
 import axios from "axios";
 import apiClient from "./apiClient";
 
@@ -54,7 +58,10 @@ export const deleteAddress = async (id: string) => {
   }
 };
 
-export const getAddress = async () => {
+export const getAddress = async (): Promise<{
+  data: AddressType[];
+  message: string;
+}> => {
   try {
     const response = await apiClient.get(`/users/addresses`);
     return response.data;
