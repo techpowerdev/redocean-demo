@@ -2,11 +2,11 @@ import axios from "axios";
 import apiClient from "./apiClient";
 import {
   StripeCreatePaymentIntentResultType,
-  StripeCreatePaymentIntentType,
+  StripeCreatePaymentIntentForOneProductType,
 } from "@/types/stripeTypes";
 
-export async function StripeCreatePaymentIntent(
-  CreatePaymentIntentData: StripeCreatePaymentIntentType
+export async function StripeCreatePaymentIntentForOneProduct(
+  CreatePaymentIntentData: StripeCreatePaymentIntentForOneProductType
 ): Promise<{ data: StripeCreatePaymentIntentResultType; message: string }> {
   try {
     const response = await apiClient.post(

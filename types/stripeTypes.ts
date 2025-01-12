@@ -1,16 +1,20 @@
-export type StripeOrderItem = {
+export type StripeOrderItemType = {
   unitPrice: number;
   discount: number;
   quantity: number;
 };
 
-export type StripeCreatePaymentIntentType = {
+export type StripeCreatePaymentIntentForOneProductType = {
   currency: string;
   captureLater: boolean;
   paymentState: string;
   orderId: string;
   orderType: string;
-  orderItems: StripeOrderItem[];
+  orderItems: StripeOrderItemType[];
+};
+
+export type StripeCreatePaymentIntentForCartProductsType = {
+  cartId: string;
 };
 
 export type StripeCreatePaymentIntentResultType = {
@@ -20,11 +24,11 @@ export type StripeCreatePaymentIntentResultType = {
     // payment_method: string;
     // processing: string;
     status: string;
-    amount: string;
+    amount: number;
     currency: string;
     metadata: string;
   };
-  order: {
-    totalAmount: number;
-  };
+  // order: {
+  //   totalAmount: number;
+  // };
 };

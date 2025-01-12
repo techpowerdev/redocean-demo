@@ -31,7 +31,7 @@ export default function AddressSelector() {
         <h1 className="font-semibold">เลือกที่อยู่ในการจัดส่ง</h1>
         <AutocompleteAddressForm />
       </div>
-      <ScrollArea className="h-[260px]">
+      <ScrollArea className="h-fit max-h-[260px] overflow-auto">
         {addresses && addresses.length > 0 ? (
           <RadioGroup
             defaultValue={selectedAddress ? selectedAddress.id : undefined}

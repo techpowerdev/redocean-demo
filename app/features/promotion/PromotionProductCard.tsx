@@ -11,10 +11,11 @@ import ProductImage from "@/app/features/product/ProductImages";
 import SetProductQuantity from "@/app/features/product/SetProductQuantity";
 import { searchProductVariant } from "@/services/productServices";
 import ProductOptions from "@/app/features/product/ProductOptions";
-import AddProductToCart from "@/app/features/product/AddProductToCart";
+// import AddProductToCart from "@/app/features/product/AddProductToCart";
 import { ProductType, VariantOption } from "@/types/productTypes";
 import { AddProductToCardInputType } from "@/types/cartTypes";
 import { PromotionActivityType, PromotionType } from "@/types/promotionTypes";
+import BuyNowButton from "@/app/features/product/BuyNowButton";
 interface Props {
   isActive: boolean;
   promotion: PromotionType;
@@ -219,7 +220,12 @@ export default function PromotionProductCard({
             handleQtyIncrease={handleQtyIncrease}
             handleQtyDecrease={handleQtyDecrease}
           />
-          <AddProductToCart
+          {/* <AddProductToCart
+            isActive={isActive}
+            product={cartProduct}
+            stock={selectedVariant?.stock || 0}
+          /> */}
+          <BuyNowButton
             isActive={isActive}
             product={cartProduct}
             stock={selectedVariant?.stock || 0}

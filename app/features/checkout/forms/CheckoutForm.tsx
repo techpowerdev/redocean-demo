@@ -304,38 +304,3 @@
 //     </Container>
 //   );
 // }
-"use client";
-
-import { useEffect } from "react";
-import toast from "react-hot-toast";
-import { useAddressStore } from "@/state-stores/addressStore";
-import Container from "@/components/shared/Container";
-import AddressSelector from "../../address/forms/AddressSelector";
-import { getAddress } from "@/services/addressServices";
-
-export default function CheckoutForm() {
-  // global state
-  const addresses = useAddressStore((state) => state.addresses);
-  const setAddresses = useAddressStore((state) => state.setAddresses);
-  const selectedAddress = useAddressStore((state) => state.selectedAddress);
-  const selectAddress = useAddressStore((state) => state.selectAddress);
-
-  useEffect(() => {
-    const fetchAddress = async () => {
-      const result = await getAddress();
-      const primaryAddress = result.data.find((address) => address.isActive);
-      selectAddress(primaryAddress ?? result.data?.[0]);
-      setAddresses(result.data);
-    };
-    fetchAddress();
-  }, []);
-
-  return (
-    <Container>
-      <h1 className="text-2xl font-semibold mb-4">ที่อยู่ในการจัดส่ง</h1>
-      <div className="mb-4">
-        <AddressSelector />
-      </div>
-    </Container>
-  );
-}

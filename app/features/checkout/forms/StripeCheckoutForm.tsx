@@ -13,19 +13,40 @@ import {
   StripePaymentElementOptions,
 } from "@stripe/stripe-js";
 import { formatPrice } from "@/utils/formatPrice";
+import { useAddressStore } from "@/state-stores/addressStore";
+import toast from "react-hot-toast";
+import { useCheckoutStore } from "@/state-stores/useCheckoutStore";
+import { useRouter } from "next/navigation";
 
 type Props = {
-  totalAmount: number;
+  handleSetPaymentSuccess: (value: boolean) => void;
 };
+export default function StripeCheckoutForm({ handleSetPaymentSuccess }: Props) {
+  // global state
+  const selectedAddress = useAddressStore((state) => state.selectedAddress);
+  const paymentIntent = useCheckoutStore((state) => state.paymentIntent);
+  const setPaymentIntent = useCheckoutStore((state) => state.setPaymentIntent);
+  const clientSecret = useCheckoutStore((state) => state.clientSecret);
+  const setClientSecret = useCheckoutStore((state) => state.setClientSecret);
+  const totalAmount = useCheckoutStore((state) => state.totalAmount);
+  const setConfirmed = useCheckoutStore((state) => state.setConfirmed);
 
-export default function StripeCheckoutForm({ totalAmount }: Props) {
+  // stripe hook
   const stripe = useStripe();
   const elements = useElements();
+
+  // local state
   const [message, setMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  const router = useRouter();
+
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
+
+    if (!selectedAddress) {
+      return toast.error("กรุณาระบุที่อยู่การจัดส่ง");
+    }
 
     if (!stripe || !elements) {
       return;
@@ -47,16 +68,28 @@ export default function StripeCheckoutForm({ totalAmount }: Props) {
         },
       });
 
+      if (!error) {
+        // return router.push("/complete-checkout");
+
+        // clear cart
+
+        // clear payment state
+        handleSetPaymentSuccess(true);
+        setPaymentIntent(null);
+        setClientSecret(null);
+        // setTotalAmount(0);
+      }
+
       if (error) {
         if (error.type === "card_error" || error.type === "validation_error") {
-          setMessage(error.message || "Payment failed. Please try again.");
+          setMessage(error.message || "จ่ายเงินไม่สำเร็จ กรุณาลองอีกครั้ง");
         } else {
-          setMessage("An unexpected error occurred.");
+          setMessage("เกิดข้อผิดพลาดบางอย่าง");
         }
       }
     } catch (err) {
       console.error("Payment confirmation error:", err);
-      setMessage("An error occurred. Please try again.");
+      setMessage("พบข้อผิดพลาด กรุณาลองอีกครั้ง");
     }
 
     setIsLoading(false);
