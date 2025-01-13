@@ -16,8 +16,8 @@ export default function MobileMenu() {
   // global state
   const cart = useCartServerStore((state) => state.cart);
   return (
-    // <footer className="fixed z-30 bottom-0 bg-white border-t p-2 w-full flex gap-6 flex-wrap items-center justify-center">
-    <footer className="bg-white border-t p-2 w-full flex gap-6 flex-wrap items-center justify-center">
+    <footer className="fixed z-30 bottom-0 bg-white border-t p-2 w-full flex gap-6 flex-wrap items-center justify-center">
+      {/* <footer className="bg-white border-t p-2 w-full flex gap-6 flex-wrap items-center justify-center"> */}
       <Link
         className={`p-2 flex flex-col text-sm items-center gap-2 hover:bg-primary-foreground hover:rounded-lg ${
           pathname === "/" ? "bg-primary-foreground rounded-lg" : ""
