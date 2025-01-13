@@ -4,17 +4,16 @@ import dynamic from "next/dynamic";
 import React, { useState } from "react";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
+
 import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
-import { ScrollArea } from "@/components/ui/scroll-area";
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+
 import toast from "react-hot-toast";
 import axios from "axios";
 import { Edit } from "lucide-react";
@@ -101,6 +100,8 @@ export default function EditAddressForm({ address }: Props) {
   const updateAddress = useAddressStore((state) => state.updateAddress);
 
   // local state
+  const [isOpen, setIsOpen] = useState(false); // จัดการสถานะของ Sheet
+
   const [val, setVal] = useState({
     recipient: address.recipient,
     phoneNumber: address.phoneNumber,
@@ -138,7 +139,7 @@ export default function EditAddressForm({ address }: Props) {
 
       updateAddress(address.id, formData);
 
-      setLoading(false);
+      setIsOpen(false); // ปิด Sheet เมื่อบันทึกสำเร็จ
     } catch (error) {
       if (error instanceof z.ZodError) {
         const errorMessages: Record<string, string> = {};
@@ -163,139 +164,126 @@ export default function EditAddressForm({ address }: Props) {
   };
 
   return (
-    <Drawer>
-      <DrawerTrigger asChild>
-        <Edit size={16} />
-      </DrawerTrigger>
-      <DrawerContent>
-        <div className="mx-auto w-full max-w-sm">
-          <DrawerHeader>
-            <DrawerTitle>แก้ไขที่อยู่</DrawerTitle>
-            <DrawerDescription>กรอกข้อมูลที่อยู่ให้ครบถ้วน</DrawerDescription>
-          </DrawerHeader>
-          <form onSubmit={handleSubmit}>
-            <ScrollArea className="h-[calc(100vh-350px)] px-4">
-              <ThailandAddressTypeahead
-                value={val}
-                onValueChange={(updatedValue) => {
-                  setVal((prev) => ({
-                    ...prev,
-                    subdistrict: updatedValue.subdistrict,
-                    district: updatedValue.district,
-                    province: updatedValue.province,
-                    postalCode: updatedValue.postalCode,
-                  }));
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+      <SheetTrigger asChild>
+        <Edit size={16} onClick={() => setIsOpen(true)} />
+      </SheetTrigger>
+      <SheetContent className="w-full md:w-[540px]">
+        <SheetHeader>
+          <SheetTitle>แก้ไขที่อยู่</SheetTitle>
+          <SheetDescription>กรอกข้อมูลที่อยู่ให้ครบถ้วน</SheetDescription>
+        </SheetHeader>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-2 my-2">
+          <ThailandAddressTypeahead
+            value={val}
+            onValueChange={(updatedValue) => {
+              setVal((prev) => ({
+                ...prev,
+                subdistrict: updatedValue.subdistrict,
+                district: updatedValue.district,
+                province: updatedValue.province,
+                postalCode: updatedValue.postalCode,
+              }));
+            }}
+          >
+            <div className="space-y-4">
+              <input
+                type="text"
+                placeholder="ชื่อผู้รับ"
+                className="w-full p-2 border rounded-sm"
+                value={val.recipient}
+                onChange={(e) => setVal({ ...val, recipient: e.target.value })}
+              />
+              {errors.recipient && (
+                <p className="text-red-500 text-sm">{errors.recipient}</p>
+              )}
+              <input
+                type="text"
+                placeholder="เบอร์โทรผู้รับ"
+                className="w-full p-2 border rounded-sm"
+                value={val.phoneNumber}
+                onChange={(e) =>
+                  setVal({ ...val, phoneNumber: e.target.value })
+                }
+              />
+              {errors.phoneNumber && (
+                <p className="text-red-500 text-sm">{errors.phoneNumber}</p>
+              )}
+              <input
+                type="text"
+                placeholder="ที่อยู่ / อาคาร"
+                className="w-full p-2 border rounded-sm"
+                value={val.address}
+                onChange={(e) => setVal({ ...val, address: e.target.value })}
+              />
+              {errors.address && (
+                <p className="text-red-500 text-sm">{errors.address}</p>
+              )}
+              <input
+                type="text"
+                placeholder="ถนน / ซอย"
+                className="w-full p-2 border rounded-sm"
+                value={val.street}
+                onChange={(e) => setVal({ ...val, street: e.target.value })}
+              />
+              <SubdistrictInput
+                placeholder="ตำบล / แขวง"
+                className="w-full p-2 border rounded-sm"
+              />
+              {errors.subdistrict && (
+                <p className="text-red-500 text-sm">{errors.subdistrict}</p>
+              )}
+              <DistrictInput
+                placeholder="อำเภอ / เขต"
+                className="w-full p-2 border rounded-sm"
+              />
+              {errors.district && (
+                <p className="text-red-500 text-sm">{errors.district}</p>
+              )}
+              <ProvinceInput
+                placeholder="จังหวัด"
+                className="w-full p-2 border rounded-sm"
+              />
+              {errors.province && (
+                <p className="text-red-500 text-sm">{errors.province}</p>
+              )}
+              <PostalCodeInput
+                placeholder="รหัสไปรษณีย์"
+                className="w-full p-2 border rounded-sm"
+              />
+              {errors.postalCode && (
+                <p className="text-red-500 text-sm">{errors.postalCode}</p>
+              )}
+              <Suggestion
+                // containerProps={{ className: "flex flex-col mt-2" }}
+                containerProps={{
+                  className:
+                    "flex flex-col border rounded-sm shadow-md mt-1 divide-y",
                 }}
-              >
-                <div className="space-y-4">
-                  <input
-                    type="text"
-                    placeholder="ชื่อผู้รับ"
-                    className="w-full p-2 border rounded-sm"
-                    value={val.recipient}
-                    onChange={(e) =>
-                      setVal({ ...val, recipient: e.target.value })
-                    }
-                  />
-                  {errors.recipient && (
-                    <p className="text-red-500 text-sm">{errors.recipient}</p>
-                  )}
-                  <input
-                    type="text"
-                    placeholder="เบอร์โทรผู้รับ"
-                    className="w-full p-2 border rounded-sm"
-                    value={val.phoneNumber}
-                    onChange={(e) =>
-                      setVal({ ...val, phoneNumber: e.target.value })
-                    }
-                  />
-                  {errors.phoneNumber && (
-                    <p className="text-red-500 text-sm">{errors.phoneNumber}</p>
-                  )}
-                  <input
-                    type="text"
-                    placeholder="ที่อยู่ / อาคาร"
-                    className="w-full p-2 border rounded-sm"
-                    value={val.address}
-                    onChange={(e) =>
-                      setVal({ ...val, address: e.target.value })
-                    }
-                  />
-                  {errors.address && (
-                    <p className="text-red-500 text-sm">{errors.address}</p>
-                  )}
-                  <input
-                    type="text"
-                    placeholder="ถนน / ซอย"
-                    className="w-full p-2 border rounded-sm"
-                    value={val.street}
-                    onChange={(e) => setVal({ ...val, street: e.target.value })}
-                  />
-                  <SubdistrictInput
-                    placeholder="ตำบล / แขวง"
-                    className="w-full p-2 border rounded-sm"
-                  />
-                  {errors.subdistrict && (
-                    <p className="text-red-500 text-sm">{errors.subdistrict}</p>
-                  )}
-                  <DistrictInput
-                    placeholder="อำเภอ / เขต"
-                    className="w-full p-2 border rounded-sm"
-                  />
-                  {errors.district && (
-                    <p className="text-red-500 text-sm">{errors.district}</p>
-                  )}
-                  <ProvinceInput
-                    placeholder="จังหวัด"
-                    className="w-full p-2 border rounded-sm"
-                  />
-                  {errors.province && (
-                    <p className="text-red-500 text-sm">{errors.province}</p>
-                  )}
-                  <PostalCodeInput
-                    placeholder="รหัสไปรษณีย์"
-                    className="w-full p-2 border rounded-sm"
-                  />
-                  {errors.postalCode && (
-                    <p className="text-red-500 text-sm">{errors.postalCode}</p>
-                  )}
-                  <Suggestion
-                    // containerProps={{ className: "flex flex-col mt-2" }}
-                    containerProps={{
-                      className:
-                        "flex flex-col border rounded-sm shadow-md mt-1 divide-y",
-                    }}
-                    optionItemProps={{
-                      className: "cursor-pointer p-2 hover:bg-slate-100",
-                    }}
-                  />
-                  <label className="flex justify-start items-center gap-2">
-                    <input
-                      type="checkbox"
-                      id="isActive"
-                      name="isActive"
-                      checked={val.isActive}
-                      onChange={(e) =>
-                        setVal({ ...val, isActive: e.target.checked })
-                      }
-                      className="h-4 w-4 accent-primary"
-                    />
-                    ตั้งเป็นที่อยู่หลัก
-                  </label>
-                </div>
-              </ThailandAddressTypeahead>
-            </ScrollArea>
-            <DrawerFooter>
-              <Button disabled={loading} type="submit">
-                {loading ? <Loading /> : "บันทึก"}
-              </Button>
-              <DrawerClose asChild>
-                <Button variant="outline">ยกเลิก</Button>
-              </DrawerClose>
-            </DrawerFooter>
-          </form>
-        </div>
-      </DrawerContent>
-    </Drawer>
+                optionItemProps={{
+                  className: "cursor-pointer p-2 hover:bg-slate-100",
+                }}
+              />
+              <label className="flex justify-start items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="isActive"
+                  name="isActive"
+                  checked={val.isActive}
+                  onChange={(e) =>
+                    setVal({ ...val, isActive: e.target.checked })
+                  }
+                  className="h-4 w-4 accent-primary"
+                />
+                ตั้งเป็นที่อยู่หลัก
+              </label>
+            </div>
+          </ThailandAddressTypeahead>
+          <Button disabled={loading} type="submit" className="w-full">
+            {loading ? <Loading /> : "บันทึก"}
+          </Button>
+        </form>
+      </SheetContent>
+    </Sheet>
   );
 }
