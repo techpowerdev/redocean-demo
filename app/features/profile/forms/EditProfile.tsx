@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Edit } from "lucide-react";
@@ -7,16 +9,17 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
-import React from "react";
+import React, { useState } from "react";
 import { useCurrentUserStore } from "@/state-stores/useCurrentUserStore";
 import {
-  Drawer,
-  DrawerContent,
-  DrawerDescription,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+
 import {
   Form,
   FormControl,
@@ -62,8 +65,12 @@ const formSchema = z.object({
 export type FormData = z.infer<typeof formSchema>;
 
 export function EditProfile() {
+  // global state
   const currentUser = useCurrentUserStore((state) => state.currentUser);
   const setCurrentUser = useCurrentUserStore((state) => state.setCurrentUser);
+
+  // local state
+  const [isOpen, setIsOpen] = useState(false); // จัดการสถานะของ Sheet
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema), // validate data with the schema
@@ -81,6 +88,7 @@ export function EditProfile() {
       const response = await editProfile(data);
       setCurrentUser(response.data);
       toast.success("บันทึกสำเร็จ");
+      setIsOpen(false); // ปิด Sheet เมื่อบันทึกสำเร็จ
     } catch (error) {
       console.log(error);
       toast.error("บันทึกไม่สำเร็จ");
@@ -88,68 +96,65 @@ export function EditProfile() {
   };
 
   return (
-    <Drawer>
-      <DrawerTrigger asChild>
-        <Edit size={16} />
-      </DrawerTrigger>
-      <DrawerContent>
-        <div className="mx-auto w-full max-w-sm ">
-          <DrawerHeader>
-            <DrawerTitle>แก้ไขข้อมูลส่วนตัว</DrawerTitle>
-            <DrawerDescription>กรอกข้อมูลส่วนตัวให้ครบถ้วน</DrawerDescription>
-          </DrawerHeader>
-
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="flex flex-col gap-4 p-4"
-            >
-              <FormField
-                control={form.control}
-                name="fullName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>ชื่อ-สกุล</FormLabel>
-                    <FormControl>
-                      <Input placeholder="กรอกชื่อ-สกุล" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="phoneNumber"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>เบอร์โทร</FormLabel>
-                    <FormControl>
-                      <Input placeholder="กรอกเบอร์โทร" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>อีเมล</FormLabel>
-                    <FormControl>
-                      <Input placeholder="กรอกอีเมล" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button type="submit" className="w-full">
-                บันทึกการแก้ไข
-              </Button>
-            </form>
-          </Form>
-        </div>
-      </DrawerContent>
-    </Drawer>
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+      <SheetTrigger asChild>
+        <Edit size={16} onClick={() => setIsOpen(true)} />
+      </SheetTrigger>
+      <SheetContent className="w-full md:w-[540px]">
+        <SheetHeader>
+          <SheetTitle>แก้ไขข้อมูลส่วนตัว</SheetTitle>
+          <SheetDescription>กรอกข้อมูลส่วนตัวให้ครบถ้วน</SheetDescription>
+        </SheetHeader>
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="flex flex-col gap-4 my-2"
+          >
+            <FormField
+              control={form.control}
+              name="fullName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>ชื่อ-สกุล</FormLabel>
+                  <FormControl>
+                    <Input placeholder="กรอกชื่อ-สกุล" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="phoneNumber"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>เบอร์โทร</FormLabel>
+                  <FormControl>
+                    <Input placeholder="กรอกเบอร์โทร" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>อีเมล</FormLabel>
+                  <FormControl>
+                    <Input placeholder="กรอกอีเมล" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type="submit" className="w-full">
+              บันทึกการแก้ไข
+            </Button>
+          </form>
+        </Form>
+      </SheetContent>
+    </Sheet>
   );
 }
