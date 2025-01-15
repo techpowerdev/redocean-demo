@@ -32,6 +32,7 @@ export type CartItemType = {
   cart?: CartType | null;
   product?: ProductType | null;
   promotionActivity?: PromotionActivityType | null;
+  promotionType?: string | null;
 
   // return from backend process
   unitPrice: number;
