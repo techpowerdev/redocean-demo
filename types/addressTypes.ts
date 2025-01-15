@@ -32,3 +32,8 @@ export type UpdateAddressType = Omit<
   AddressType,
   "id" | "userId" | "createdAt" | "updatedAt"
 >;
+
+export type ShippingAddressType = Omit<
+  AddressType,
+  "id" | "isActive" | "createdAt" | "updatedAt" | "userId" | "user"
+>;
