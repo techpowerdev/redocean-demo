@@ -5,16 +5,27 @@ export type StripeOrderItemType = {
 };
 
 export type StripeCreatePaymentIntentForOneProductType = {
-  currency: string;
-  captureLater: boolean;
-  paymentState: string;
-  orderId: string;
-  orderType: string;
-  orderItems: StripeOrderItemType[];
+  productId: string;
+  sku: string;
+  quantity: number;
+  promotionActivityId?: string;
+  // promotionCode?: string;
+  currency?: string;
+  captureLater?: boolean;
+  // paymentState: string;
 };
 
 export type StripeCreatePaymentIntentForCartProductsType = {
-  cartId: string;
+  cartItems: {
+    id: string;
+    productId: string;
+    sku: string;
+    quantity: number;
+  }[];
+  // promotionCode?: string;
+  currency?: string;
+  captureLater?: boolean;
+  // paymentState: string; // move to check from metadata in stripe instead
 };
 
 export type StripeCreatePaymentIntentResultType = {
@@ -26,7 +37,7 @@ export type StripeCreatePaymentIntentResultType = {
     status: string;
     amount: number;
     currency: string;
-    metadata: string;
+    metadata: Record<string, string>;
   };
   // order: {
   //   totalAmount: number;
