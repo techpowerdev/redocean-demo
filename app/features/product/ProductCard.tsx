@@ -207,8 +207,8 @@ export default function ProductCard({ product }: Props) {
 
         <div className="w-full flex flex-col gap-4">
           <SetProductQuantity
-            cartCounter={false} // if you don't need to show "QUANTITY :"
-            cartProduct={cartProduct}
+            showLabelQuantity={false} // if you don't need to show "QUANTITY :"
+            product={cartProduct}
             handleQtyIncrease={handleQtyIncrease}
             handleQtyDecrease={handleQtyDecrease}
           />
