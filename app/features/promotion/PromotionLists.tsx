@@ -10,10 +10,10 @@ import { PromotionType } from "@/types/promotionTypes";
 import ChangeBooleanStatusField from "@/components/shared/ChangeBooleanStatusField";
 
 type Props = {
-  events: PromotionType[];
+  promotions: PromotionType[];
 };
 
-export function EventList({ events }: Props) {
+export function PromotionLists({ promotions }: Props) {
   // global state
   const selectedPromotion = usePromotionStore(
     (state) => state.selectedPromotion
@@ -22,7 +22,7 @@ export function EventList({ events }: Props) {
   const changePromotionStatus = usePromotionStore(
     (state) => state.changePromotionStatus
   );
-  if (events.length === 0) {
+  if (promotions.length === 0) {
     return (
       <div className="w-full flex justify-center items-center">
         ยังไม่มีกิจกรรม
@@ -32,8 +32,8 @@ export function EventList({ events }: Props) {
   return (
     <ScrollArea className="h-[calc(100vh-180px)]">
       <div className="flex flex-col gap-2 p-4 pt-0">
-        {events?.length ? (
-          events?.map((item: PromotionType) => (
+        {promotions?.length ? (
+          promotions?.map((item: PromotionType) => (
             <div
               key={item.id}
               className={cn(
@@ -72,30 +72,8 @@ export function EventList({ events }: Props) {
                       {item.description.substring(0, 200)}
                     </div>
                   </div>
-                  {/* {item.image && (
-                    <div className="relative w-full aspect-square">
-                      <Image
-                        fill
-                        src={`${
-                          process.env.NEXT_PUBLIC_IMAGE_HOST_URL +
-                          item.images[0].url
-                        }`}
-                        alt={item.images[0].id}
-                        className="object-contain"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      />
-                    </div>
-                  )} */}
                 </div>
               </div>
-              {/* <ToggleBooleanField
-                initialStatus={item.isActive}
-                fieldName="isActive"
-                icon={CalendarClock}
-                apiEndpoint={`${process.env.NEXT_PUBLIC_API_URL}/promotions/change-status/${item.id}`} // ปรับ Endpoint ให้ตรงกับสินค้า
-                id={item.id} // ส่งค่า ID ที่ถูกต้อง
-                label="Active"
-              /> */}
               <ChangeBooleanStatusField
                 initialStatus={item.isActive}
                 id={item.id}

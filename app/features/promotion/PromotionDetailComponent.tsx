@@ -6,7 +6,7 @@ import Image from "next/image";
 import { formatDateTimePromotion } from "@/utils/formatDate";
 import { usePromotionStore } from "@/state-stores/admin/adminPromotionStore";
 
-export default function EventDetailComponent() {
+export default function PromotionDetailComponent() {
   const selectedPromotion = usePromotionStore(
     (state) => state.selectedPromotion
   );

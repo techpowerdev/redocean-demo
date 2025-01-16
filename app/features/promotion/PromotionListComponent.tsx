@@ -4,15 +4,15 @@ import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import Loading from "@/components/shared/Loading";
-import { EventList } from "./EventList";
 import { usePromotionStore } from "@/state-stores/admin/adminPromotionStore";
 import {
   FetchAllPromotionResponseType,
   PromotionType,
 } from "@/types/promotionTypes";
 import { getAllPromotions } from "@/services/promotionServices";
+import { PromotionLists } from "@/app/features/promotion/PromotionLists";
 
-export default function EventListComponent() {
+export default function PromotionListComponent() {
   const promotionLists = usePromotionStore((state) => state.promotionLists);
   const setPromotionLists = usePromotionStore(
     (state) => state.setPromotionLists
@@ -89,7 +89,7 @@ export default function EventListComponent() {
         component
       ) : (
         <div className="m-0">
-          <EventList events={filteredPromotions} />
+          <PromotionLists promotions={filteredPromotions} />
         </div>
       )}
     </>

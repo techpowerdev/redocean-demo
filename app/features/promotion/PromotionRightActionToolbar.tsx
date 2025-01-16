@@ -1,7 +1,7 @@
 "use client";
 
 import { SquarePen, Trash2 } from "lucide-react";
-import ActionToolbar from "../../components/shared/ActionToolbar";
+import ActionToolbar from "../../(admin)/admin/components/shared/ActionToolbar";
 import { ConfirmationPopup } from "@/components/shared/ConfirmationPopup";
 import { useState } from "react";
 import {
@@ -9,10 +9,10 @@ import {
   getAllPromotions,
 } from "@/services/promotionServices";
 import { usePromotionStore } from "@/state-stores/admin/adminPromotionStore";
-import { EditEvent } from "./EditEvent";
 import { FetchAllPromotionResponseType } from "@/types/promotionTypes";
+import { useRouter } from "next/navigation";
 
-export function EventRightActionToolbar() {
+export function PromotionRightActionToolbar() {
   // global state
   const selectedPromotion = usePromotionStore(
     (state) => state.selectedPromotion
@@ -23,12 +23,10 @@ export function EventRightActionToolbar() {
   );
 
   // local state
-  const [openEditForm, setOpenEditForm] = useState(false);
   const [openDeleteForm, setOpenDeleteForm] = useState(false);
 
-  const handleOpenForm = () => {
-    setOpenEditForm(!openEditForm);
-  };
+  // navigation
+  const router = useRouter();
 
   const handleOpenDeleteForm = () => {
     setOpenDeleteForm(!openDeleteForm);
@@ -44,13 +42,6 @@ export function EventRightActionToolbar() {
 
   return (
     <>
-      {/* edit Promotion form */}
-      <EditEvent
-        openEditForm={openEditForm}
-        setOpenEditForm={handleOpenForm}
-        selectedPromotion={selectedPromotion}
-      />
-
       <ConfirmationPopup
         title="ต้องการลบสินค้านี้?"
         open={openDeleteForm}
@@ -65,7 +56,8 @@ export function EventRightActionToolbar() {
           {
             icon: <SquarePen className="h-4 w-4" />,
             tooltip: "แก้ไข",
-            onClick: handleOpenForm,
+            onClick: () =>
+              router.push(`/admin/promotion/edit/${selectedPromotion?.id}`),
           },
           {
             icon: <Trash2 className="h-4 w-4" />,
