@@ -161,7 +161,7 @@ export function AdminLayout({
     },
 
     {
-      href: "/admin/event",
+      href: "/admin/promotion",
       title: "จัดการอีเวนท์",
       // label: "342",
       icon: CalendarClock,
