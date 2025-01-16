@@ -21,8 +21,18 @@ import { CircleX } from "lucide-react";
 import toast from "react-hot-toast";
 
 import { useProductStore } from "@/state-stores/admin/adminProductStore";
-import { FetchAllProductResponseType, ProductType } from "@/types/productTypes";
-import { getAllProducts, updateProduct } from "@/services/productServices";
+import {
+  EditProductResponseType,
+  FetchAllProductResponseType,
+  FetchOneProductResponseType,
+  ProductType,
+} from "@/types/productTypes";
+import {
+  getAllProducts,
+  getProductById,
+  updateProduct,
+} from "@/services/productServices";
+import { useRouter } from "next/navigation";
 
 // Define the schema for validation using zod
 const EditProductFormSchema = z.object({
@@ -72,42 +82,26 @@ type Props = {
   product: ProductType;
 };
 
-export default function EditProductForm({ product }: Props) {
+export function EditProductForm({ product }: Props) {
   // local state
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const setProductLists = useProductStore((state) => state.setProductLists);
+  const selectProduct = useProductStore((state) => state.selectProduct);
+
+  // navigation
+  const router = useRouter();
 
   const form = useForm<EditProductFormValues>({
     resolver: zodResolver(EditProductFormSchema), // validate data with the schema
     defaultValues: {
-      sku: product.sku || "",
-      name: product.name || "",
-      description: product.description || "",
+      sku: product?.sku || "",
+      name: product?.name || "",
+      description: product?.description || "",
       images: [],
-      price: product.price || 0,
-      stock: product.stock || 0,
+      price: product?.price || 0,
+      stock: product?.stock || 0,
     },
   });
-
-  // ใช้ useEffect เพื่อตั้งค่าใหม่เมื่อ selectedProduct เปลี่ยนแปลง
-  useEffect(() => {
-    if (product) {
-      form.reset({
-        sku: product.sku,
-        name: product.name,
-        description: product.description,
-        images: [],
-        price: product.price,
-        stock: product.stock,
-      });
-      // แสดงรูปภาพที่มีอยู่จาก product ถ้ามี
-      setImagePreviews(
-        product.image
-          ? [process.env.NEXT_PUBLIC_IMAGE_HOST_URL + product.image]
-          : []
-      );
-    }
-  }, [form, product]);
 
   const onDrop = (acceptedFiles: File[]) => {
     const newImages = acceptedFiles.map((file) => ({
@@ -160,14 +154,22 @@ export default function EditProductForm({ product }: Props) {
 
     try {
       // Step 1: สร้าง Event ก่อน
-      const productResult = await updateProduct(product.id, ProductFormData);
+      const updatedResult: EditProductResponseType = await updateProduct(
+        product?.id || "",
+        ProductFormData
+      );
 
-      if (productResult) {
+      if (updatedResult) {
+        const updatedproduct: FetchOneProductResponseType =
+          await getProductById(updatedResult.data.id);
+        selectProduct(updatedproduct.data);
+
         const newProducdts: FetchAllProductResponseType =
           await getAllProducts();
         setProductLists(newProducdts.data);
       }
       toast.success("บันทึกการแก้ไขแล้ว");
+      router.push("/admin/product");
     } catch (error) {
       if (error instanceof Error) {
         const errorMessage = error.message;
@@ -175,6 +177,26 @@ export default function EditProductForm({ product }: Props) {
       }
     }
   }
+
+  // ใช้ useEffect เพื่อตั้งค่าใหม่เมื่อ product เปลี่ยนแปลง
+  useEffect(() => {
+    if (product) {
+      form.reset({
+        sku: product.sku,
+        name: product.name,
+        description: product.description,
+        images: [],
+        price: product.price,
+        stock: product.stock,
+      });
+      // แสดงรูปภาพที่มีอยู่จาก product ถ้ามี
+      setImagePreviews(
+        product.image
+          ? [process.env.NEXT_PUBLIC_IMAGE_HOST_URL + product.image]
+          : []
+      );
+    }
+  }, []);
 
   useEffect(() => {
     if (Object.keys(form.formState.errors).length !== 0) {
@@ -313,7 +335,6 @@ export default function EditProductForm({ product }: Props) {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name={`stock`}
@@ -331,7 +352,9 @@ export default function EditProductForm({ product }: Props) {
               </FormItem>
             )}
           />
-          <Button type="submit">บันทึก</Button>
+          <div className="w-full flex justify-end py-3">
+            <Button type="submit">บันทึก</Button>
+          </div>
         </div>
       </form>
     </Form>
