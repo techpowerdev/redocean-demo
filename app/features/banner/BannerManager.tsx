@@ -91,8 +91,7 @@ export default function BannerManager() {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="mx-auto p-4">
-        <h1 className="text-xl font-semibold mb-4">จัดการแบนเนอร์</h1>
+      <div className="mx-auto">
         <div className="mb-4">
           <Input
             type="file"
