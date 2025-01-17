@@ -20,7 +20,6 @@ import {
 } from "@/components/ui/popover";
 import { useEffect, useState } from "react";
 import { useProductStore } from "@/state-stores/admin/adminProductStore";
-import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import { FetchAllProductResponseType, ProductType } from "@/types/productTypes";
 import { getAllProducts } from "@/services/productServices";
@@ -133,7 +132,6 @@ export function SearchProductInPromotionForm({
             </div>
           </div>
         )}
-        <Separator />
       </div>
     </>
   );
