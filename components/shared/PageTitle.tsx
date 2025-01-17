@@ -5,5 +5,5 @@ type Props = {
   className?: string;
 };
 export default function PageTitle({ title, className }: Props) {
-  return <div className={`text-lg font-semibold ${className}`}>{title}</div>;
+  return <div className={`md:text-xl font-semibold ${className}`}>{title}</div>;
 }
