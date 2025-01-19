@@ -38,6 +38,8 @@
 // export default apiClient;
 
 // version 2 : use token from cookie
+// ใช้ได้กับ client component เท่านั้น ถ้ามีการเรียก api ที่ server component ได้ไม่มี token ใน cookie ส่งไปด้วย (อาจต้องใช้ middleware ช่วยได้ ?)
+
 import axios from "axios";
 
 // สร้าง Axios Instance
