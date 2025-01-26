@@ -9,6 +9,7 @@ export type StripeCreatePaymentIntentProductItemType = {
   promotionActivityId?: string | null;
   promotionType?: string | null;
 };
+
 export type StripeCreatePaymentIntentType = {
   items: StripeCreatePaymentIntentProductItemType[];
   shippingAddress: ShippingAddressType;
@@ -53,7 +54,24 @@ export type StripeCreatePaymentIntentResultType = {
     currency: string;
     metadata: Record<string, string>;
   };
-  // order: {
-  //   totalAmount: number;
-  // };
+  items: {
+    productId: string;
+    sku: string;
+    name: string;
+    description: string;
+    variantOptions: string;
+    image: string;
+    promotionActivityId?: string | null;
+    promotionType?: string | null;
+    unitPrice: number;
+    quantity: number;
+    discount: number;
+    discountedPrice: number;
+    total: number;
+    warningMessage?: string | null;
+    isAvailableStock: boolean;
+  }[];
+  totalAmount: number;
+  totalDiscount: number;
+  netAmount: number;
 };

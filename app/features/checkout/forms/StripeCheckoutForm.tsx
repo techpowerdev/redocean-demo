@@ -12,11 +12,8 @@ import {
   // StripeAddressElementOptions,
   StripePaymentElementOptions,
 } from "@stripe/stripe-js";
-import { formatPrice } from "@/utils/formatPrice";
 import { useAddressStore } from "@/state-stores/addressStore";
 import toast from "react-hot-toast";
-import { useCheckoutStore } from "@/state-stores/useCheckoutStore";
-import { useRouter } from "next/navigation";
 
 type Props = {
   handleSetPaymentSuccess: (value: boolean) => void;
@@ -24,12 +21,6 @@ type Props = {
 export default function StripeCheckoutForm({ handleSetPaymentSuccess }: Props) {
   // global state
   const selectedAddress = useAddressStore((state) => state.selectedAddress);
-  const paymentIntent = useCheckoutStore((state) => state.paymentIntent);
-  const setPaymentIntent = useCheckoutStore((state) => state.setPaymentIntent);
-  const clientSecret = useCheckoutStore((state) => state.clientSecret);
-  const setClientSecret = useCheckoutStore((state) => state.setClientSecret);
-  const totalAmount = useCheckoutStore((state) => state.totalAmount);
-  const setConfirmed = useCheckoutStore((state) => state.setConfirmed);
 
   // stripe hook
   const stripe = useStripe();
@@ -38,8 +29,6 @@ export default function StripeCheckoutForm({ handleSetPaymentSuccess }: Props) {
   // local state
   const [message, setMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-
-  const router = useRouter();
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
@@ -55,7 +44,8 @@ export default function StripeCheckoutForm({ handleSetPaymentSuccess }: Props) {
     setIsLoading(true);
 
     try {
-      const { error } = await stripe.confirmPayment({
+      // const { error } = await stripe.confirmPayment({
+      const result = await stripe.confirmPayment({
         elements,
         redirect: "if_required",
         confirmParams: {
@@ -68,23 +58,33 @@ export default function StripeCheckoutForm({ handleSetPaymentSuccess }: Props) {
         },
       });
 
-      if (!error) {
-        // return router.push("/complete-checkout");
+      console.log("result==>", result);
 
-        // clear cart
+      if (!result.error) {
+        // return router.push("/complete-checkout");
 
         // clear payment state
         handleSetPaymentSuccess(true);
-        setPaymentIntent(null);
-        setClientSecret(null);
+        // clear cart
+        // send order data to queue
+        // create order
+        // decrease product quantity
+        // create payment record
+        // setPaymentIntent(null);
+        // setClientSecret(null);
         // setTotalAmount(0);
       }
 
-      if (error) {
-        if (error.type === "card_error" || error.type === "validation_error") {
-          setMessage(error.message || "จ่ายเงินไม่สำเร็จ กรุณาลองอีกครั้ง");
+      if (result.error) {
+        if (
+          result.error.type === "card_error" ||
+          result.error.type === "validation_error"
+        ) {
+          setMessage(
+            result.error.message || "จ่ายเงินไม่สำเร็จ กรุณาลองอีกครั้ง"
+          );
         } else {
-          setMessage("เกิดข้อผิดพลาดบางอย่าง");
+          setMessage("เกิดข้อผิดพลาดในการประมวลผล");
         }
       }
     } catch (err) {
@@ -123,13 +123,14 @@ export default function StripeCheckoutForm({ handleSetPaymentSuccess }: Props) {
   }
 
   return (
-    <form id="payment-form" onSubmit={handleSubmit}>
-      <h1 className="text-2xl font-semibold mb-4">ช่องทางการชำระเงิน</h1>
+    <form
+      id="payment-form"
+      onSubmit={handleSubmit}
+      className="flex flex-col gap-4 my-4"
+    >
+      <h1 className="text-xl font-semibold">ช่องทางการชำระเงิน</h1>
       {/* <AddressElement options={StripeAddressElementOptions} /> */}
       <PaymentElement id="payment-element" options={paymentElementOptions} />
-      <div className="text-center text-xl font-semibold text-slate-700 py-4">
-        ยอดที่ต้องชำระ {formatPrice(totalAmount || 0)}
-      </div>
       <button
         disabled={isLoading || !stripe || !elements}
         id="submit"

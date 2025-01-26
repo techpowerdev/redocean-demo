@@ -86,26 +86,34 @@
 
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { loadStripe, StripeElementsOptions } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import StripeCheckoutForm from "@/app/features/checkout/forms/StripeCheckoutForm";
-import AddressSelector from "@/app/features/address/forms/AddressSelector";
 import Container from "@/components/shared/Container";
-import { useCheckoutStore } from "@/state-stores/useCheckoutStore";
+// import { useCheckoutStore } from "@/state-stores/useCheckoutStore";
 import PaymentSuccess from "@/app/features/checkout/forms/PaymentSuccess";
+import { useCheckoutStore } from "@/state-stores/useCheckoutStore";
+import { formatPrice } from "@/utils/formatPrice";
 
 // Load Stripe with your publishable key
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string
 );
 
-export default function Page(): JSX.Element {
-  // global state
-  const clientSecret = useCheckoutStore((state) => state.clientSecret);
+type Props = {
+  params: { clientSecret: string };
+};
 
-  // const [clientSecret, setClientSecret] = useState<string | null>(null);
+export default function CheckoutPage({ params }: Props) {
+  // global state
+  const paymentIntent = useCheckoutStore((state) => state.paymentIntent);
+
+  // local state
   const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [payAmount, setPayAmount] = useState(0);
+
+  const { clientSecret } = params;
 
   const options: StripeElementsOptions = {
     clientSecret: clientSecret ?? "",
@@ -120,21 +128,33 @@ export default function Page(): JSX.Element {
     setPaymentSuccess(value);
   }, []);
 
+  useEffect(() => {
+    const amount = new URLSearchParams(window.location.search).get("amount");
+    const totalAmount = Number(amount) / 100;
+    setPayAmount(totalAmount);
+  }, []);
+
   return (
     <div className="w-full h-full">
-      <Container>
-        {clientSecret && stripePromise && (
-          <div className="w-full h-full flex flex-col gap-4">
-            <AddressSelector />
-            <Elements options={options} stripe={stripePromise}>
-              <StripeCheckoutForm
-                handleSetPaymentSuccess={handleSetPaymentSuccess}
-              />
-            </Elements>
-          </div>
-        )}
-      </Container>
-      {paymentSuccess && <PaymentSuccess />}
+      {paymentSuccess ? (
+        <PaymentSuccess clientSecret={clientSecret} />
+      ) : (
+        <Container>
+          <h1 className="text-xl font-semibold">
+            ยอดที่ต้องชำระ : {formatPrice(payAmount)}
+          </h1>
+
+          {clientSecret && stripePromise && (
+            <div className="w-full h-full flex flex-col gap-4">
+              <Elements options={options} stripe={stripePromise}>
+                <StripeCheckoutForm
+                  handleSetPaymentSuccess={handleSetPaymentSuccess}
+                />
+              </Elements>
+            </div>
+          )}
+        </Container>
+      )}
     </div>
   );
 }

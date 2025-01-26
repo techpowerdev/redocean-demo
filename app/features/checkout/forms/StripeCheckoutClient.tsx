@@ -4,7 +4,6 @@ import { useState, useCallback } from "react";
 import { loadStripe, StripeElementsOptions } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import StripeCheckoutForm from "@/app/features/checkout/forms/StripeCheckoutForm";
-// import AddressSelector from "@/app/features/address/forms/AddressSelector";
 import Container from "@/components/shared/Container";
 import PaymentSuccess from "@/app/features/checkout/forms/PaymentSuccess";
 
@@ -37,7 +36,6 @@ export default function StripeCheckoutClient({ clientSecret }: Props) {
       <Container>
         {clientSecret && stripePromise && (
           <div className="w-full h-full flex flex-col gap-4">
-            {/* <AddressSelector /> */}
             <Elements options={options} stripe={stripePromise}>
               <StripeCheckoutForm
                 handleSetPaymentSuccess={handleSetPaymentSuccess}
