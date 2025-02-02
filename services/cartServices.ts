@@ -4,7 +4,7 @@ import { AddProductToCardInputType } from "@/types/cartTypes";
 
 export const getUserCart = async () => {
   try {
-    const response = await apiClient.get(`/users/carts`);
+    const response = await apiClient.get(`/carts`);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -20,7 +20,7 @@ export const addProductItemToCart = async (
   cartItem: AddProductToCardInputType
 ) => {
   try {
-    const response = await apiClient.post(`/users/carts`, cartItem);
+    const response = await apiClient.post(`/carts`, cartItem);
 
     return response.data;
   } catch (error) {
@@ -35,7 +35,7 @@ export const addProductItemToCart = async (
 
 export const removeProductItemFormCart = async (id: string) => {
   try {
-    const response = await apiClient.delete(`/users/carts/items/${id}`);
+    const response = await apiClient.delete(`/carts/items/${id}`);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -48,7 +48,7 @@ export const removeProductItemFormCart = async (id: string) => {
 };
 export const clearCart = async () => {
   try {
-    const response = await apiClient.delete(`/users/carts`);
+    const response = await apiClient.delete(`/carts`);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -60,10 +60,9 @@ export const clearCart = async () => {
 
 export const increaseProductItemQty = async (id: string, quantity: number) => {
   try {
-    const response = await apiClient.patch(
-      `/users/carts/items/${id}/qty/increase`,
-      { quantity }
-    );
+    const response = await apiClient.patch(`/carts/items/${id}/qty/increase`, {
+      quantity,
+    });
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -75,10 +74,9 @@ export const increaseProductItemQty = async (id: string, quantity: number) => {
 
 export const decreaseProductItemQty = async (id: string, quantity: number) => {
   try {
-    const response = await apiClient.patch(
-      `/users/carts/items/${id}/qty/decrease`,
-      { quantity }
-    );
+    const response = await apiClient.patch(`/carts/items/${id}/qty/decrease`, {
+      quantity,
+    });
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
