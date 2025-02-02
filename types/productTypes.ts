@@ -87,3 +87,36 @@ export type CartProductType = {
   specialDiscount?: number;
   quantity: number;
 };
+
+export type CheckProductAvailabilityForUserPayloadType = {
+  items: {
+    productId: string;
+    sku: string;
+    quantity: number;
+    promotionActivityId?: string | null;
+    promotionType?: string | null;
+  }[];
+};
+
+export type CheckProductAvailabilityForUserResponseType = {
+  items: {
+    productId: string;
+    sku: string;
+    name: string;
+    description: string;
+    variantOptions: string;
+    image: string;
+    promotionActivityId?: string | null;
+    promotionType?: string | null;
+    unitPrice: number;
+    quantity: number;
+    discount: number;
+    discountedPrice: number;
+    total: number;
+    warningMessage?: string | null;
+    isAvailableStock: boolean;
+  }[];
+  totalAmount: number;
+  totalDiscount: number;
+  netAmount: number;
+};
