@@ -10,6 +10,7 @@ import { getUserOrders } from "@/services/orderServices";
 import { FetchAllOrderResponseType, OrderType } from "@/types/orderTypes";
 import { Eye, Truck } from "lucide-react";
 import { formatPrice } from "@/utils/formatPrice";
+import { statuses } from "@/app/features/order/data/OrderStatuses";
 
 export default function OrderList() {
   const [userOrders, setUserOrders] = useState<OrderType[] | null>(null);
@@ -42,7 +43,8 @@ export default function OrderList() {
               {formatDateTimePromotion(new Date(order.createdAt).toISOString())}
             </span>
             <span className="text-[14px] font-bold text-green-600 border px-2 p-1 rounded-sm">
-              {order.status}
+              {statuses.find((status) => status.value === order.status)
+                ?.label || "อยู่ระหว่างดำเนินการ"}
             </span>
           </div>
           <Link href={`/order/${order.id}`}>
@@ -51,7 +53,7 @@ export default function OrderList() {
             ))}
           </Link>
           <p className="text-end font-semibold my-2">
-            รวมเป็นเงินทั้งสิ้น : {formatPrice(order.totalAmount)}
+            รวมเป็นเงินทั้งสิ้น : {formatPrice(order.netAmount)}
           </p>
           <div className="grid grid-cols-2 items-center gap-2">
             <Link
@@ -72,7 +74,7 @@ export default function OrderList() {
               </Link>
             ) : (
               <div className="flex justify-center items-center gap-2 mt-2 bg-white p-2 rounded-md w-full text-primary">
-                อยู่ระหว่างดำเนินการ
+                ยังไม่มีเลขพัสดุ
               </div>
             )}
           </div>

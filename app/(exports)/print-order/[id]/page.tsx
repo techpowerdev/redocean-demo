@@ -193,16 +193,14 @@ export default function PrintOrderDetail({
                   {formatPrice(item.discount || 0)}
                 </td>
                 <td className="border border-gray-300 px-4 py-2 text-right">
-                  {formatPrice(item.unitPrice - (item.discount || 0))}
+                  {formatPrice(item.unitPrice - item.discount)}
                 </td>
                 <td className="border border-gray-300 px-4 py-2 text-center">
                   {item.quantity}
                 </td>
                 <td className="border border-gray-300 px-4 py-2 text-right">
-                  {/* {formatPrice(item.total)} */}
                   {formatPrice(
-                    item.unitPrice * item.quantity -
-                      (item.discount || 0) * item.quantity
+                    (item.unitPrice - item.discount) * item.quantity
                   )}
                 </td>
               </tr>
@@ -213,7 +211,7 @@ export default function PrintOrderDetail({
             >
               <td colSpan={6} className="font-bold bg-gray-300 py-2 px-4">
                 <span className="mr-2">รวมเป็นเงินทั้งหมด</span>
-                {order?.totalAmount ? formatPrice(order.totalAmount) : ""}
+                {formatPrice(order.netAmount || 0)}
               </td>
             </tr>
           </tbody>

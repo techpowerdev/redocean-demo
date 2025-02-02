@@ -2,16 +2,20 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 
-import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 
 // import { labels, priorities, statuses } from "./data/data";
 // import { Task } from "./data/schema";
 import {
   CircleCheckBig,
+  CircleX,
+  HandCoins,
+  LoaderCircle,
+  Package,
+  PackageCheck,
   RefreshCw,
   TicketPercent,
-  Truck,
+  // Truck,
   Users,
 } from "lucide-react";
 // import { z } from "zod";
@@ -35,56 +39,56 @@ export const labels = [
   },
 ];
 
-// pending
-// shipping
-// return
-// completed
-// cancelled
-// failed
-// refunded
-
 export const statuses = [
   {
+    value: "need_to_pay",
+    label: "รอชำระเงิน",
+    icon: RefreshCw,
+  },
+  {
     value: "pending",
-    label: "รอดำเนินการ",
+    label: "อยู่ระหว่างดำเนินการ",
     icon: RefreshCw,
   },
   {
     value: "awaiting_confirmation",
     label: "รอยืนยันคำสั่งซื้อ",
-    icon: RefreshCw,
+    icon: LoaderCircle,
   },
   {
-    value: "shipping",
-    label: "กำลังจัดส่ง",
-    icon: Truck,
+    value: "confirmed",
+    label: "ยืนยันคำสั่งซื้อแล้ว",
+    icon: CircleCheckBig,
   },
+  {
+    value: "preparing_to_ship",
+    label: "เตรียมจัดส่ง",
+    icon: Package,
+  },
+  // {
+  //   value: "shipping",
+  //   label: "กำลังจัดส่ง",
+  //   icon: Truck,
+  // },
   {
     value: "completed",
     label: "สำเร็จ",
-    icon: CircleCheckBig,
+    icon: PackageCheck,
+  },
+  {
+    value: "refunded",
+    label: "คืนเงิน",
+    icon: HandCoins,
+  },
+  {
+    value: "cancelled",
+    label: "ยกเลิกคำสั่งซื้อ",
+    icon: CircleX,
   },
 ];
 
-// export const orderSchema = z.object({
-//   id: z.string(),
-//   title: z.string(),
-//   status: z.string(),
-//   label: z.string(),
-//   priority: z.string(),
-// });
-
-// export type Order = z.infer<typeof orderSchema>;
 export type Order = OrderType;
-// "id": "cm3fkkj8d000r22mlkoztebnj",
-// "orderType": "groupbuying",
-// "creditCardFee": 0,
-// "shippingFee": 0,
-// "totalAmount": 0,
-// "returnAmount": 0,
-// "status": "pending",
-// "trackingNumber": "TH0988767373",
-// "shippingAddress
+
 // กำหนดหัวของคอลัมน์
 export const OrderColumn: ColumnDef<Order>[] = [
   {
@@ -121,26 +125,26 @@ export const OrderColumn: ColumnDef<Order>[] = [
     enableSorting: false,
     enableHiding: false,
   },
-  {
-    accessorKey: "orderType",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Order Type" />
-    ),
-    cell: ({ row }) => {
-      const label = labels.find(
-        (label) => label.value === row.original.orderType
-      );
+  // {
+  //   accessorKey: "orderType",
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader column={column} title="Order Type" />
+  //   ),
+  //   cell: ({ row }) => {
+  //     const label = labels.find(
+  //       (label) => label.value === row.original.orderType
+  //     );
 
-      return (
-        <div className="flex space-x-2">
-          {label && <Badge variant="outline">{label.label}</Badge>}
-          {/* <span className="max-w-[500px] truncate font-medium">
-            {row.getValue("orderType")}
-          </span> */}
-        </div>
-      );
-    },
-  },
+  //     return (
+  //       <div className="flex space-x-2">
+  //         {label && <Badge variant="outline">{label.label}</Badge>}
+  //         {/* <span className="max-w-[500px] truncate font-medium">
+  //           {row.getValue("orderType")}
+  //         </span> */}
+  //       </div>
+  //     );
+  //   },
+  // },
   {
     accessorKey: "totalAmount",
     header: ({ column }) => (
@@ -148,6 +152,18 @@ export const OrderColumn: ColumnDef<Order>[] = [
     ),
     cell: ({ row }) => (
       <div className="">{formatPrice(row.getValue("totalAmount"))}</div>
+    ),
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id));
+    },
+  },
+  {
+    accessorKey: "totalDiscount",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Total Discount" />
+    ),
+    cell: ({ row }) => (
+      <div className="">{formatPrice(row.getValue("totalDiscount"))}</div>
     ),
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));

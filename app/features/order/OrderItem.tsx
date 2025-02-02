@@ -32,16 +32,25 @@ export default function OrderItem({ item }: ItemContentProps) {
         <div className="mt-4">
           <div className="flex justify-between items-center">
             <div className="flex flex-col gap-2">
-              <span className="line-through text-red-500">
-                {formatPrice(item.unitPrice)}
-              </span>
-              <span className="text-green-500">
-                {formatPrice(item.unitPrice - (item.discount || 0))}
-              </span>
+              {item.discount != null && item.discount > 0 ? (
+                <>
+                  <span className="line-through text-red-500">
+                    {formatPrice(item.unitPrice)}
+                  </span>
+                  <span className="text-green-500">
+                    {formatPrice((item.unitPrice || 0) - item.discount)}
+                  </span>
+                </>
+              ) : (
+                <span>{formatPrice(item.unitPrice)}</span>
+              )}
             </div>
             <span>จำนวน : {item.quantity}</span>
           </div>
-          <div className="mt-4 text-end">รวม : {formatPrice(item.total)}</div>
+          <div className="mt-4 text-end">
+            รวม :{" "}
+            {formatPrice((item.unitPrice - item.discount) * item.quantity)}
+          </div>
         </div>
       </div>
     </div>
