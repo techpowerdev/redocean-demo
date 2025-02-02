@@ -9,7 +9,7 @@ type Props = {
   params: { id: string };
 };
 
-export default function page({ params }: Props) {
+export default function EditProduct({ params }: Props) {
   const [product, setProduct] = useState<ProductType | null>(null);
   useEffect(() => {
     const fetchProduct = async () => {

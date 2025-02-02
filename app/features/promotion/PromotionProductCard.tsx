@@ -11,11 +11,11 @@ import ProductImage from "@/app/features/product/ProductImages";
 import SetProductQuantity from "@/app/features/product/SetProductQuantity";
 import { searchProductVariant } from "@/services/productServices";
 import ProductOptions from "@/app/features/product/ProductOptions";
-// import AddProductToCart from "@/app/features/product/AddProductToCart";
 import { ProductType, VariantOption } from "@/types/productTypes";
-import { AddProductToCardInputType } from "@/types/cartTypes";
 import { PromotionActivityType, PromotionType } from "@/types/promotionTypes";
-import BuyNowButton from "@/app/features/product/BuyNowButton";
+import PlaceOrderCheckout from "@/app/features/checkout/forms/PlaceOrderCheckout";
+// import AddProductToCart from "@/app/features/product/AddProductToCart";
+import PromotionRules from "@/app/features/promotion/PromotionRules";
 interface Props {
   isActive: boolean;
   promotion: PromotionType;
@@ -55,7 +55,7 @@ export default function PromotionProductCard({
   const [selectedVariant, setSelectedVariant] =
     useState<selectedVariantType | null>(null);
 
-  const [cartProduct, setCartProduct] = useState<AddProductToCardInputType>({
+  const [createOrderData, setCreateOrderData] = useState({
     productId: "",
     sku: "",
     quantity: 1,
@@ -65,26 +65,26 @@ export default function PromotionProductCard({
 
   const handleQtyIncrease = useCallback(async () => {
     if (selectedVariant) {
-      if (cartProduct.quantity + 1 > selectedVariant.stock) {
+      if (createOrderData.quantity + 1 > selectedVariant.stock) {
         toast.error("จำนวนสินค้าไม่เพียงพอ");
         return;
       }
     }
 
-    setCartProduct((prev) => {
+    setCreateOrderData((prev) => {
       return { ...prev, quantity: prev.quantity + 1 };
     });
-  }, [cartProduct.quantity, selectedVariant]);
+  }, [createOrderData.quantity, selectedVariant]);
 
   const handleQtyDecrease = useCallback(() => {
-    if (cartProduct.quantity === 1) {
+    if (createOrderData.quantity === 1) {
       return;
     }
 
-    setCartProduct((prev) => {
+    setCreateOrderData((prev) => {
       return { ...prev, quantity: prev.quantity - 1 };
     });
-  }, [cartProduct]);
+  }, [createOrderData]);
 
   const handleOptionChange = (key: string, value: string | undefined) => {
     setSelectedOptions((prev) => ({
@@ -104,7 +104,7 @@ export default function PromotionProductCard({
 
         if (productVariant) {
           setSelectedVariant(productVariant);
-          setCartProduct({
+          setCreateOrderData({
             productId: product.id,
             sku: productVariant.sku,
             quantity: 1,
@@ -113,7 +113,7 @@ export default function PromotionProductCard({
           });
         } else {
           setSelectedVariant(null);
-          setCartProduct({
+          setCreateOrderData({
             productId: "",
             sku: "",
             quantity: 1,
@@ -126,7 +126,13 @@ export default function PromotionProductCard({
       }
     };
     fetchData();
-  }, [product.id, promotionActivity, promotionActivity?.id, selectedOptions]);
+  }, [
+    product.id,
+    promotion.type,
+    promotionActivity,
+    promotionActivity.id,
+    selectedOptions,
+  ]);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 my-5">
@@ -215,21 +221,26 @@ export default function PromotionProductCard({
 
         <div className="w-full flex flex-col gap-4">
           <SetProductQuantity
-            cartCounter={false} // if you don't need to show "QUANTITY :"
-            cartProduct={cartProduct}
+            showLabelQuantity={false} // if you don't need to show "QUANTITY :"
+            product={createOrderData}
             handleQtyIncrease={handleQtyIncrease}
             handleQtyDecrease={handleQtyDecrease}
           />
           {/* <AddProductToCart
             isActive={isActive}
-            product={cartProduct}
+            product={createOrderData}
             stock={selectedVariant?.stock || 0}
           /> */}
-          <BuyNowButton
-            isActive={isActive}
-            product={cartProduct}
-            stock={selectedVariant?.stock || 0}
-          />
+          {isActive && <PlaceOrderCheckout singleItem={createOrderData} />}
+          {promotionActivity.minimumPurchaseQuantity
+            ? promotionActivity.minimumPurchaseQuantity > 0 && (
+                <PromotionRules
+                  minimumPurchaseQuantity={
+                    promotionActivity.minimumPurchaseQuantity
+                  }
+                />
+              )
+            : null}
         </div>
       </div>
     </div>

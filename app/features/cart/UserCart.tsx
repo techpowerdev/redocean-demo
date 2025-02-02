@@ -3,47 +3,27 @@
 import { formatPrice } from "@/utils/formatPrice";
 import { Button } from "@/components/ui/button";
 import Heading from "@/components/shared/Heading";
-import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import EmptyCart from "@/app/features/cart/EmptyCart";
 import { getUserCart } from "@/services/cartServices";
 import CartItem from "@/app/features/cart/CartItem";
 import { useCartServerStore } from "@/state-stores/cartServerStore";
 import { ShoppingCart } from "lucide-react";
-import { checkStockAndPromotionForCheckout } from "@/services/orderServices";
-import toast from "react-hot-toast";
 import { FetchCartResponseType } from "@/types/cartTypes";
+import PlaceOrderCheckout from "@/app/features/checkout/forms/PlaceOrderCheckout";
+import { CreateOrderItem } from "@/types/orderTypes";
 
 export default function CartClient() {
-  const setCart = useCartServerStore((state) => state.setCart);
+  // cart
   const cart = useCartServerStore((state) => state.cart);
+  const setCart = useCartServerStore((state) => state.setCart);
   const clearCart = useCartServerStore((state) => state.clearCart);
-
-  const router = useRouter();
-
-  const handleCheckout = async () => {
-    try {
-      if (cart?.cartItems) {
-        const isStockSufficient = await checkStockAndPromotionForCheckout(
-          cart?.cartItems
-        );
-        if (isStockSufficient) {
-          router.push("/checkout");
-        }
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        const errorMessage = error.message;
-        toast.error(errorMessage);
-      }
-    }
-  };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response: FetchCartResponseType = await getUserCart();
-        console.log(response.data);
+        console.log("cart", response.data);
         setCart(response.data);
       } catch (error) {
         console.log(error);
@@ -56,6 +36,17 @@ export default function CartClient() {
   if (!cart || cart.cartItems?.length === 0) {
     return <EmptyCart />;
   }
+
+  const items: CreateOrderItem[] =
+    cart?.cartItems?.map(
+      ({ productId, sku, quantity, promotionActivityId, promotionType }) => ({
+        productId,
+        sku,
+        quantity,
+        promotionActivityId,
+        promotionType,
+      })
+    ) ?? [];
 
   return (
     <div>
@@ -85,9 +76,7 @@ export default function CartClient() {
             <span>{formatPrice(cart.cartTotalAmount)}</span>
           </div>
           <p className="text-slate-500">ยังไม่รวมค่าธรรมเนียมและค่าขนส่ง</p>
-          <Button size={"lg"} className="text-lg" onClick={handleCheckout}>
-            ชำระเงิน
-          </Button>
+          <PlaceOrderCheckout cartItems={items} />
         </div>
       </div>
     </div>

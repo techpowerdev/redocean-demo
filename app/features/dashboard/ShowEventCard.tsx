@@ -24,16 +24,22 @@ interface Props {
 
 export default function ShowEventCard({ promotion }: Props) {
   const [sending, setSending] = useState(false);
+  const [updating, setUpdating] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const [openSendOrderToConfirmForm, setOpenSendOrderToConfirmForm] =
     useState(false);
-  const [openSendOrderToFulfillment, setOpenSendOrderToFulfillment] =
-    useState(false);
-
   const handleOpenSendOrderToConfirmForm = () => {
     setOpenSendOrderToConfirmForm(!openSendOrderToConfirmForm);
   };
+
+  const [openConfirmOrderForm, setOpenConfirmOrderForm] = useState(false);
+  const handleOpenConfirmOrderForm = () => {
+    setOpenConfirmOrderForm(!openConfirmOrderForm);
+  };
+
+  const [openSendOrderToFulfillment, setOpenSendOrderToFulfillment] =
+    useState(false);
   const handleOpenSendOrderToFulfillment = () => {
     setOpenSendOrderToFulfillment(!openSendOrderToFulfillment);
   };
@@ -46,9 +52,16 @@ export default function ShowEventCard({ promotion }: Props) {
       );
       const orders = result.data;
 
-      if (orders) {
+      const needToConfirm = orders.filter(
+        (order) => order.status === "pending"
+      );
+
+      console.log("orders===", orders);
+      console.log("needToConfirm===", needToConfirm);
+
+      if (needToConfirm.length > 0) {
         const results = await Promise.all(
-          orders.map(async (order) => {
+          needToConfirm.map(async (order) => {
             try {
               // ส่งข้อความไปที่ Line
               const messageResult = await sendMessageToLine(
@@ -74,12 +87,57 @@ export default function ShowEventCard({ promotion }: Props) {
           })
         );
 
-        console.log("results Orders:", results);
+        console.log("send line results:", results);
       }
     } catch (error) {
       console.error(error);
     } finally {
       setSending(false);
+    }
+  };
+
+  const updateAllOrdersStatusToConfirmed = async (
+    promotionActivityId: string
+  ) => {
+    setUpdating(true);
+    try {
+      const result: FetchAllOrderResponseType = await getPromotionOrder(
+        promotionActivityId
+      );
+      const orders = result.data;
+      const needToConfirm = orders.filter(
+        (order) => order.status === "pending"
+      );
+
+      console.log("orders===", orders);
+      console.log("needToConfirm=====", needToConfirm);
+
+      if (needToConfirm.length > 0) {
+        const results = await Promise.all(
+          needToConfirm.map(async (order) => {
+            try {
+              // หากส่งข้อความสำเร็จ ให้เปลี่ยนสถานะออเดอร์
+              const updatedResults = await changeOrderStatus(
+                order.id,
+                "confirmed"
+              );
+              return updatedResults;
+            } catch (error) {
+              console.error(
+                `Failed to update status for order ${order.id}:`,
+                error
+              );
+              return null; // หรือค่าเริ่มต้นกรณีล้มเหลว
+            }
+          })
+        );
+
+        console.log("updated status results:", results);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setUpdating(false);
     }
   };
 
@@ -89,12 +147,19 @@ export default function ShowEventCard({ promotion }: Props) {
       const result: FetchAllOrderResponseType = await getPromotionOrder(
         promotionActivityId
       );
-      console.log(result.data);
+      const orders = result.data;
 
-      if (result) {
+      const confirmedOrders = orders.filter(
+        (order) => order.status === "confirmed"
+      );
+
+      console.log("orders===", orders);
+      console.log("confirmedOrders===", confirmedOrders);
+
+      if (confirmedOrders.length > 0) {
         const orders: CreateOrderFullfillmentBody[] = [];
 
-        result.data.map((order) => {
+        confirmedOrders.map((order) => {
           // คำนวณยอดรวม
           const summary = order.orderItems?.reduce(
             (acc, item) => {
@@ -168,7 +233,15 @@ export default function ShowEventCard({ promotion }: Props) {
         const results = await Promise.all(
           orders.map(async (order) => {
             try {
-              return await createOrderFullfillment(order);
+              const sendResult = await createOrderFullfillment(order);
+              // หากส่งข้อความสำเร็จ ให้เปลี่ยนสถานะออเดอร์
+              if (sendResult) {
+                await changeOrderStatus(
+                  order.order_reference,
+                  "preparing_to_ship"
+                );
+              }
+              return sendResult;
             } catch (error) {
               failedOrders.push({ order, error }); // เก็บรายการที่ล้มเหลว
               return null; // หรือค่าเริ่มต้นกรณีล้มเหลว
@@ -203,7 +276,7 @@ export default function ShowEventCard({ promotion }: Props) {
             <h1>เป้าหมาย: {activity.minimumPurchaseQuantity}</h1>
             <Button
               onClick={handleOpenSendOrderToConfirmForm}
-              className="bg-orange-500 hover:bg-orange-500 hover:bg-opacity-90"
+              className="bg-red-500 hover:bg-red-500 hover:bg-opacity-90"
             >
               {sending ? "กำลังส่ง..." : "ส่งคำขอยืนยันคำสั่งซื้อ"}
             </Button>
@@ -212,6 +285,18 @@ export default function ShowEventCard({ promotion }: Props) {
               open={openSendOrderToConfirmForm}
               setOpen={handleOpenSendOrderToConfirmForm}
               action={() => sendOrdersToConfirm(activity.id)}
+            />
+            <Button
+              onClick={handleOpenConfirmOrderForm}
+              className="bg-orange-500 hover:bg-orange-500 hover:bg-opacity-90"
+            >
+              {updating ? "กำลังอัปเดต..." : "ยืนยันคำสั่งซื้อทั้งหมด"}
+            </Button>
+            <ConfirmationPopup
+              title="ต้องการยืนยันคำสั่งซื้อทั้งหมด?"
+              open={openConfirmOrderForm}
+              setOpen={handleOpenConfirmOrderForm}
+              action={() => updateAllOrdersStatusToConfirmed(activity.id)}
             />
             <Button
               onClick={handleOpenSendOrderToFulfillment}
