@@ -75,3 +75,14 @@ export type StripeCreatePaymentIntentResultType = {
   totalDiscount: number;
   netAmount: number;
 };
+
+export interface CreatePaymentIntentParam {
+  orderId: string;
+  amount: number;
+  currency?: string; // default: "thb"
+  captureLater?: boolean; // default: false
+  paymentState?: PaymentStateType; // default: "initial_payment"
+}
+export interface CreatePaymentIntentResponse {
+  clientSecret: string;
+}
