@@ -1,7 +1,43 @@
 import { CartItemType } from "@/types/cartTypes";
-import { CreateOderType } from "@/types/orderTypes";
+import {
+  CreateOderType,
+  CreateOrderWithPaymentIntentParams,
+  CreateOrderWithPaymentIntentResponse,
+} from "@/types/orderTypes";
 import apiClient from "@/services/apiClient";
 import axios from "axios";
+
+export async function createOrderWithPaymentIntent(
+  CreateData: CreateOrderWithPaymentIntentParams
+): Promise<{ data: CreateOrderWithPaymentIntentResponse; message: string }> {
+  try {
+    const response = await apiClient.post(`/orders`, CreateData);
+    return response.data; // ดึง data จาก axios แล้วส่งเฉพาะข้อมูลที่ได้รับจาก API
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || "สร้างรายการคำสั่งซื้อไม่สำเร็จ"
+      );
+    }
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
+  }
+}
+
+export async function cancelOrderAndRefund(
+  orderId: string
+): Promise<{ data: any; message: string }> {
+  try {
+    const response = await apiClient.patch(`/orders/${orderId}/cancel`);
+    return response.data; // ดึง data จาก axios แล้วส่งเฉพาะข้อมูลที่ได้รับจาก API
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || "ส่งคำขอยกเลิกคำสั่งซื้อไม่สำเร็จ"
+      );
+    }
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
+  }
+}
 
 export const createOrder = async (data: CreateOderType) => {
   try {
@@ -54,6 +90,7 @@ export const changeTrackingNumber = async (
 export const getOneOrder = async (id: string) => {
   try {
     const response = await apiClient.get(`/orders/${id}`);
+    console.log("get one order === ", response.data);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -209,6 +246,7 @@ export async function createOrderFullfillment(
 
     return response.data;
   } catch (error) {
+    console.log("create fulfillment error===", error);
     if (axios.isAxiosError(error)) {
       throw new Error(
         error.response?.data?.message || "สร้างคำสั่งซื้อไม่สำเร็จ"
