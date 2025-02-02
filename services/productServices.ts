@@ -1,5 +1,9 @@
 import axios from "axios";
 import apiClient from "./apiClient";
+import {
+  CheckProductAvailabilityForUserPayloadType,
+  CheckProductAvailabilityForUserResponseType,
+} from "@/types/productTypes";
 
 // specific for user
 export const getAllProductForSell = async () => {
@@ -245,6 +249,29 @@ export const searchProductVariant = async (
     if (axios.isAxiosError(error)) {
       throw new Error(
         error.response?.data?.message || "ไม่สามารถค้นหาสินค้าได้"
+      );
+    }
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
+  }
+};
+
+// validation
+export const checkProductAvailabilityForUser = async (
+  data: CheckProductAvailabilityForUserPayloadType
+): Promise<{
+  data: CheckProductAvailabilityForUserResponseType;
+  message?: string | null;
+}> => {
+  try {
+    const response = await apiClient.post(
+      `/products/check-available-for-user`,
+      data
+    );
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || "เกิดข้อผิดพลาดระหว่างตรวจสอบสินค้า"
       );
     }
     throw new Error("เกิดข้อผิดพลาดบางอย่าง");
