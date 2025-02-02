@@ -37,3 +37,31 @@ export type ShippingAddressType = Omit<
   AddressType,
   "id" | "isActive" | "createdAt" | "updatedAt" | "userId" | "user"
 >;
+
+// // #################### Refractor ####################
+// // basic type
+// export interface Address {
+//   recipient: string;
+//   phoneNumber: string;
+//   address: string;
+//   street: string;
+//   subDistrict: string;
+//   district: string;
+//   province: string;
+//   postalCode: string;
+//   isActive: boolean;
+// }
+
+// // export type CreateAddress = Address;
+
+// // export type CreateAddressResponse = Address;
+
+// // export type UpdateAddress = Address;
+
+// // export type ShippingAddress = Address;
+
+// export interface GetAddressResponse extends Address {
+//   id: string;
+//   createdAt: Date;
+//   updatedAt: Date;
+// }
