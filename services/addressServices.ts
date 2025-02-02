@@ -8,7 +8,7 @@ import apiClient from "./apiClient";
 
 export const createAddress = async (data: CreateAddressType) => {
   try {
-    const response = await apiClient.post(`/users/addresses`, data);
+    const response = await apiClient.post(`/addresses`, data);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -20,7 +20,7 @@ export const createAddress = async (data: CreateAddressType) => {
 
 export const updateAddress = async (id: string, data: UpdateAddressType) => {
   try {
-    const response = await apiClient.put(`/users/addresses/${id}`, data);
+    const response = await apiClient.put(`/addresses/${id}`, data);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -32,7 +32,7 @@ export const updateAddress = async (id: string, data: UpdateAddressType) => {
 
 export const changeActiveAddress = async (id: string, isActive: boolean) => {
   try {
-    const response = await apiClient.patch(`/users/addresses/${id}`, {
+    const response = await apiClient.patch(`/addresses/${id}`, {
       isActive,
     });
     return response.data;
@@ -48,7 +48,7 @@ export const changeActiveAddress = async (id: string, isActive: boolean) => {
 
 export const deleteAddress = async (id: string) => {
   try {
-    const response = await apiClient.delete(`/users/addresses/${id}`);
+    const response = await apiClient.delete(`/addresses/${id}`);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -63,7 +63,7 @@ export const getAddress = async (): Promise<{
   message: string;
 }> => {
   try {
-    const response = await apiClient.get(`/users/addresses`);
+    const response = await apiClient.get(`/addresses`);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
