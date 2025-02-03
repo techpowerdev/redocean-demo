@@ -6,8 +6,8 @@ import {
   CircleX,
   ClockArrowDown,
   LoaderCircle,
+  Package,
   ScrollText,
-  Truck,
 } from "lucide-react";
 import { OrderSummaryReponseType, OrderSummaryType } from "@/types/orderTypes";
 
@@ -31,7 +31,7 @@ export default function OrderSummaryOfPromotionToday({
     fetchData();
   }, [promotionActivityId]);
   return (
-    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-6">
+    <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
       <DashboardCard
         title="ทั้งหมด"
         value={orderSummary?.totalOrders || 0}
@@ -55,11 +55,11 @@ export default function OrderSummaryOfPromotionToday({
       <DashboardCard
         title="เตรียมจัดส่ง"
         value={orderSummary?.preparingToShipOrders || 0}
-        Icon={Truck}
+        Icon={Package}
       />
       <DashboardCard
         title="ยกเลิกและคืนเงิน"
-        value={orderSummary?.cancelledOrders || 0}
+        value={orderSummary?.cancelledAndRefundedOrders || 0}
         Icon={CircleX}
       />
     </div>
