@@ -12,16 +12,11 @@ import {
   // StripeAddressElementOptions,
   StripePaymentElementOptions,
 } from "@stripe/stripe-js";
-import { useAddressStore } from "@/state-stores/addressStore";
-import toast from "react-hot-toast";
 
 type Props = {
   handleSetPaymentSuccess: (value: boolean) => void;
 };
 export default function StripeCheckoutForm({ handleSetPaymentSuccess }: Props) {
-  // global state
-  const selectedAddress = useAddressStore((state) => state.selectedAddress);
-
   // stripe hook
   const stripe = useStripe();
   const elements = useElements();
@@ -32,10 +27,6 @@ export default function StripeCheckoutForm({ handleSetPaymentSuccess }: Props) {
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
-
-    if (!selectedAddress) {
-      return toast.error("กรุณาระบุที่อยู่การจัดส่ง");
-    }
 
     if (!stripe || !elements) {
       return;
