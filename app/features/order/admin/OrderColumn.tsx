@@ -85,6 +85,11 @@ export const statuses = [
     label: "ยกเลิกคำสั่งซื้อ",
     icon: CircleX,
   },
+  {
+    value: "cancelled_and_refunded",
+    label: "ยกเลิกคำสั่งซื้อและคืนเงิน",
+    icon: CircleX,
+  },
 ];
 
 export type Order = OrderType;
