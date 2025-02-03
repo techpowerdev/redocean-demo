@@ -39,6 +39,7 @@ export default function PlaceOrderCheckout({ singleItem, cartItems }: Props) {
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false); // จัดการสถานะของ Sheet
   const [isOpen2, setIsOpen2] = useState(false); // จัดการสถานะของ Sheet
+  const [creatingOrder, setCreatingOrder] = useState(false);
 
   // navigation
   const router = useRouter();
@@ -73,7 +74,7 @@ export default function PlaceOrderCheckout({ singleItem, cartItems }: Props) {
     if (items.length === 0) {
       return;
     }
-
+    setCreatingOrder(true);
     setIsOpen(true);
 
     try {
@@ -151,6 +152,8 @@ export default function PlaceOrderCheckout({ singleItem, cartItems }: Props) {
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setCreatingOrder(false);
     }
   };
 
@@ -180,16 +183,15 @@ export default function PlaceOrderCheckout({ singleItem, cartItems }: Props) {
             size={"lg"}
             className="w-full text-lg my-4"
             onClick={handleCheckout}
-            disabled={!singleItem && (!cartItems || cartItems.length === 0)}
+            disabled={creatingOrder || (!singleItem && !cartItems?.length)}
           >
-            ยืนยัน
+            {creatingOrder ? "กำลังดำเนินการ..." : " ยืนยัน"}
           </Button>
         </SheetContent>
       </Sheet>
       <Sheet open={isOpen2} onOpenChange={setIsOpen2}>
         <SheetTitle />
         <SheetContent className="w-full md:w-[540px] overflow-y-auto">
-          {/* เกิดปัญหาไม่สามารถสั่งซื้อตัวอื่นได้ ให้เปลี่ยนไปใช้เป็น sheet อีกตัวซ้อนขึ้นมา */}
           {summaryProducts && (
             <>
               <OrderSummary orderData={summaryProducts} />
