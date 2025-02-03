@@ -22,7 +22,7 @@ const nextConfig = {
         hostname: "cdn.nocnoc.com",
       },
       {
-        hostname: "test-api.khumkha.com",
+        hostname: "api.khumkha.com",
       },
     ],
   },
