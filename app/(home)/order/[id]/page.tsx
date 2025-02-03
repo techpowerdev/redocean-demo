@@ -156,6 +156,12 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                 ?.label || "อยู่ระหว่างดำเนินการ"}
             </span>
           </p>
+          {order.cancelReason && (
+            <p className="flex flex-wrap gap-2">
+              <span className="font-semibold">เหตผล:</span>
+              <span>{order.cancelReason}</span>
+            </p>
+          )}
         </div>
         {/* Order Items Table */}
         <div>
