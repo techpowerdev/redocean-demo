@@ -26,6 +26,7 @@ export type OrderType = {
     province: string;
     postalCode: string;
   };
+  cancelReason: string | null;
   createdAt: Date;
   updatedAt: Date;
 
@@ -125,7 +126,7 @@ export type OrderSummaryType = {
   awaitingConfirmationOrders: number;
   confirmedOrders: number;
   preparingToShipOrders: number;
-  cancelledOrders: number;
+  cancelledAndRefundedOrders: number;
 };
 
 export type OrderSummaryReponseType = {
