@@ -39,6 +39,20 @@ export async function cancelOrderAndRefund(
   }
 }
 
+export async function captureOrder(
+  orderId: string
+): Promise<{ data: any; message: string }> {
+  try {
+    const response = await apiClient.post(`/orders/${orderId}/capture`);
+    return response.data; // ดึง data จาก axios แล้วส่งเฉพาะข้อมูลที่ได้รับจาก API
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message || "capture ไม่สำเร็จ");
+    }
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
+  }
+}
+
 export const createOrder = async (data: CreateOderType) => {
   try {
     const response = await apiClient.post(`/orders`, data);

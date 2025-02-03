@@ -5,6 +5,7 @@ import { PromotionCountdown } from "@/app/features/promotion/PromotionCountdown"
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import {
+  // captureOrder,
   changeOrderStatus,
   createOrderFullfillment,
   CreateOrderFullfillmentBody,
@@ -240,6 +241,8 @@ export default function ShowEventCard({ promotion }: Props) {
                   order.order_reference,
                   "preparing_to_ship"
                 );
+                // // capture การชำระเงินผ่านบัตรเครดิตที่ hold ไว้ หลังยืนยันออเดอร์แล้ว
+                // await captureOrder(order.order_reference);
               }
               return sendResult;
             } catch (error) {
