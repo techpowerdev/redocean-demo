@@ -45,6 +45,19 @@ export default function PlaceOrderCheckout({ singleItem, cartItems }: Props) {
 
   const items = singleItem ? [singleItem] : cartItems || [];
 
+  const handleOpenPlaceOrderForm = () => {
+    if (!currentUser) {
+      router.push("/login-line"); // ถ้า user เป็น null ให้ redirect ไปที่หน้าแรก
+      toast.error("กรุณาเชื่อมต่อไลน์");
+      return;
+    }
+
+    if (!currentUser.phoneVerified) {
+      router.push("/verify-user"); // ถ้า user เป็น null ให้ redirect ไปที่หน้าแรก
+      return;
+    }
+    setIsOpen(true);
+  };
   const handleCheckout = async () => {
     if (!currentUser) {
       router.push("/login-line"); // ถ้า user เป็น null ให้ redirect ไปที่หน้าแรก
@@ -147,12 +160,13 @@ export default function PlaceOrderCheckout({ singleItem, cartItems }: Props) {
     }
     router.push(`/checkout/${clientSecret}`);
   };
+
   return (
     <>
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <Button
           size={"lg"}
-          onClick={() => setIsOpen(true)}
+          onClick={handleOpenPlaceOrderForm}
           disabled={!singleItem && (!cartItems || cartItems.length === 0)}
           className="text-lg"
         >
