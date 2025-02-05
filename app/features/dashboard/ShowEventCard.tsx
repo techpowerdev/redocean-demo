@@ -9,15 +9,29 @@ import {
   changeOrderStatus,
   createOrderFullfillment,
   CreateOrderFullfillmentBody,
+  getOneOrder,
   getPromotionOrder,
 } from "@/services/orderServices";
-import { FetchAllOrderResponseType } from "@/types/orderTypes";
+import {
+  FetchAllOrderResponseType,
+  FetchOneOrderResponseType,
+} from "@/types/orderTypes";
 import OrderSummaryOfPromotionToday from "./OrderSummaryOfPromotionToday";
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import { PromotionType } from "@/types/promotionTypes";
-import { sendMessageToLine } from "@/services/pushMessageService";
+import {
+  createProductItem,
+  createSummaryItem,
+  sendMessageToLine,
+} from "@/services/pushMessageService";
 import { ConfirmationPopup } from "@/components/shared/ConfirmationPopup";
+import {
+  FlexBox,
+  FlexMessage,
+  SendMessageToLineParams,
+} from "@/types/lineTypes";
+import { formatPrice } from "@/utils/formatPrice";
 
 interface Props {
   promotion: PromotionType;
@@ -64,13 +78,121 @@ export default function ShowEventCard({ promotion }: Props) {
         const results = await Promise.all(
           needToConfirm.map(async (order) => {
             try {
-              // ส่งข้อความไปที่ Line
-              const messageResult = await sendMessageToLine(
-                order.user?.lineUid || "",
-                `เนื่องจากยอดรวมออเดอร์ไม่ได้ตามเป้าหมาย กรุณายืนยันการสั่งซื้อหรือยกเลิก โดยไปที่ : ${
-                  process.env.NEXT_PUBLIC_CLIENT_HOST_URL + "/order/" + order.id
-                }`
+              const fetchOrder: FetchOneOrderResponseType = await getOneOrder(
+                order.id
               );
+
+              const orderData = fetchOrder?.data;
+              const OrderItem: FlexBox[] =
+                orderData.orderItems?.map((item) =>
+                  createProductItem(
+                    `${item.name + " " + item.variantOptions}`,
+                    formatPrice(item.unitPrice),
+                    item.quantity.toString()
+                  )
+                ) ?? [];
+
+              const flexMessage: FlexMessage = {
+                type: "bubble",
+                body: {
+                  type: "box",
+                  layout: "vertical",
+                  contents: [
+                    {
+                      type: "image",
+                      // url: `${process.env.NEXT_PUBLIC_CLIENT_HOST_URL}/logo.jpg`,
+                      url: "https://demo.khumkha.com/_next/image?url=%2Flogo.jpg&w=3840&q=75",
+                    },
+                    {
+                      type: "text",
+                      text: "khumkha.com",
+                      weight: "bold",
+                      color: "#dc2626",
+                      size: "sm",
+                      align: "center",
+                    },
+                    {
+                      type: "text",
+                      text: "โปรดยืนยันคำสั่งซื้อ",
+                      weight: "bold",
+                      size: "lg",
+                      color: "#ff8633",
+                      align: "center",
+                    },
+                    {
+                      type: "text",
+                      text: "เนื่องจากยอดรวมออเดอร์ไม่ได้ตามเงื่อนไข โปรดยืนยันคำสั่งซื้อ หรือยกเลิกคำสั่งซื้อนี้",
+                      size: "xs",
+                      color: "#aaaaaa",
+                      wrap: true,
+                    },
+                    { type: "separator", margin: "xxl" },
+
+                    // 🔹 กล่องรายการสินค้า
+                    {
+                      type: "box",
+                      layout: "vertical",
+                      margin: "xxl",
+                      spacing: "sm",
+                      contents: [
+                        // ✅ รายการสินค้า
+                        // createProductItem("Energy Drink", "฿120", "x 1"),
+                        ...OrderItem,
+                        { type: "separator", margin: "xxl" },
+
+                        // ✅ จำนวนสินค้า
+                        createSummaryItem(
+                          "รวมค่าสินค้า",
+                          formatPrice(order.totalAmount)
+                        ),
+                        createSummaryItem(
+                          "รวมส่วนลด",
+                          formatPrice(order.totalDiscount)
+                        ),
+                        createSummaryItem(
+                          "ยอดเงินสุทธิ",
+                          formatPrice(order.netAmount)
+                        ),
+                        {
+                          type: "button",
+                          action: {
+                            type: "uri",
+                            label: "ไปที่หน้ายืนยันคำสั่งซื้อ",
+                            uri: `${process.env.NEXT_PUBLIC_CLIENT_HOST_URL}/order/${order.id}`,
+                          },
+                          style: "primary",
+                          color: "#dc2626",
+                          margin: "xl",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                footer: {
+                  type: "box",
+                  layout: "vertical",
+                  contents: [
+                    // {
+                    //   type: "button",
+                    //   action: {
+                    //     type: "uri",
+                    //     label: "ไปที่หน้าการสั่งซื้อ",
+                    //     uri: `${process.env.NEXT_PUBLIC_CLIENT_HOST_URL}/order/${order.id}`,
+                    //   },
+                    //   style: "primary",
+                    //   color: "#dc2626",
+                    // },
+                    createSummaryItem("Order ID", order.id),
+                  ],
+                },
+                styles: { footer: { separator: true } },
+              };
+
+              const message: SendMessageToLineParams = {
+                userId: order.user?.lineUid || "",
+                flexMessage: flexMessage,
+              };
+              const messageResult = await sendMessageToLine(message);
 
               // หากส่งข้อความสำเร็จ ให้เปลี่ยนสถานะออเดอร์
               if (messageResult) {
