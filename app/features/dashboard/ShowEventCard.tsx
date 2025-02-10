@@ -100,8 +100,8 @@ export default function ShowEventCard({ promotion }: Props) {
                   contents: [
                     {
                       type: "image",
-                      // url: `${process.env.NEXT_PUBLIC_CLIENT_HOST_URL}/logo.jpg`,
-                      url: "https://demo.khumkha.com/_next/image?url=%2Flogo.jpg&w=3840&q=75",
+                      url: `${process.env.NEXT_PUBLIC_CLIENT_HOST_URL}/logo.jpg`,
+                      // url: "https://demo.khumkha.com/_next/image?url=%2Flogo.jpg&w=3840&q=75",
                     },
                     {
                       type: "text",
@@ -158,7 +158,7 @@ export default function ShowEventCard({ promotion }: Props) {
                           action: {
                             type: "uri",
                             label: "ไปที่หน้ายืนยันคำสั่งซื้อ",
-                            uri: `${process.env.NEXT_PUBLIC_CLIENT_HOST_URL}/order/${order.id}`,
+                            uri: `${process.env.NEXT_PUBLIC_LINE_LIFF_URL}/order/${order.id}`,
                           },
                           style: "primary",
                           color: "#dc2626",
