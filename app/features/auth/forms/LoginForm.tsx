@@ -15,9 +15,9 @@ import {
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { login } from "@/services/authServices";
-import { LoginResponseType } from "@/types/userTypes";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { useCurrentUserStore } from "@/state-stores/useCurrentUserStore";
 
 const formSchema = z.object({
   email: z
@@ -52,14 +52,25 @@ export function LoginForm() {
     },
   });
 
+  // global state
+  const setCurrentUser = useCurrentUserStore((state) => state.setCurrentUser);
+  const setToken = useCurrentUserStore((state) => state.setToken);
+  const setRefreshToken = useCurrentUserStore((state) => state.setRefreshToken);
+
   const router = useRouter();
 
   async function onSubmit(data: FormValues) {
     try {
-      const response: LoginResponseType = await login(data);
-      console.log(response.data);
-      toast.success(response.message || "เข้าสู่ระบบแล้ว");
-      router.push("/admin");
+      const response = await login(data);
+      setCurrentUser(response.data.user);
+      setToken(response.data.accessToken);
+      setRefreshToken(response.data.refreshToken);
+      toast.success("เข้าสู่ระบบแล้ว");
+      if (response.data.user.role === "admin") {
+        router.push("/admin");
+      } else {
+        router.push("/");
+      }
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);

@@ -7,6 +7,7 @@ import { lineLogin } from "@/services/authServices";
 export default function CheckLogined() {
   const setCurrentUser = useCurrentUserStore((state) => state.setCurrentUser);
   const setToken = useCurrentUserStore((state) => state.setToken);
+  const setRefreshToken = useCurrentUserStore((state) => state.setRefreshToken);
   const clearCurrentUser = useCurrentUserStore(
     (state) => state.clearCurrentUser
   );
@@ -29,9 +30,7 @@ export default function CheckLogined() {
           });
           setCurrentUser(response.data.user);
           setToken(response.data.accessToken);
-          // } catch (error) {
-          //   console.log(error);
-          // }
+          setRefreshToken(response.data.refreshToken);
         } else {
           clearCurrentUser();
         }

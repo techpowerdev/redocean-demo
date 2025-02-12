@@ -1,16 +1,18 @@
-import { UserProfileType } from "@/types/userTypes";
+import { GetCurrentUserResponse } from "@/types/userTypes";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
 // กำหนด type ของ state แต่ละตัว รวมถึง function ด้วย
 export type State = {
-  currentUser: UserProfileType | null;
+  currentUser: GetCurrentUserResponse | null;
   token: string | null;
+  refreshToken: string | null;
 };
 
 export type Action = {
-  setCurrentUser: (currentUser: UserProfileType) => void;
+  setCurrentUser: (currentUser: GetCurrentUserResponse) => void;
   setToken: (token: string | null) => void;
+  setRefreshToken: (refreshToken: string | null) => void;
   clearCurrentUser: () => void;
 };
 
@@ -28,12 +30,16 @@ export const useCurrentUserStore = create<State & Action>()(
       (set) => ({
         currentUser: null,
         token: null,
+        refreshToken: null,
         loading: true,
         setCurrentUser: (user) => set(() => ({ currentUser: user })),
         setToken: (token) => set(() => ({ token: token })),
+        setRefreshToken: (refreshToken) =>
+          set(() => ({ refreshToken: refreshToken })),
 
         // Action to clear the currentUser (logout)
-        clearCurrentUser: () => set({ currentUser: null, token: null }),
+        clearCurrentUser: () =>
+          set({ currentUser: null, token: null, refreshToken: null }),
       }),
       { name: "currentUser" }
     )

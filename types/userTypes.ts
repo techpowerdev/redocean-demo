@@ -1,86 +1,60 @@
-import { AddressType } from "./addressTypes";
-import { CartType } from "./cartTypes";
-import { OrderType } from "./orderTypes";
-import { RefreshTokenType } from "./refreshTokenTypes";
-
-// types based on the prisma schema
-export type UserType = {
+export type User = {
   id: string;
-  email?: string | null;
-  password?: string | null;
-  lineUid?: string | null;
+  email: string | null;
+  lineUid: string | null;
   displayName: string | null;
   pictureUrl: string | null;
-  fullName?: string | null;
-  phoneNumber?: string | null;
+  fullName: string | null;
+  phoneNumber: string | null;
   phoneVerified: boolean;
-  role: string;
-  isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-
-  refreshToken?: RefreshTokenType | null;
-  addresses?: AddressType[] | null;
-  orders?: OrderType[] | null;
-  cart?: CartType | null;
+  readonly role: string;
 };
-// end of types based on the prisma schema
 
-// types for the client side
-export type SignUpType = {
+export type SignUpParam = {
   email: string;
   password: string;
 };
 
-export type SignUpResponseType = {
-  message: string;
-  data: {
-    accessToken: string;
-    refreshToken: string;
-    user: {
-      id: string;
-      email: string;
-      lineUid: string;
-      displayName: string;
-      pictureUrl: string;
-      phoneNumber: string;
-      phoneVerified: boolean;
-      role: string;
-    };
-  };
+export type SignUpResponse = User;
+
+export type LoginParam = {
+  email: string;
+  password: string;
 };
 
-export type LoginType = SignUpType;
-
-export type LoginResponseType = SignUpResponseType;
+export type LoginResponse = {
+  accessToken: string;
+  refreshToken: string;
+  user: User;
+};
 
 // line login
-export type LineLoginType = {
+export type LineLoginParam = {
   lineUid: string;
   displayName: string;
   email?: string | null;
   pictureUrl?: string | null;
 };
 
-export type EditProfileType = {
+export type LineLoginResponse = {
+  accessToken: string;
+  refreshToken: string;
+  user: User;
+};
+
+export type EditProfileParam = {
   fullName?: string;
-  phoneNumber: string;
+  phoneNumber?: string;
   email?: string;
 };
 
-export type UserProfileType = {
-  id: string;
-  lineUid?: string;
-  displayName?: string | null;
-  pictureUrl?: string | null;
-  email?: string | null;
-  fullName?: string | null;
-  phoneNumber?: string | null;
+export type EditProfileResponse = User;
+
+export type GetCurrentUserResponse = User;
+
+export type VerifyUserParam = {
+  phoneNumber: string;
   phoneVerified: boolean;
-  readonly role: string;
 };
 
-export type FetchCurrentUserType = {
-  message?: string;
-  data: UserProfileType;
-};
+export type VerifyUserResponse = User;

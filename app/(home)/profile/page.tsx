@@ -4,15 +4,16 @@ import { Mail, Phone, Power, UserRoundPen } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
-import { EditProfile } from "../../features/profile/forms/EditProfile";
+import { EditProfile } from "@/app/features/profile/forms/EditProfile";
 import { useCurrentUserStore } from "@/state-stores/useCurrentUserStore";
 import liff from "@line/liff";
 import LineLogin from "@/app/features/auth/LineLogin";
 import Container from "@/components/shared/Container";
-// import { logoutUser } from "@/services/authServices";
+import { logoutUser } from "@/services/authServices";
 
 export default function Profile() {
   const currentUser = useCurrentUserStore((state) => state.currentUser);
+  const refreshToken = useCurrentUserStore((state) => state.refreshToken);
   const clearCurrentUser = useCurrentUserStore(
     (state) => state.clearCurrentUser
   );
@@ -21,8 +22,10 @@ export default function Profile() {
   const logout = async () => {
     if (liff.isLoggedIn()) {
       try {
-        // await logoutUser();
         liff.logout();
+        if (refreshToken) {
+          await logoutUser(refreshToken);
+        }
         clearCurrentUser();
         toast.success("ออกจากระบบแล้ว");
       } catch (error) {

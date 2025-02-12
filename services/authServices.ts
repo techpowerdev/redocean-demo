@@ -1,8 +1,20 @@
 import axios from "axios";
 import apiClient from "./apiClient";
-import { LineLoginType, LoginType, SignUpType } from "@/types/userTypes";
+import {
+  SignUpParam,
+  SignUpResponse,
+  LoginParam,
+  LoginResponse,
+  LineLoginParam,
+  LineLoginResponse,
+  GetCurrentUserResponse,
+  VerifyUserParam,
+  VerifyUserResponse,
+} from "@/types/userTypes";
 
-export async function signUp(signUpData: SignUpType) {
+export async function signUp(
+  signUpData: SignUpParam
+): Promise<{ data: SignUpResponse; message: string }> {
   try {
     const response = await apiClient.post(`/register`, signUpData);
     return response.data; // ส่งเฉพาะข้อมูลที่ได้รับจาก API
@@ -16,7 +28,9 @@ export async function signUp(signUpData: SignUpType) {
   }
 }
 
-export async function login(loginData: LoginType) {
+export async function login(
+  loginData: LoginParam
+): Promise<{ data: LoginResponse; message: string }> {
   try {
     const response = await apiClient.post(`/login`, loginData);
     return response.data;
@@ -28,7 +42,9 @@ export async function login(loginData: LoginType) {
   }
 }
 
-export async function lineLogin(lineLoginData: LineLoginType) {
+export async function lineLogin(
+  lineLoginData: LineLoginParam
+): Promise<{ data: LineLoginResponse; message: string }> {
   try {
     const response = await apiClient.post(`/login/line`, lineLoginData);
     return response.data;
@@ -39,7 +55,10 @@ export async function lineLogin(lineLoginData: LineLoginType) {
     throw new Error("เกิดข้อผิดพลาดบางอย่าง");
   }
 }
-export async function getCurrentUser() {
+
+export async function getCurrentUser(): Promise<{
+  data: GetCurrentUserResponse;
+}> {
   try {
     const response = await apiClient.get(`/users/current-user`);
     return response.data;
@@ -50,9 +69,12 @@ export async function getCurrentUser() {
     throw new Error("เกิดข้อผิดพลาดบางอย่าง");
   }
 }
-export async function logoutUser() {
+
+export async function logoutUser(
+  refreshToken?: string
+): Promise<{ message: string }> {
   try {
-    const response = await apiClient.get(`/logout`);
+    const response = await apiClient.post(`/logout`, { refreshToken });
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -63,14 +85,10 @@ export async function logoutUser() {
 }
 
 export async function verifyUser(
-  phoneNumber: string,
-  phoneVerified: boolean = true
-) {
+  verifyUserData: VerifyUserParam
+): Promise<{ data: VerifyUserResponse }> {
   try {
-    const response = await apiClient.put(`/verify-user`, {
-      phoneNumber,
-      phoneVerified,
-    });
+    const response = await apiClient.put(`/verify-user`, verifyUserData);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {

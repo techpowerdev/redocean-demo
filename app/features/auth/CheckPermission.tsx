@@ -1,6 +1,5 @@
 "use client";
 import { getCurrentUser } from "@/services/authServices";
-import { FetchCurrentUserType } from "@/types/userTypes";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -9,7 +8,7 @@ export default function CheckPermission() {
 
   useEffect(() => {
     const fetchCurrentUser = async () => {
-      const currentUser: FetchCurrentUserType = await getCurrentUser();
+      const currentUser = await getCurrentUser();
       const role = currentUser.data.role;
       if (role !== "admin") {
         router.push("/");

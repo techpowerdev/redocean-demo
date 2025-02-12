@@ -106,22 +106,12 @@ const OTPDialog = () => {
 
       if (response.data.code == 0 && response.data.msg == "Verify Success") {
         try {
-          // const response = await axios.put(
-          //   `${process.env.NEXT_PUBLIC_API_URL}/verify-user`,
-          //   {
-          //     phoneNumber,
-          //     phoneVerified: true,
-          //   },
-          //   {
-          //     headers: {
-          //       Authorization: `Bearer ${token}`, // Attach the token here
-          //     },
-          //   }
-          // );
-          const response = await verifyUser(phoneNumber);
-          console.log(response);
+          const response = await verifyUser({
+            phoneNumber,
+            phoneVerified: true,
+          });
           setIsVerified(true);
-          setCurrentUser(response.data.user);
+          setCurrentUser(response.data);
           router.push("/");
           toast.success("ยืนยันตัวตนสำเร็จ!");
         } catch (error) {
@@ -150,17 +140,6 @@ const OTPDialog = () => {
       return () => clearInterval(timer);
     }
   }, [countdown]);
-
-  // useEffect(() => {
-  //   if (token) {
-  //     if (!isTokenValid(token)) {
-  //       console.warn("Token expired or not available. Redirecting to login...");
-  //       router.push("/login-line");
-  //     }
-  //   } else {
-  //     router.push("/login-line");
-  //   }
-  // }, []);
 
   if (isVerified) return null;
 

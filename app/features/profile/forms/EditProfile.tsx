@@ -91,8 +91,12 @@ export function EditProfile() {
       toast.success("บันทึกสำเร็จ");
       setIsOpen(false); // ปิด Sheet เมื่อบันทึกสำเร็จ
     } catch (error) {
-      console.log(error);
-      toast.error("บันทึกไม่สำเร็จ");
+      if (error instanceof Error) {
+        // ถ้าเกิดข้อผิดพลาดจากฟังก์ชัน editProfile
+        console.error("Error:", error.message);
+        // แสดงข้อความที่ return จาก API
+        toast.error(error.message);
+      }
     }
   };
 
