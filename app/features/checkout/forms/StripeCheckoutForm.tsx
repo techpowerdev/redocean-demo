@@ -39,14 +39,14 @@ export default function StripeCheckoutForm({ handleSetPaymentSuccess }: Props) {
       const result = await stripe.confirmPayment({
         elements,
         redirect: "if_required",
-        confirmParams: {
-          // return_url: process.env.NEXT_PUBLIC_STRIPE_RETURN_URL || "/",
-          payment_method_data: {
-            billing_details: {
-              email: "techpowerdevpro@gmail.com", // ใส่อีเมลหลอกๆไว้ เนื่องจาก stripe required
-            },
-          },
-        },
+        // confirmParams: {
+        //   // return_url: process.env.NEXT_PUBLIC_STRIPE_RETURN_URL || "/",
+        //   // payment_method_data: {
+        //   //   billing_details: {
+        //   //     email: "techpowerdevpro@gmail.com", // ใส่อีเมลหลอกๆไว้ เนื่องจาก stripe required
+        //   //   },
+        //   // },
+        // },
       });
 
       console.log("result==>", result);
@@ -91,11 +91,11 @@ export default function StripeCheckoutForm({ handleSetPaymentSuccess }: Props) {
     business: {
       name: "Red Ocean Marketing",
     },
-    fields: {
-      billingDetails: {
-        email: "never", // ไม่เก็บอีเมล
-      },
-    },
+    // fields: {
+    //   billingDetails: {
+    //     email: "never", // ไม่เก็บอีเมล
+    //   },
+    // },
   };
 
   // const StripeAddressElementOptions: StripeAddressElementOptions = {
