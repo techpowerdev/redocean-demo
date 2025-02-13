@@ -8,12 +8,12 @@ import { Separator } from "@/components/ui/separator";
 import { EllipsisVertical } from "lucide-react";
 import React from "react";
 import EditAddressForm from "./EditAddressForm";
-import { AddressType } from "@/types/addressTypes";
 import { Badge } from "@/components/ui/badge";
 import { useAddressStore } from "@/state-stores/addressStore";
+import { Address } from "@/types/baseTypes";
 
 type Props = {
-  address: AddressType;
+  address: Address;
 };
 export default function AddressCard({ address }: Props) {
   const deleteAddress = useAddressStore((state) => state.deleteAddress);

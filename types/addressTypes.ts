@@ -1,67 +1,34 @@
-import { UserType } from "./userTypes";
+import { Address } from "./baseTypes";
 
-// types based on the prisma schema
-export type AddressType = {
-  id: string;
+export type CreateAddressParam = {
   recipient: string;
   phoneNumber: string;
   address: string;
-  street: string;
+  street: string | null;
+  subDistrict: string;
+  district: string;
+  province: string;
+  postalCode: string;
+  isActive?: boolean;
+};
+
+export type CreateAddressResponse = Address;
+
+export type UpdateAddressParam = {
+  recipient: string;
+  phoneNumber: string;
+  address: string;
+  street: string | null;
   subDistrict: string;
   district: string;
   province: string;
   postalCode: string;
   isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-
-  userId: string;
-
-  user?: UserType | null;
 };
 
-// end of types based on the prisma schema
+export type UpdateAddressResponse = Address;
 
-// types for the client side
-export type CreateAddressType = Omit<
-  AddressType,
-  "id" | "userId" | "createdAt" | "updatedAt"
->;
-
-export type UpdateAddressType = Omit<
-  AddressType,
-  "id" | "userId" | "createdAt" | "updatedAt"
->;
-
-export type ShippingAddressType = Omit<
-  AddressType,
+export type ShippingAddress = Omit<
+  Address,
   "id" | "isActive" | "createdAt" | "updatedAt" | "userId" | "user"
 >;
-
-// // #################### Refractor ####################
-// // basic type
-// export interface Address {
-//   recipient: string;
-//   phoneNumber: string;
-//   address: string;
-//   street: string;
-//   subDistrict: string;
-//   district: string;
-//   province: string;
-//   postalCode: string;
-//   isActive: boolean;
-// }
-
-// // export type CreateAddress = Address;
-
-// // export type CreateAddressResponse = Address;
-
-// // export type UpdateAddress = Address;
-
-// // export type ShippingAddress = Address;
-
-// export interface GetAddressResponse extends Address {
-//   id: string;
-//   createdAt: Date;
-//   updatedAt: Date;
-// }

@@ -1,12 +1,16 @@
 import {
-  AddressType,
-  CreateAddressType,
-  UpdateAddressType,
+  CreateAddressParam,
+  CreateAddressResponse,
+  UpdateAddressParam,
+  UpdateAddressResponse,
 } from "@/types/addressTypes";
 import axios from "axios";
 import apiClient from "./apiClient";
+import { Address } from "@/types/baseTypes";
 
-export const createAddress = async (data: CreateAddressType) => {
+export const createAddress = async (
+  data: CreateAddressParam
+): Promise<{ data: CreateAddressResponse; message: string }> => {
   try {
     const response = await apiClient.post(`/addresses`, data);
     return response.data;
@@ -18,7 +22,10 @@ export const createAddress = async (data: CreateAddressType) => {
   }
 };
 
-export const updateAddress = async (id: string, data: UpdateAddressType) => {
+export const updateAddress = async (
+  id: string,
+  data: UpdateAddressParam
+): Promise<{ data: UpdateAddressResponse; message: string }> => {
   try {
     const response = await apiClient.put(`/addresses/${id}`, data);
     return response.data;
@@ -30,7 +37,13 @@ export const updateAddress = async (id: string, data: UpdateAddressType) => {
   }
 };
 
-export const changeActiveAddress = async (id: string, isActive: boolean) => {
+export const changeActiveAddress = async (
+  id: string,
+  isActive: boolean
+): Promise<{
+  data: Address;
+  message: string;
+}> => {
   try {
     const response = await apiClient.patch(`/addresses/${id}`, {
       isActive,
@@ -46,7 +59,9 @@ export const changeActiveAddress = async (id: string, isActive: boolean) => {
   }
 };
 
-export const deleteAddress = async (id: string) => {
+export const deleteAddress = async (
+  id: string
+): Promise<{ data: Address; message: string }> => {
   try {
     const response = await apiClient.delete(`/addresses/${id}`);
     return response.data;
@@ -59,7 +74,7 @@ export const deleteAddress = async (id: string) => {
 };
 
 export const getAddress = async (): Promise<{
-  data: AddressType[];
+  data: Address[];
   message: string;
 }> => {
   try {

@@ -2,11 +2,7 @@ import toast from "react-hot-toast";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import { AxiosError } from "axios";
-import {
-  AddressType,
-  CreateAddressType,
-  UpdateAddressType,
-} from "@/types/addressTypes";
+import { CreateAddressParam, UpdateAddressParam } from "@/types/addressTypes";
 
 import {
   changeActiveAddress,
@@ -15,6 +11,7 @@ import {
   getAddress,
   updateAddress,
 } from "@/services/addressServices";
+import { Address } from "@/types/baseTypes";
 
 // Utility to handle API errors
 const handleApiError = (error: unknown, defaultMessage: string) => {
@@ -25,15 +22,15 @@ const handleApiError = (error: unknown, defaultMessage: string) => {
 };
 
 export type State = {
-  addresses: AddressType[] | null;
-  selectedAddress: AddressType | null;
+  addresses: Address[] | null;
+  selectedAddress: Address | null;
 };
 
 export type Action = {
-  setAddresses: (addresses: AddressType[]) => void;
-  selectAddress: (address: AddressType) => void;
-  createAddress: (address: CreateAddressType) => Promise<void>;
-  updateAddress: (id: string, address: UpdateAddressType) => Promise<void>;
+  setAddresses: (addresses: Address[]) => void;
+  selectAddress: (address: Address) => void;
+  createAddress: (address: CreateAddressParam) => Promise<void>;
+  updateAddress: (id: string, address: UpdateAddressParam) => Promise<void>;
   changeActiveAddress: (id: string, isActive: boolean) => Promise<void>;
   deleteAddress: (id: string) => Promise<void>;
 };
@@ -75,10 +72,8 @@ export const useAddressStore = create<State & Action>()(
 
         changeActiveAddress: async (id, isActive) => {
           try {
-            const response = await changeActiveAddress(id, isActive).then(
-              (res) => res.data
-            );
-            set({ selectedAddress: response });
+            const response = await changeActiveAddress(id, isActive);
+            set({ selectedAddress: response.data });
             toast.success(response?.message || "แก้ไขเป็นที่อยู่หลักแล้ว");
             const updatedAddress = await getAddress().then((res) => res.data);
             set({ addresses: updatedAddress });

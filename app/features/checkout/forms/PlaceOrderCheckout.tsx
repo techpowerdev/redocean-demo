@@ -21,6 +21,7 @@ import {
   CreateOrderWithPaymentIntentResponse,
 } from "@/types/orderTypes";
 import { useCartServerStore } from "@/state-stores/cartServerStore";
+import { ShippingAddress } from "@/types/addressTypes";
 
 type Props = {
   singleItem?: CreateOrderItem;
@@ -91,8 +92,7 @@ export default function PlaceOrderCheckout({ singleItem, cartItems }: Props) {
           postalCode,
         } = selectedAddress;
 
-        // สร้างข้อมูลใหม่ที่มีเฉพาะฟิลด์ที่ต้องการ
-        const shippingAddress = {
+        const shippingAddress: ShippingAddress = {
           recipient,
           phoneNumber,
           address,
@@ -103,9 +103,10 @@ export default function PlaceOrderCheckout({ singleItem, cartItems }: Props) {
           postalCode,
         };
 
+        // สร้างข้อมูลใหม่ที่มีเฉพาะฟิลด์ที่ต้องการ
         const createPaymentData: CreateOrderWithPaymentIntentParams = {
           items: items,
-          shippingAddress,
+          shippingAddress: shippingAddress,
           captureLater: true,
         };
         const { data } = await createOrderWithPaymentIntent(createPaymentData);

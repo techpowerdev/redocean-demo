@@ -1,6 +1,8 @@
+import { ShippingAddress } from "./addressTypes";
+import { Address } from "./baseTypes";
 import { ProductType } from "./productTypes";
 import { PromotionActivityType } from "./promotionTypes";
-import { UserType } from "./userTypes";
+import { User } from "./userTypes";
 
 // types based on the prisma schema
 export type OrderType = {
@@ -32,7 +34,7 @@ export type OrderType = {
 
   userId: string;
 
-  user?: UserType | null;
+  user?: User | null;
   orderItems?: OrderItemType[] | null;
   payments?: PaymentItemType[] | null;
 };
@@ -139,7 +141,7 @@ export type OrderSummaryReponseType = {
 // ลงท้ายด้วย param/params หากเป็น type ของ input ใน function
 export interface CreateOrderWithPaymentIntentParams {
   items: CreateOrderItem[];
-  shippingAddress: Address;
+  shippingAddress: ShippingAddress;
   currency?: string;
   captureLater?: boolean;
   paymentState?: PaymentState;
@@ -153,32 +155,13 @@ export interface CreateOrderItem {
   promotionType?: string | null;
 }
 
-export interface Address {
-  // id: string;
-  recipient: string;
-  phoneNumber: string;
-  address: string;
-  street: string;
-  subDistrict: string;
-  district: string;
-  province: string;
-  postalCode: string;
-  // isActive: boolean;
-  // createdAt: Date;
-  // updatedAt: Date;
-
-  // userId: string;
-
-  // user?: UserType | null;
-}
-
 export type PaymentState = "initial_payment" | "additional_payment";
 export interface AddressResponse extends Address {
   id: string;
   createdAt: Date;
   updatedAt: Date;
   userId: string;
-  user?: UserType | null;
+  user?: User | null;
 }
 
 export interface CreateOrderWithPaymentIntentResponse {

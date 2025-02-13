@@ -19,7 +19,7 @@ import axios from "axios";
 import { Edit } from "lucide-react";
 import Loading from "@/components/shared/Loading";
 import { useAddressStore } from "@/state-stores/addressStore";
-import { AddressType } from "@/types/addressTypes";
+import { Address } from "@/types/baseTypes";
 
 // Dynamically import the typeahead components
 const ThailandAddressTypeahead = dynamic(
@@ -93,7 +93,7 @@ const AddressSchema = z.object({
 });
 
 type Props = {
-  address: AddressType;
+  address: Address;
 };
 export default function EditAddressForm({ address }: Props) {
   // global state
@@ -223,7 +223,7 @@ export default function EditAddressForm({ address }: Props) {
                 type="text"
                 placeholder="ถนน / ซอย"
                 className="w-full p-2 border rounded-sm"
-                value={val.street}
+                value={val.street || ""}
                 onChange={(e) => setVal({ ...val, street: e.target.value })}
               />
               <SubdistrictInput
