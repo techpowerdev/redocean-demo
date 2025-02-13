@@ -3,6 +3,7 @@ import {
   CreateOderType,
   CreateOrderWithPaymentIntentParams,
   CreateOrderWithPaymentIntentResponse,
+  OrderType,
 } from "@/types/orderTypes";
 import apiClient from "@/services/apiClient";
 import axios from "axios";
@@ -116,7 +117,7 @@ export const getOneOrder = async (id: string) => {
   }
 };
 
-export const getAllOrders = async () => {
+export const getAllOrders = async (): Promise<{ data: OrderType[] }> => {
   try {
     const response = await apiClient.get(`/orders/all`);
     return response.data;

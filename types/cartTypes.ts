@@ -1,6 +1,6 @@
 import { ProductType } from "./productTypes";
 import { PromotionActivityType } from "./promotionTypes";
-import { UserType } from "./userTypes";
+import { User } from "./userTypes";
 
 // types based on the prisma schema
 export type CartType = {
@@ -10,7 +10,7 @@ export type CartType = {
 
   userId: string;
 
-  user?: UserType | null;
+  user?: User | null;
   cartItems?: CartItemType[] | null;
 
   // return from backend process
