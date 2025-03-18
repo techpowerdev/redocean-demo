@@ -56,9 +56,7 @@ export async function lineLogin(
   }
 }
 
-export async function getCurrentUser(): Promise<{
-  data: GetCurrentUserResponse;
-}> {
+export async function getCurrentUser(): Promise<GetCurrentUserResponse> {
   try {
     const response = await apiClient.get(`/users/current-user`);
     return response.data;
