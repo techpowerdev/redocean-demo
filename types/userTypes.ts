@@ -40,7 +40,11 @@ export type EditProfileParam = {
 
 export type EditProfileResponse = User;
 
-export type GetCurrentUserResponse = User;
+export type GetCurrentUserResponse = {
+  data: User;
+};
+
+export type CurrentUser = User;
 
 export type VerifyUserParam = {
   phoneNumber: string;

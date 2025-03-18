@@ -1,16 +1,16 @@
-import { GetCurrentUserResponse } from "@/types/userTypes";
+import { CurrentUser } from "@/types/userTypes";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
 // กำหนด type ของ state แต่ละตัว รวมถึง function ด้วย
 export type State = {
-  currentUser: GetCurrentUserResponse | null;
+  currentUser: CurrentUser | null;
   token: string | null;
   refreshToken: string | null;
 };
 
 export type Action = {
-  setCurrentUser: (currentUser: GetCurrentUserResponse) => void;
+  setCurrentUser: (currentUser: CurrentUser) => void;
   setToken: (token: string | null) => void;
   setRefreshToken: (refreshToken: string | null) => void;
   clearCurrentUser: () => void;
