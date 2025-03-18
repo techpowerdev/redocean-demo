@@ -5,17 +5,25 @@ export type SignUpParam = {
   password: string;
 };
 
-export type SignUpResponse = User;
+export type SignUpResponse = {
+  data: User;
+  message: string;
+};
 
 export type LoginParam = {
   email: string;
   password: string;
 };
 
-export type LoginResponse = {
+export type AuthResponse = {
   accessToken: string;
   refreshToken: string;
   user: User;
+};
+
+export type LoginResponse = {
+  data: AuthResponse;
+  message: string;
 };
 
 // line login
@@ -27,9 +35,7 @@ export type LineLoginParam = {
 };
 
 export type LineLoginResponse = {
-  accessToken: string;
-  refreshToken: string;
-  user: User;
+  data: AuthResponse;
 };
 
 export type EditProfileParam = {
@@ -38,7 +44,9 @@ export type EditProfileParam = {
   email?: string;
 };
 
-export type EditProfileResponse = User;
+export type EditProfileResponse = {
+  data: User;
+};
 
 export type GetCurrentUserResponse = {
   data: User;
@@ -51,4 +59,6 @@ export type VerifyUserParam = {
   phoneVerified: boolean;
 };
 
-export type VerifyUserResponse = User;
+export type VerifyUserResponse = {
+  data: User;
+};

@@ -12,9 +12,7 @@ import {
   VerifyUserResponse,
 } from "@/types/userTypes";
 
-export async function signUp(
-  signUpData: SignUpParam
-): Promise<{ data: SignUpResponse; message: string }> {
+export async function signUp(signUpData: SignUpParam): Promise<SignUpResponse> {
   try {
     const response = await apiClient.post(`/register`, signUpData);
     return response.data; // ส่งเฉพาะข้อมูลที่ได้รับจาก API
@@ -28,9 +26,7 @@ export async function signUp(
   }
 }
 
-export async function login(
-  loginData: LoginParam
-): Promise<{ data: LoginResponse; message: string }> {
+export async function login(loginData: LoginParam): Promise<LoginResponse> {
   try {
     const response = await apiClient.post(`/login`, loginData);
     return response.data;
@@ -44,7 +40,7 @@ export async function login(
 
 export async function lineLogin(
   lineLoginData: LineLoginParam
-): Promise<{ data: LineLoginResponse; message: string }> {
+): Promise<LineLoginResponse> {
   try {
     const response = await apiClient.post(`/login/line`, lineLoginData);
     return response.data;
@@ -84,7 +80,7 @@ export async function logoutUser(
 
 export async function verifyUser(
   verifyUserData: VerifyUserParam
-): Promise<{ data: VerifyUserResponse }> {
+): Promise<VerifyUserResponse> {
   try {
     const response = await apiClient.put(`/verify-user`, verifyUserData);
     return response.data;
