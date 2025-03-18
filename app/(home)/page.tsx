@@ -7,13 +7,12 @@ import {
 import NoPromotion from "@/app/features/promotion/NoPromotion";
 import HeroBanner from "@/app/features/banner/HeroBanner";
 import { getAllBanners } from "@/services/bannerServices";
-import { FetchAllBannersResponseType } from "@/types/bannerTypes";
 import { ShowUpcomingPromotion } from "@/app/features/promotion/ShowUpcomingPromotion";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const banners: FetchAllBannersResponseType = await getAllBanners();
+  const banners = await getAllBanners();
   const promotions = await getPromotionToday();
   const upcomingPromotions = await getUpcomingPromotion();
 

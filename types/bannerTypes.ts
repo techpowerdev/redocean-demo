@@ -1,22 +1,7 @@
-import { ImageType } from "./imageTypes";
+import { Banner } from "@/types/baseTypes";
 
-// types based on the prisma schema
-export type BannerType = {
-  id: string;
-  order: number;
-  createdAt: Date;
-  updatedAt: Date;
-
-  imageId: string;
-
-  image?: ImageType | null;
-};
-// end of types based on the prisma schema
-
-// types for the client side
-export type FetchAllBannersResponseType = {
-  message?: string | null;
-  data: BannerType[];
+export type GetAllBannersResponse = {
+  data: Banner[];
 };
 
 export type UpdateBannerOrderType = {

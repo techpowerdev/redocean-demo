@@ -1,8 +1,11 @@
 import axios from "axios";
 import apiClient from "./apiClient";
-import { UpdateBannerOrderType } from "@/types/bannerTypes";
+import {
+  GetAllBannersResponse,
+  UpdateBannerOrderType,
+} from "@/types/bannerTypes";
 
-export const getAllBanners = async () => {
+export const getAllBanners = async (): Promise<GetAllBannersResponse> => {
   try {
     const response = await apiClient.get(`/banners/all`);
     return response.data;
