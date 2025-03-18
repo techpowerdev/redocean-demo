@@ -1,14 +1,4 @@
-export type User = {
-  id: string;
-  email: string | null;
-  lineUid: string | null;
-  displayName: string | null;
-  pictureUrl: string | null;
-  fullName: string | null;
-  phoneNumber: string | null;
-  phoneVerified: boolean;
-  readonly role: string;
-};
+import { User } from "@/types/baseTypes";
 
 export type SignUpParam = {
   email: string;
