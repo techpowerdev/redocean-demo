@@ -1,14 +1,9 @@
-import { Image, Promotion, PromotionActivity } from "@/types/baseTypes";
-
-export type PromotionWithImageAndPromotionActivity = Promotion & {
-  images: Image[];
-  promotionActivities: PromotionActivity[];
-};
+import { Promotion } from "@/types/baseTypes";
 
 export type GetPromotionTodayResponse = {
-  data: PromotionWithImageAndPromotionActivity[];
+  data: Promotion[];
 };
 
 export type GetUpcomingPromotionResponse = {
-  data: PromotionWithImageAndPromotionActivity[];
+  data: Promotion[];
 };
