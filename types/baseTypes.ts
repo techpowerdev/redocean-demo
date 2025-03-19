@@ -16,6 +16,12 @@ export type User = {
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
+
+  // relation
+  refreshToken?: RefreshToken | null;
+  addresses?: Address[] | null;
+  orders?: Order[] | null;
+  cart?: Cart | null;
 };
 /**
  * Model ResfreshToken
@@ -28,6 +34,9 @@ export type RefreshToken = {
   token: string;
   expiresAt: Date;
   userId: string;
+
+  // relation
+  user?: User | null;
 };
 /**
  * Model Address
@@ -47,6 +56,9 @@ export type Address = {
   district: string;
   province: string;
   postalCode: string;
+
+  // relation
+  user?: User | null;
 };
 /**
  * Model Category
@@ -55,6 +67,9 @@ export type Address = {
 export type Category = {
   name: string;
   id: string;
+
+  // relation
+  products?: Product[] | null;
 };
 /**
  * Model Product
@@ -73,6 +88,13 @@ export type Product = {
   stock: number;
   hasVariant: boolean;
   categoryId: string | null;
+
+  // relation
+  category?: Category | null;
+  productVariants?: ProductVariant[] | null;
+  promotionActivities?: PromotionActivity[] | null;
+  orderItems?: OrderItem[] | null;
+  cartItems?: CartItem[] | null;
 };
 /**
  * Model ProductVariant
@@ -89,6 +111,9 @@ export type ProductVariant = {
   stock: number;
   variantOptions: Record<string, string>;
   productId: string;
+
+  // relation
+  product?: Product | null;
 };
 /**
  * Model Cart
@@ -99,6 +124,10 @@ export type Cart = {
   createdAt: Date;
   updatedAt: Date;
   userId: string;
+
+  // relation
+  user?: User | null;
+  cartItems?: CartItem[] | null;
 };
 /**
  * Model CartItem
@@ -114,6 +143,11 @@ export type CartItem = {
   promotionType: string | null;
   cartId: string;
   promotionActivityId: string | null;
+
+  // relation
+  cart?: Cart | null;
+  product?: Product | null;
+  promotionActivity?: PromotionActivity | null;
 };
 /**
  * Model Order
@@ -138,6 +172,32 @@ export type Order = {
   createdAt: Date;
   updatedAt: Date;
   userId: string;
+
+  // relation
+  user?: User | null;
+  orderItems?: OrderItem[] | null;
+  payments?: Payment[] | null;
+};
+/**
+ * Model OrderItem
+ *
+ */
+type OrderItem = {
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  sku: string;
+  productId: string;
+  quantity: number;
+  promotionActivityId: string | null;
+  unitPrice: number;
+  discount: number;
+  orderId: string;
+
+  // relation
+  order?: Order | null;
+  product?: Product | null;
+  promotionActivity?: PromotionActivity | null;
 };
 /**
  * Model Image
@@ -151,6 +211,10 @@ export type Image = {
   tag: string | null;
   promotionId: string | null;
   bannerId: string | null;
+
+  // relation
+  promotion?: Promotion | null;
+  banner?: Banner | null;
 };
 /**
  * Model Promotion
@@ -166,6 +230,10 @@ export type Promotion = {
   type: PromotionType;
   startAt: Date;
   endAt: Date;
+
+  // relation
+  promotionActivities?: PromotionActivity[] | null;
+  images?: Image[] | null;
 };
 /**
  * Model PromotionActivity
@@ -185,6 +253,12 @@ export type PromotionActivity = {
   limitQuantityPerUser: boolean;
   maxQuantityPerUser: number | null;
   minimumPurchaseQuantity: number | null;
+
+  // relation
+  promotion?: Promotion | null;
+  product?: Product | null;
+  cartItems?: CartItem[] | null;
+  orderItems?: OrderItem[] | null;
 };
 /**
  * Model Banner
@@ -195,6 +269,9 @@ export type Banner = {
   createdAt: Date;
   updatedAt: Date;
   order: number;
+
+  // relation
+  image?: Image | null;
 };
 /**
  * Model Payment
@@ -213,6 +290,9 @@ export type Payment = {
   chargeId: string | null;
   captured: boolean;
   amountRefunded: number;
+
+  // relation
+  order?: Order | null;
 };
 /**
  * Enum Role
@@ -260,3 +340,82 @@ type PaymentType = "promptpay" | "card";
  *
  */
 type PaymentState = "initial_payment" | "additional_payment";
+
+// // include type of relation data
+// export type UserWithRelations = User & {
+//   refreshToken?: RefreshToken | null;
+//   addresses?: Address[] | null;
+//   orders?: Order[] | null;
+//   cart?: Cart | null;
+// };
+
+// export type RefreshTokenWithRelation = RefreshToken & {
+//   user?: User | null;
+// };
+
+// export type AddressWithRelation = Address & {
+//   user?: User | null;
+// };
+
+// export type CategoryWithRelation = Category & {
+//   products?: Product[] | null;
+// };
+
+// export type ProductWithRelation = Product & {
+//   category?: Category | null;
+//   productVariants?: ProductVariant[] | null;
+//   promotionActivities?: PromotionActivity[] | null;
+//   orderItems?: OrderItem[] | null;
+//   cartItems?: CartItem[] | null;
+// };
+
+// export type ProductVariantWithRelation = ProductVariant & {
+//   product?: Product | null;
+// };
+
+// export type CartWithRelation = Cart & {
+//   user?: User | null;
+//   cartItems?: CartItem[] | null;
+// };
+// export type CartItemWithRelation = CartItem & {
+//   cart?: Cart | null;
+//   product?: Product | null;
+//   promotionActivity?: PromotionActivity | null;
+// };
+
+// export type OrderWithRelation = Order & {
+//   user?: User | null;
+//   orderItems?: OrderItem[] | null;
+//   payments?: Payment[] | null;
+// };
+
+// export type OrderItemWithRelation = OrderItem & {
+//   order?: Order | null;
+//   product?: Product | null;
+//   promotionActivity?: PromotionActivity | null;
+// };
+
+// export type ImageWithRelation = Image & {
+//   promotion?: Promotion | null;
+//   banner?: Banner | null;
+// };
+
+// export type PromotionWithRelation = Promotion & {
+//   promotionActivities?: PromotionActivity[] | null;
+//   images?: Image[] | null;
+// };
+
+// export type PromotionActivityWithRelation = PromotionActivity & {
+//   promotion?: Promotion | null;
+//   product?: Product | null;
+//   cartItems?: CartItem[] | null;
+//   orderItems?: OrderItem[] | null;
+// };
+
+// export type BannerWithRelation = Banner & {
+//   image?: Image | null;
+// };
+
+// export type PaymentWithRelation = Payment & {
+//   order?: Order | null;
+// };
