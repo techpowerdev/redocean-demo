@@ -7,9 +7,9 @@ export const formatDateTimeTH = (dateString: string): string => {
   );
 };
 
-export function formatDateToDatetimeLocal(date: string): string {
+export function formatDateToDatetimeLocal(date: Date | string): string {
   // แปลงวันที่จาก "2024-11-19T12:25:00.000Z" เป็น "2024-11-19T12:25"
-  const localDate = new Date(date);
+  const localDate = typeof date === "string" ? new Date(date) : date;
   const year = localDate.getFullYear();
   const month = String(localDate.getMonth() + 1).padStart(2, "0");
   const day = String(localDate.getDate()).padStart(2, "0");
