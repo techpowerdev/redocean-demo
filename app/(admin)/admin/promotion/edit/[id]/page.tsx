@@ -1,10 +1,7 @@
 "use client";
 
 import { getPromotionById } from "@/services/promotionServices";
-import {
-  FetchOnePromotionResponseType,
-  PromotionType,
-} from "@/types/promotionTypes";
+import { Promotion } from "@/types/baseTypes";
 import React, { useEffect, useState } from "react";
 import PageTitle from "@/components/shared/PageTitle";
 import { EditPromotionForm } from "@/app/features/promotion/forms/EditPromotionForm";
@@ -14,13 +11,11 @@ type Props = {
 };
 
 export default function EditPromotionPage({ params }: Props) {
-  const [promotion, setPromotion] = useState<PromotionType | null>(null);
+  const [promotion, setPromotion] = useState<Promotion | null>(null);
 
   useEffect(() => {
     const fetchPromotion = async () => {
-      const promotion: FetchOnePromotionResponseType = await getPromotionById(
-        params.id
-      );
+      const promotion = await getPromotionById(params.id);
       setPromotion(promotion.data);
     };
     fetchPromotion();

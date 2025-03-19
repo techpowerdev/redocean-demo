@@ -11,16 +11,16 @@ import ProductImage from "@/app/features/product/ProductImages";
 import SetProductQuantity from "@/app/features/product/SetProductQuantity";
 import { searchProductVariant } from "@/services/productServices";
 import ProductOptions from "@/app/features/product/ProductOptions";
-import { ProductType, VariantOption } from "@/types/productTypes";
-import { PromotionActivityType, PromotionType } from "@/types/promotionTypes";
+import { VariantOption } from "@/types/baseTypes";
+import { Product, PromotionActivity, Promotion } from "@/types/baseTypes";
 import PlaceOrderCheckout from "@/app/features/checkout/forms/PlaceOrderCheckout";
 // import AddProductToCart from "@/app/features/product/AddProductToCart";
 import PromotionRules from "@/app/features/promotion/PromotionRules";
 interface Props {
   isActive: boolean;
-  promotion: PromotionType;
-  promotionActivity: PromotionActivityType;
-  product: ProductType;
+  promotion: Promotion;
+  promotionActivity: PromotionActivity;
+  product: Product;
 }
 
 export type selectedVariantType = {

@@ -12,14 +12,11 @@ import {
   getOneOrder,
   getPromotionOrder,
 } from "@/services/orderServices";
-import {
-  FetchAllOrderResponseType,
-  FetchOneOrderResponseType,
-} from "@/types/orderTypes";
+
 import OrderSummaryOfPromotionToday from "./OrderSummaryOfPromotionToday";
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
-import { PromotionType } from "@/types/promotionTypes";
+import { Promotion } from "@/types/baseTypes";
 import {
   createProductItem,
   createSummaryItem,
@@ -34,7 +31,7 @@ import {
 import { formatPrice } from "@/utils/formatPrice";
 
 interface Props {
-  promotion: PromotionType;
+  promotion: Promotion;
 }
 
 export default function ShowEventCard({ promotion }: Props) {
@@ -62,9 +59,7 @@ export default function ShowEventCard({ promotion }: Props) {
   const sendOrdersToConfirm = async (promotionActivityId: string) => {
     setSending(true);
     try {
-      const result: FetchAllOrderResponseType = await getPromotionOrder(
-        promotionActivityId
-      );
+      const result = await getPromotionOrder(promotionActivityId);
       const orders = result.data;
 
       const needToConfirm = orders.filter(
@@ -78,9 +73,7 @@ export default function ShowEventCard({ promotion }: Props) {
         const results = await Promise.all(
           needToConfirm.map(async (order) => {
             try {
-              const fetchOrder: FetchOneOrderResponseType = await getOneOrder(
-                order.id
-              );
+              const fetchOrder = await getOneOrder(order.id);
 
               const orderData = fetchOrder?.data;
               const OrderItem: FlexBox[] =
@@ -224,9 +217,7 @@ export default function ShowEventCard({ promotion }: Props) {
   ) => {
     setUpdating(true);
     try {
-      const result: FetchAllOrderResponseType = await getPromotionOrder(
-        promotionActivityId
-      );
+      const result = await getPromotionOrder(promotionActivityId);
       const orders = result.data;
       const needToConfirm = orders.filter(
         (order) => order.status === "pending"
@@ -267,9 +258,7 @@ export default function ShowEventCard({ promotion }: Props) {
   const sendOrdersToFulfillment = async (promotionActivityId: string) => {
     setLoading(true);
     try {
-      const result: FetchAllOrderResponseType = await getPromotionOrder(
-        promotionActivityId
-      );
+      const result = await getPromotionOrder(promotionActivityId);
       const orders = result.data;
 
       const confirmedOrders = orders.filter(

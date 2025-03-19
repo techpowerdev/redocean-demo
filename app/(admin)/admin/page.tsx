@@ -1,10 +1,9 @@
 import ShowEventCard from "../../features/dashboard/ShowEventCard";
 import { getPromotionToday } from "@/services/promotionServices";
 import NoPromotion from "@/app/features/promotion/NoPromotion";
-import { FetchAllPromotionResponseType } from "@/types/promotionTypes";
 
 export default async function dashboard() {
-  const promotions: FetchAllPromotionResponseType = await getPromotionToday();
+  const promotions = await getPromotionToday();
 
   if (!promotions?.data || promotions.data.length === 0) {
     return <NoPromotion />;

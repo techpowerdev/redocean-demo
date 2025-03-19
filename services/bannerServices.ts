@@ -1,11 +1,9 @@
 import axios from "axios";
 import apiClient from "./apiClient";
-import {
-  GetAllBannersResponse,
-  UpdateBannerOrderType,
-} from "@/types/bannerTypes";
+import { UpdateBannerOrderParam } from "@/types/bannerTypes";
+import { Banner } from "@/types/baseTypes";
 
-export const getAllBanners = async (): Promise<GetAllBannersResponse> => {
+export const getAllBanners = async (): Promise<{ data: Banner[] }> => {
   try {
     const response = await apiClient.get(`/banners/all`);
     return response.data;
@@ -19,7 +17,9 @@ export const getAllBanners = async (): Promise<GetAllBannersResponse> => {
   }
 };
 
-export const createBanner = async (formData: FormData) => {
+export const createBanner = async (
+  formData: FormData
+): Promise<{ data: Banner }> => {
   try {
     const response = await apiClient.post(`/banners`, formData, {
       headers: {
@@ -37,7 +37,9 @@ export const createBanner = async (formData: FormData) => {
   }
 };
 
-export const updateBannerOrder = async (banners: UpdateBannerOrderType[]) => {
+export const updateBannerOrder = async (
+  banners: UpdateBannerOrderParam[]
+): Promise<{ data: Banner[] }> => {
   try {
     const response = await apiClient.put(`/banners`, { banners });
     return response.data;
@@ -51,7 +53,7 @@ export const updateBannerOrder = async (banners: UpdateBannerOrderType[]) => {
   }
 };
 
-export const deleteBanner = async (bannerId: string) => {
+export const deleteBanner = async (bannerId: string): Promise<void> => {
   try {
     const response = await apiClient.delete(`/banners/${bannerId}`);
     return response.data;

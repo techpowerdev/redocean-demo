@@ -22,10 +22,6 @@ import { CircleX } from "lucide-react";
 import toast from "react-hot-toast";
 import { useProductStore } from "@/state-stores/admin/adminProductStore";
 import { addProduct, getAllProducts } from "@/services/productServices";
-import {
-  CreateProductResponseType,
-  FetchAllProductResponseType,
-} from "@/types/productTypes";
 import { useRouter } from "next/navigation";
 
 // Define the schema for validation using zod
@@ -139,13 +135,10 @@ export default function CreateProduct() {
     });
 
     try {
-      const productResult: CreateProductResponseType = await addProduct(
-        ProductFormData
-      );
+      const productResult = await addProduct(ProductFormData);
 
       if (productResult) {
-        const updatedProducts: FetchAllProductResponseType =
-          await getAllProducts();
+        const updatedProducts = await getAllProducts();
 
         setProductLists(updatedProducts.data);
       }

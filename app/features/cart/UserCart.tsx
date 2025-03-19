@@ -9,7 +9,6 @@ import { getUserCart } from "@/services/cartServices";
 import CartItem from "@/app/features/cart/CartItem";
 import { useCartServerStore } from "@/state-stores/cartServerStore";
 import { ShoppingCart } from "lucide-react";
-import { FetchCartResponseType } from "@/types/cartTypes";
 import PlaceOrderCheckout from "@/app/features/checkout/forms/PlaceOrderCheckout";
 import { CreateOrderItem } from "@/types/orderTypes";
 
@@ -22,7 +21,7 @@ export default function CartClient() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response: FetchCartResponseType = await getUserCart();
+        const response = await getUserCart();
         console.log("cart", response.data);
         setCart(response.data);
       } catch (error) {

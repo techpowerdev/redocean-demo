@@ -1,12 +1,13 @@
 import { CartItemType } from "@/types/cartTypes";
 import {
-  CreateOderType,
+  // CreateOderType,
   CreateOrderWithPaymentIntentParams,
   CreateOrderWithPaymentIntentResponse,
-  OrderType,
+  OrderSummaryType,
 } from "@/types/orderTypes";
 import apiClient from "@/services/apiClient";
 import axios from "axios";
+import { Order } from "@/types/baseTypes";
 
 export async function createOrderWithPaymentIntent(
   CreateData: CreateOrderWithPaymentIntentParams
@@ -54,21 +55,21 @@ export async function captureOrder(
   }
 }
 
-export const createOrder = async (data: CreateOderType) => {
-  try {
-    const response = await apiClient.post(`/orders`, data);
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      throw new Error(
-        error.response?.data?.message || "สร้างคำสั่งซื้อไม่สำเร็จ"
-      );
-    }
-    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
-  }
-};
+// export const createOrder = async (data: CreateOderType) => {
+//   try {
+//     const response = await apiClient.post(`/orders`, data);
+//     return response.data;
+//   } catch (error) {
+//     if (axios.isAxiosError(error)) {
+//       throw new Error(
+//         error.response?.data?.message || "สร้างคำสั่งซื้อไม่สำเร็จ"
+//       );
+//     }
+//     throw new Error("เกิดข้อผิดพลาดบางอย่าง");
+//   }
+// };
 
-export const getUserOrders = async () => {
+export const getUserOrders = async (): Promise<{ data: Order[] }> => {
   try {
     const response = await apiClient.get(`/users/orders/all`);
     return response.data;
@@ -85,7 +86,7 @@ export const getUserOrders = async () => {
 export const changeTrackingNumber = async (
   orderId: string,
   trackingNumber: string
-) => {
+): Promise<void> => {
   try {
     const response = await apiClient.patch(
       `/orders/${orderId}/change-trackingnumber`,
@@ -102,7 +103,9 @@ export const changeTrackingNumber = async (
   }
 };
 
-export const getOneOrder = async (id: string) => {
+export const getOneOrder = async (
+  id: string
+): Promise<{ data: Order; message?: string | null }> => {
   try {
     const response = await apiClient.get(`/orders/${id}`);
     console.log("get one order === ", response.data);
@@ -117,7 +120,7 @@ export const getOneOrder = async (id: string) => {
   }
 };
 
-export const getAllOrders = async (): Promise<{ data: OrderType[] }> => {
+export const getAllOrders = async (): Promise<{ data: Order[] }> => {
   try {
     const response = await apiClient.get(`/orders/all`);
     return response.data;
@@ -133,7 +136,7 @@ export const getAllOrders = async (): Promise<{ data: OrderType[] }> => {
 
 export const getOrderSummaryOfGroupBuying = async (
   promotionActivityId: string | null
-) => {
+): Promise<{ data: OrderSummaryType }> => {
   try {
     const response = await apiClient.get(
       `/orders/summary/today/${promotionActivityId}`
@@ -161,7 +164,9 @@ export type SearchFilters = {
 };
 
 // get order on each promotion
-export const getPromotionOrder = async (promotionActivityId: string) => {
+export const getPromotionOrder = async (
+  promotionActivityId: string
+): Promise<{ data: Order[] }> => {
   try {
     // เรียก API ด้วย axios
     const response = await apiClient.get(

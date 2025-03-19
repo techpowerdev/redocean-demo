@@ -21,12 +21,12 @@ import {
 import { useEffect, useState } from "react";
 import { useProductStore } from "@/state-stores/admin/adminProductStore";
 import Image from "next/image";
-import { FetchAllProductResponseType, ProductType } from "@/types/productTypes";
+import { Product } from "@/types/baseTypes";
 import { getAllProducts } from "@/services/productServices";
 
 type Props = {
-  selectedProduct: ProductType | null;
-  setSelectedProduct: (selectedProduct: ProductType) => void;
+  selectedProduct: Product | null;
+  setSelectedProduct: (selectedProduct: Product) => void;
 };
 export function SearchProductInPromotionForm({
   selectedProduct,
@@ -43,7 +43,7 @@ export function SearchProductInPromotionForm({
   useEffect(() => {
     const fetchAllProducts = async () => {
       try {
-        const products: FetchAllProductResponseType = await getAllProducts();
+        const products = await getAllProducts();
         setProductLists(products.data);
       } catch (error) {
         console.error("Error fetching products:", error);

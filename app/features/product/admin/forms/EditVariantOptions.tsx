@@ -40,11 +40,7 @@ import {
   getProductById,
   updateProductVariant,
 } from "@/services/productServices";
-import {
-  FetchAllProductResponseType,
-  FetchOneProductResponseType,
-  ProductVariantType,
-} from "@/types/productTypes";
+import { ProductVariant } from "@/types/baseTypes";
 
 // Define the schema for validation using zod
 const ProductVariantFormSchema = z.object({
@@ -93,7 +89,7 @@ const ProductVariantFormSchema = z.object({
 type ProductFormValues = z.infer<typeof ProductVariantFormSchema>;
 
 type Props = {
-  productVariant: ProductVariantType;
+  productVariant: ProductVariant;
   open: boolean;
   setOpen: (status: boolean) => void;
 };
@@ -183,7 +179,7 @@ export default function EditVariantOptions({
 
   const fetchSavedOptions = async (id: string) => {
     try {
-      const response: FetchOneProductResponseType = await getProductById(id);
+      const response = await getProductById(id);
       const variantKeys = Array.from(
         new Set(
           response.data.productVariants?.flatMap((product) =>
@@ -261,11 +257,12 @@ export default function EditVariantOptions({
       );
 
       if (productResult) {
-        const updateSelectedProduct: FetchOneProductResponseType =
-          await getProductById(productResult.data.productId);
+        const updateSelectedProduct = await getProductById(
+          productResult.data.productId
+        );
         selectProduct(updateSelectedProduct.data);
 
-        const newProducts: FetchAllProductResponseType = await getAllProducts();
+        const newProducts = await getAllProducts();
         setProductLists(newProducts.data);
         toast.success("บันทึกการแก้ไขแล้ว");
 

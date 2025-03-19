@@ -29,17 +29,13 @@ import {
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { useProductStore } from "@/state-stores/admin/adminProductStore";
-import {
-  EditProductResponseType,
-  FetchAllProductResponseType,
-  FetchOneProductResponseType,
-  ProductType,
-} from "@/types/productTypes";
+import { EditProductResponseType } from "@/types/productTypes";
 import {
   getAllProducts,
   getProductById,
   updateProduct,
 } from "@/services/productServices";
+import { Product } from "@/types/baseTypes";
 
 // Define the schema for validation using zod
 const EditProductFormSchema = z.object({
@@ -86,7 +82,7 @@ const EditProductFormSchema = z.object({
 type EditProductFormValues = z.infer<typeof EditProductFormSchema>;
 
 type Props = {
-  selectedProduct: ProductType | null;
+  selectedProduct: Product | null;
   openEditForm: boolean;
   setOpenEditForm: () => void;
 };
@@ -190,12 +186,12 @@ export function EditProduct({
       );
 
       if (updatedResult) {
-        const updatedSelectedProduct: FetchOneProductResponseType =
-          await getProductById(updatedResult.data.id);
+        const updatedSelectedProduct = await getProductById(
+          updatedResult.data.id
+        );
         selectProduct(updatedSelectedProduct.data);
 
-        const newProducdts: FetchAllProductResponseType =
-          await getAllProducts();
+        const newProducdts = await getAllProducts();
         setProductLists(newProducdts.data);
       }
       toast.success("บันทึกการแก้ไขแล้ว");

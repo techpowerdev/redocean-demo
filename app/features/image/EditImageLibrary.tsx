@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { FetchAllImagesResponseType, ImageType } from "@/types/imageTypes";
+import { Image } from "@/types/baseTypes";
 import {
   getAllImages,
   uploadImage,
@@ -16,11 +16,9 @@ import { Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
 
 export default function EditImageLibrary() {
-  const [images, setImages] = useState<ImageType[]>([]);
-  const [filteredImages, setFilteredImages] = useState<ImageType[] | null>(
-    null
-  );
-  const [selectedImages, setSelectedImages] = useState<ImageType[]>([]);
+  const [images, setImages] = useState<Image[]>([]);
+  const [filteredImages, setFilteredImages] = useState<Image[] | null>(null);
+  const [selectedImages, setSelectedImages] = useState<Image[]>([]);
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [tag, setTag] = useState("");
@@ -31,7 +29,7 @@ export default function EditImageLibrary() {
 
   useEffect(() => {
     const fetchImages = async () => {
-      const response: FetchAllImagesResponseType = await getAllImages();
+      const response = await getAllImages();
       setImages(response.data);
     };
     fetchImages();
@@ -45,7 +43,7 @@ export default function EditImageLibrary() {
       formData.append("image", file);
       formData.append("tag", tag); // ส่ง tag ไปพร้อมรูป
       await uploadImage(formData);
-      const response: FetchAllImagesResponseType = await getAllImages();
+      const response = await getAllImages();
       setImages(response.data);
       setFile(null);
       setTag("");
@@ -71,7 +69,7 @@ export default function EditImageLibrary() {
     }
   };
 
-  const handleSelectImage = (image: ImageType) => {
+  const handleSelectImage = (image: Image) => {
     if (selectedImages.some((img) => img.id === image.id)) {
       setSelectedImages(selectedImages.filter((img) => img.id !== image.id));
     } else {
@@ -88,7 +86,7 @@ export default function EditImageLibrary() {
       const newTag = editedTags[imageId];
       if (newTag) {
         await updateImage(imageId, newTag);
-        const response: FetchAllImagesResponseType = await getAllImages();
+        const response = await getAllImages();
         setImages(response.data);
         setSelectedImages([]);
         toast.success("อัปเดตแท็กแล้ว");
@@ -104,7 +102,7 @@ export default function EditImageLibrary() {
   const handleDelete = async (id: string) => {
     try {
       await deleteImage(id);
-      const response: FetchAllImagesResponseType = await getAllImages();
+      const response = await getAllImages();
       setImages(response.data);
       setSelectedImages([]);
       setFilteredImages(null);
@@ -121,7 +119,7 @@ export default function EditImageLibrary() {
     if (selectedImages.length === 0) return;
     try {
       await deleteImages(selectedImages.map((img) => img.id));
-      const response: FetchAllImagesResponseType = await getAllImages();
+      const response = await getAllImages();
       setImages(response.data);
       setSelectedImages([]);
       setFilteredImages(null);

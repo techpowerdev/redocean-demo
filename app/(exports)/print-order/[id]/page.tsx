@@ -5,7 +5,7 @@ import { formatPrice } from "@/utils/formatPrice";
 import { truncateText } from "@/utils/truncateText";
 import { changeTrackingNumber, getOneOrder } from "@/services/orderServices";
 import { formatDateTimePromotion } from "@/utils/formatDate";
-import { FetchOneOrderResponseType, OrderType } from "@/types/orderTypes";
+import { Order } from "@/types/baseTypes";
 import PrintButton from "@/components/shared/PrintButton";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -34,7 +34,7 @@ export default function PrintOrderDetail({
   params: { id: string };
 }) {
   // local state
-  const [order, setOrder] = useState<OrderType | null>(null);
+  const [order, setOrder] = useState<Order | null>(null);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -55,7 +55,7 @@ export default function PrintOrderDetail({
   useEffect(() => {
     const fetchOrder = async () => {
       try {
-        const result: FetchOneOrderResponseType = await getOneOrder(params.id);
+        const result = await getOneOrder(params.id);
         setOrder(result.data);
         form.reset({ trackingNumber: result.data.trackingNumber || "" });
       } catch (error) {

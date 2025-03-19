@@ -1,8 +1,13 @@
 import axios from "axios";
 import apiClient from "./apiClient";
 import {
+  AddPromotionResponse,
+  ChangePromotionStatusResponse,
+  GetAllPromotionsResponse,
+  GetPromotionByIdResponse,
   GetPromotionTodayResponse,
   GetUpcomingPromotionResponse,
+  UpdatePromotionResponse,
 } from "@/types/promotionTypes";
 
 export const getPromotionToday =
@@ -35,7 +40,9 @@ export const getUpcomingPromotion =
     }
   };
 
-export const addPromotion = async (formData: FormData) => {
+export const addPromotion = async (
+  formData: FormData
+): Promise<AddPromotionResponse> => {
   try {
     const response = await apiClient.post(`/promotions`, formData, {
       headers: {
@@ -53,7 +60,7 @@ export const addPromotion = async (formData: FormData) => {
   }
 };
 
-export const getAllPromotions = async () => {
+export const getAllPromotions = async (): Promise<GetAllPromotionsResponse> => {
   try {
     const response = await apiClient.get(`/promotions/all`);
     return response.data;
@@ -67,7 +74,9 @@ export const getAllPromotions = async () => {
   }
 };
 
-export const getPromotionById = async (promotionId: string) => {
+export const getPromotionById = async (
+  promotionId: string
+): Promise<GetPromotionByIdResponse> => {
   try {
     const response = await apiClient.get(`/promotions/${promotionId}`);
 
@@ -82,7 +91,10 @@ export const getPromotionById = async (promotionId: string) => {
   }
 };
 
-export const updatePromotion = async (id: string, formData: FormData) => {
+export const updatePromotion = async (
+  id: string,
+  formData: FormData
+): Promise<UpdatePromotionResponse> => {
   try {
     const response = await apiClient.put(`/promotions/${id}`, formData, {
       headers: {
@@ -100,7 +112,10 @@ export const updatePromotion = async (id: string, formData: FormData) => {
   }
 };
 
-export const changePromotionStatus = async (id: string, status: boolean) => {
+export const changePromotionStatus = async (
+  id: string,
+  status: boolean
+): Promise<ChangePromotionStatusResponse> => {
   try {
     const response = await apiClient.patch(`/promotions/change-status/${id}`, {
       isActive: status,
@@ -116,7 +131,7 @@ export const changePromotionStatus = async (id: string, status: boolean) => {
   }
 };
 
-export const deletePromotion = async (promotionId: string) => {
+export const deletePromotion = async (promotionId: string): Promise<void> => {
   try {
     const response = await apiClient.delete(`/promotions/${promotionId}`);
     return response.data;

@@ -1,7 +1,7 @@
 "use client";
 
 import { getProductById } from "@/services/productServices";
-import { FetchOneProductResponseType, ProductType } from "@/types/productTypes";
+import { Product } from "@/types/baseTypes";
 import React, { useEffect, useState } from "react";
 import { EditProductForm } from "./EditProductForm";
 
@@ -10,12 +10,10 @@ type Props = {
 };
 
 export default function EditProduct({ params }: Props) {
-  const [product, setProduct] = useState<ProductType | null>(null);
+  const [product, setProduct] = useState<Product | null>(null);
   useEffect(() => {
     const fetchProduct = async () => {
-      const product: FetchOneProductResponseType = await getProductById(
-        params.id
-      );
+      const product = await getProductById(params.id);
       setProduct(product.data);
     };
     fetchProduct();

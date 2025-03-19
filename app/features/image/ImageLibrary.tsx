@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { FetchAllImagesResponseType, ImageType } from "@/types/imageTypes";
+import { Image } from "@/types/baseTypes";
 import {
   getAllImages,
   uploadImage,
@@ -22,15 +22,13 @@ import toast from "react-hot-toast";
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  onSelect: (images: ImageType[]) => void;
+  onSelect: (images: Image[]) => void;
 };
 
 export default function ImageLibrary({ isOpen, onClose, onSelect }: Props) {
-  const [images, setImages] = useState<ImageType[]>([]);
-  const [filteredImages, setFilteredImages] = useState<ImageType[] | null>(
-    null
-  );
-  const [selectedImages, setSelectedImages] = useState<ImageType[]>([]);
+  const [images, setImages] = useState<Image[]>([]);
+  const [filteredImages, setFilteredImages] = useState<Image[] | null>(null);
+  const [selectedImages, setSelectedImages] = useState<Image[]>([]);
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [tag, setTag] = useState("");
@@ -38,7 +36,7 @@ export default function ImageLibrary({ isOpen, onClose, onSelect }: Props) {
 
   useEffect(() => {
     const fetchImages = async () => {
-      const response: FetchAllImagesResponseType = await getAllImages();
+      const response = await getAllImages();
       setImages(response.data);
     };
     fetchImages();
@@ -52,7 +50,7 @@ export default function ImageLibrary({ isOpen, onClose, onSelect }: Props) {
       formData.append("image", file);
       formData.append("tag", tag); // ส่ง tag ไปพร้อมรูป
       await uploadImage(formData);
-      const response: FetchAllImagesResponseType = await getAllImages();
+      const response = await getAllImages();
       setImages(response.data);
       setFile(null);
       setTag("");
@@ -78,7 +76,7 @@ export default function ImageLibrary({ isOpen, onClose, onSelect }: Props) {
     }
   };
 
-  const handleSelectImage = (image: ImageType) => {
+  const handleSelectImage = (image: Image) => {
     if (selectedImages.some((img) => img.id === image.id)) {
       setSelectedImages(selectedImages.filter((img) => img.id !== image.id));
     } else {
@@ -90,7 +88,7 @@ export default function ImageLibrary({ isOpen, onClose, onSelect }: Props) {
     if (selectedImages.length === 0) return;
     try {
       await deleteImages(selectedImages.map((img) => img.id));
-      const response: FetchAllImagesResponseType = await getAllImages();
+      const response = await getAllImages();
       setImages(response.data);
       setSelectedImages([]);
       setFilteredImages(null);

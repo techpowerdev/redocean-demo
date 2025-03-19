@@ -1,16 +1,11 @@
-import {
-  CreateAddressParam,
-  CreateAddressResponse,
-  UpdateAddressParam,
-  UpdateAddressResponse,
-} from "@/types/addressTypes";
+import { CreateAddressParam, UpdateAddressParam } from "@/types/addressTypes";
 import axios from "axios";
 import apiClient from "./apiClient";
 import { Address } from "@/types/baseTypes";
 
 export const createAddress = async (
   data: CreateAddressParam
-): Promise<{ data: CreateAddressResponse; message: string }> => {
+): Promise<{ data: Address; message: string }> => {
   try {
     const response = await apiClient.post(`/addresses`, data);
     return response.data;
@@ -25,7 +20,7 @@ export const createAddress = async (
 export const updateAddress = async (
   id: string,
   data: UpdateAddressParam
-): Promise<{ data: UpdateAddressResponse; message: string }> => {
+): Promise<{ data: Address; message: string }> => {
   try {
     const response = await apiClient.put(`/addresses/${id}`, data);
     return response.data;

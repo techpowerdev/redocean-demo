@@ -9,7 +9,6 @@ import {
   getAllPromotions,
 } from "@/services/promotionServices";
 import { usePromotionStore } from "@/state-stores/admin/adminPromotionStore";
-import { FetchAllPromotionResponseType } from "@/types/promotionTypes";
 import { useRouter } from "next/navigation";
 
 export function PromotionRightActionToolbar() {
@@ -34,8 +33,7 @@ export function PromotionRightActionToolbar() {
 
   const handleDelete = async () => {
     await deletePromotion(selectedPromotion?.id || "");
-    const newPromotions: FetchAllPromotionResponseType =
-      await getAllPromotions();
+    const newPromotions = await getAllPromotions();
     selectPromotion(null);
     setPromotionLists(newPromotions.data);
   };

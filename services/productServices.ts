@@ -3,10 +3,13 @@ import apiClient from "./apiClient";
 import {
   CheckProductAvailabilityForUserPayloadType,
   CheckProductAvailabilityForUserResponseType,
+  GetAllProductResponse,
+  GetProductByIdResponse,
 } from "@/types/productTypes";
+import { Product, ProductVariant } from "@/types/baseTypes";
 
 // specific for user
-export const getAllProductForSell = async () => {
+export const getAllProductForSell = async (): Promise<{ data: Product[] }> => {
   try {
     const response = await apiClient.get(`/products/for-sell/all`);
     return response.data;
@@ -20,7 +23,9 @@ export const getAllProductForSell = async () => {
   }
 };
 
-export const getOneProductForSell = async (productId: string) => {
+export const getOneProductForSell = async (
+  productId: string
+): Promise<{ data: Product }> => {
   try {
     const response = await apiClient.get(`/products/for-sell/${productId}`);
     return response.data;
@@ -36,7 +41,9 @@ export const getOneProductForSell = async (productId: string) => {
 
 // end of specific for user
 
-export const addProduct = async (formData: FormData) => {
+export const addProduct = async (
+  formData: FormData
+): Promise<{ data: Product }> => {
   try {
     const response = await apiClient.post(`/products`, formData, {
       headers: {
@@ -52,7 +59,7 @@ export const addProduct = async (formData: FormData) => {
   }
 };
 
-export const getAllProducts = async () => {
+export const getAllProducts = async (): Promise<GetAllProductResponse> => {
   try {
     const response = await apiClient.get(`/products/all`);
     return response.data;
@@ -66,7 +73,9 @@ export const getAllProducts = async () => {
   }
 };
 
-export const getProductById = async (productId: string) => {
+export const getProductById = async (
+  productId: string
+): Promise<GetProductByIdResponse> => {
   try {
     const response = await apiClient.get(`/products/${productId}`);
     return response.data;
@@ -80,7 +89,10 @@ export const getProductById = async (productId: string) => {
   }
 };
 
-export const updateProduct = async (id: string, formData: FormData) => {
+export const updateProduct = async (
+  id: string,
+  formData: FormData
+): Promise<{ data: Product }> => {
   try {
     const response = await apiClient.put(`/products/${id}`, formData, {
       headers: {
@@ -96,7 +108,10 @@ export const updateProduct = async (id: string, formData: FormData) => {
   }
 };
 
-export const changeProductStatus = async (id: string, status: boolean) => {
+export const changeProductStatus = async (
+  id: string,
+  status: boolean
+): Promise<{ data: Product }> => {
   try {
     const response = await apiClient.patch(`/products/change-status/${id}`, {
       isActive: status,
@@ -112,7 +127,10 @@ export const changeProductStatus = async (id: string, status: boolean) => {
   }
 };
 
-export const changeHasVariantStatus = async (id: string, status: boolean) => {
+export const changeHasVariantStatus = async (
+  id: string,
+  status: boolean
+): Promise<{ data: Product }> => {
   try {
     const response = await apiClient.patch(
       `/products/change-hasvariant-status/${id}`,
@@ -131,7 +149,7 @@ export const changeHasVariantStatus = async (id: string, status: boolean) => {
   }
 };
 
-export const deleteProduct = async (productId: string) => {
+export const deleteProduct = async (productId: string): Promise<void> => {
   try {
     const response = await apiClient.delete(`/products/${productId}`);
     return response.data;
@@ -143,7 +161,9 @@ export const deleteProduct = async (productId: string) => {
   }
 };
 
-export const addProductVariant = async (formData: FormData) => {
+export const addProductVariant = async (
+  formData: FormData
+): Promise<{ data: ProductVariant }> => {
   try {
     const response = await apiClient.post(`/products/variants`, formData, {
       headers: {
@@ -161,7 +181,10 @@ export const addProductVariant = async (formData: FormData) => {
   }
 };
 
-export const updateProductVariant = async (id: string, formData: FormData) => {
+export const updateProductVariant = async (
+  id: string,
+  formData: FormData
+): Promise<{ data: ProductVariant }> => {
   try {
     const response = await apiClient.put(`/products/variants/${id}`, formData, {
       headers: {
@@ -179,7 +202,10 @@ export const updateProductVariant = async (id: string, formData: FormData) => {
   }
 };
 
-export const changeVariantStatus = async (id: string, status: boolean) => {
+export const changeVariantStatus = async (
+  id: string,
+  status: boolean
+): Promise<{ data: ProductVariant }> => {
   try {
     const response = await apiClient.patch(
       `/products/variants/change-status/${id}`,
@@ -198,7 +224,9 @@ export const changeVariantStatus = async (id: string, status: boolean) => {
   }
 };
 
-export const deleteProductVariant = async (productVariantId: string) => {
+export const deleteProductVariant = async (
+  productVariantId: string
+): Promise<void> => {
   try {
     const response = await apiClient.delete(
       `/products/variants/${productVariantId}`

@@ -1,11 +1,11 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { AddProductToCardInputType } from "@/types/cartTypes";
+import { AddProductToCardParam } from "@/types/cartTypes";
 
 interface SetQtyProps {
   showLabelQuantity?: boolean;
-  product: AddProductToCardInputType;
+  product: AddProductToCardParam;
   handleQtyIncrease: () => void;
   handleQtyDecrease: () => void;
 }

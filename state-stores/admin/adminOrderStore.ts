@@ -1,15 +1,15 @@
 import { changeOrderStatus, getAllOrders } from "@/services/orderServices";
-import { FetchAllOrderResponseType, OrderType } from "@/types/orderTypes";
+import { Order } from "@/types/baseTypes";
 import { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import { create } from "zustand";
 
 export type State = {
-  orders: OrderType[] | null;
+  orders: Order[] | null;
 };
 
 export type Action = {
-  setOrders: (order: OrderType[] | null) => void;
+  setOrders: (order: Order[] | null) => void;
   changeOrderStatus: (id: string, status: string) => void;
 };
 
@@ -20,7 +20,7 @@ export const useAdminOrderStore = create<State & Action>()((set) => ({
     try {
       const response = await changeOrderStatus(id, status);
       toast.success(response?.message || "แก้ไขสถานะแล้ว");
-      const updatedOrders: FetchAllOrderResponseType = await getAllOrders();
+      const updatedOrders = await getAllOrders();
       set({ orders: updatedOrders.data });
     } catch (error) {
       if (error instanceof AxiosError) {

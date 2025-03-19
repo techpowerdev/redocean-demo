@@ -1,7 +1,8 @@
 import axios from "axios";
 import apiClient from "./apiClient";
+import { Image } from "@/types/baseTypes";
 
-export const getAllImages = async () => {
+export const getAllImages = async (): Promise<{ data: Image[] }> => {
   try {
     const response = await apiClient.get(`/images/all`);
     return response.data;
@@ -13,7 +14,9 @@ export const getAllImages = async () => {
   }
 };
 
-export const uploadImage = async (formData: FormData) => {
+export const uploadImage = async (
+  formData: FormData
+): Promise<{ data: Image }> => {
   try {
     const response = await apiClient.post(`/images`, formData, {
       headers: {
@@ -31,7 +34,10 @@ export const uploadImage = async (formData: FormData) => {
   }
 };
 
-export const updateImage = async (imageId: string, tag: string) => {
+export const updateImage = async (
+  imageId: string,
+  tag: string
+): Promise<{ data: Image }> => {
   try {
     const response = await apiClient.put(
       `/images/${imageId}`,
@@ -53,7 +59,7 @@ export const updateImage = async (imageId: string, tag: string) => {
   }
 };
 
-export const deleteImages = async (imageIds: string[]) => {
+export const deleteImages = async (imageIds: string[]): Promise<void> => {
   try {
     const response = await apiClient.delete(`/images`, {
       data: { ids: imageIds },
@@ -67,7 +73,7 @@ export const deleteImages = async (imageIds: string[]) => {
   }
 };
 
-export const deleteImage = async (imageId: string) => {
+export const deleteImage = async (imageId: string): Promise<void> => {
   try {
     const response = await apiClient.delete(`/images/${imageId}`);
     return response.data;

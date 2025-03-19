@@ -41,10 +41,6 @@ import {
   getAllProducts,
   getProductById,
 } from "@/services/productServices";
-import {
-  FetchAllProductResponseType,
-  FetchOneProductResponseType,
-} from "@/types/productTypes";
 
 // Define the schema for validation using zod
 const ProductVariantFormSchema = z.object({
@@ -146,7 +142,7 @@ export default function AddVariantOptions() {
 
   const fetchSavedOptions = async (id: string) => {
     try {
-      const response: FetchOneProductResponseType = await getProductById(id);
+      const response = await getProductById(id);
       const variantKeys = Array.from(
         new Set(
           response.data.productVariants?.flatMap((product) =>
@@ -222,11 +218,12 @@ export default function AddVariantOptions() {
       const productResult = await addProductVariant(ProductVariantFormData);
 
       if (productResult) {
-        const updateSelectedProduct: FetchOneProductResponseType =
-          await getProductById(productResult.data.productId);
+        const updateSelectedProduct = await getProductById(
+          productResult.data.productId
+        );
         selectProduct(updateSelectedProduct.data);
 
-        const newProducts: FetchAllProductResponseType = await getAllProducts();
+        const newProducts = await getAllProducts();
         setProductLists(newProducts.data);
         toast.success("เพิ่มตัวเลือกสินค้าแล้ว");
 

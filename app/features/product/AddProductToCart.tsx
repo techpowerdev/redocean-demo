@@ -3,14 +3,14 @@
 import { Button } from "@/components/ui/button";
 import { useCartServerStore } from "@/state-stores/cartServerStore";
 import { useCurrentUserStore } from "@/state-stores/useCurrentUserStore";
-import { AddProductToCardInputType } from "@/types/cartTypes";
+import { AddProductToCardParam } from "@/types/cartTypes";
 import { useRouter } from "next/navigation";
 import React from "react";
 import toast from "react-hot-toast";
 
 type Props = {
   isActive?: boolean;
-  product: AddProductToCardInputType;
+  product: AddProductToCardParam;
   stock: number;
 };
 

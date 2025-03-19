@@ -12,10 +12,10 @@ import SetProductQuantity from "@/app/features/product/SetProductQuantity";
 import { searchProductVariant } from "@/services/productServices";
 import ProductOptions from "@/app/features/product/ProductOptions";
 import AddProductToCart from "@/app/features/product/AddProductToCart";
-import { ProductType, VariantOption } from "@/types/productTypes";
-import { AddProductToCardInputType } from "@/types/cartTypes";
+import { Product, VariantOption } from "@/types/baseTypes";
+import { AddProductToCardParam } from "@/types/cartTypes";
 interface Props {
-  product: ProductType;
+  product: Product;
 }
 
 export type selectedVariantType = {
@@ -47,7 +47,7 @@ export default function ProductCard({ product }: Props) {
   const [selectedVariant, setSelectedVariant] =
     useState<selectedVariantType | null>(null);
 
-  const [cartProduct, setCartProduct] = useState<AddProductToCardInputType>({
+  const [cartProduct, setCartProduct] = useState<AddProductToCardParam>({
     productId: "",
     sku: "",
     quantity: 1,

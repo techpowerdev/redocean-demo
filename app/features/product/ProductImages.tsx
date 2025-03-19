@@ -1,11 +1,11 @@
 "use client";
-import { ProductType, ProductVariantType } from "@/types/productTypes";
+import { Product, ProductVariant } from "@/types/baseTypes";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
 type Props = {
-  product: ProductType;
-  variants: ProductVariantType[] | null | undefined; // ส่ง array ของ variant object
+  product: Product;
+  variants: ProductVariant[] | null | undefined; // ส่ง array ของ variant object
   selectedOption: Record<string, string | undefined>; // ส่งเฉพาะ option ที่เลือก เช่น { "สี": "เขียว", "ขนาด": "190 กรัม" }
 };
 

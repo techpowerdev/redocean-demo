@@ -1,9 +1,9 @@
 import PromotionItem from "@/app/features/promotion/PromotionItem";
 import SocialShare from "@/app/features/social-share/SocialShare";
-import { PromotionType } from "@/types/promotionTypes";
+import { Promotion } from "@/types/baseTypes";
 
 type Props = {
-  promotions: PromotionType[];
+  promotions: Promotion[];
 };
 
 export default function PromotionList({ promotions }: Props) {

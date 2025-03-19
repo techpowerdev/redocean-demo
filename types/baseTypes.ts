@@ -109,7 +109,7 @@ export type ProductVariant = {
   image: string | null;
   price: number;
   stock: number;
-  variantOptions: Record<string, string>;
+  variantOptions: VariantOption;
   productId: string;
 
   // relation
@@ -182,7 +182,7 @@ export type Order = {
  * Model OrderItem
  *
  */
-type OrderItem = {
+export type OrderItem = {
   id: string;
   createdAt: Date;
   updatedAt: Date;
@@ -198,6 +198,12 @@ type OrderItem = {
   order?: Order | null;
   product?: Product | null;
   promotionActivity?: PromotionActivity | null;
+
+  // addition field sending from backend
+  variantOptions?: string;
+  name: string;
+  description: string;
+  image?: string;
 };
 /**
  * Model Image
@@ -294,6 +300,11 @@ export type Payment = {
   // relation
   order?: Order | null;
 };
+/**
+ * VariantOption
+ *
+ */
+export type VariantOption = Record<string, string>;
 /**
  * Enum Role
  *

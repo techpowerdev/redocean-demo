@@ -1,4 +1,4 @@
-import { Address } from "./baseTypes";
+import { Address } from "@/types/baseTypes";
 
 export type CreateAddressParam = {
   recipient: string;
@@ -12,8 +12,6 @@ export type CreateAddressParam = {
   isActive?: boolean;
 };
 
-export type CreateAddressResponse = Address;
-
 export type UpdateAddressParam = {
   recipient: string;
   phoneNumber: string;
@@ -25,8 +23,6 @@ export type UpdateAddressParam = {
   postalCode: string;
   isActive: boolean;
 };
-
-export type UpdateAddressResponse = Address;
 
 export type ShippingAddress = Omit<
   Address,

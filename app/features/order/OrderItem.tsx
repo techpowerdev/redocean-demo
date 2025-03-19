@@ -1,4 +1,4 @@
-import { OrderItemType } from "@/types/orderTypes";
+import { OrderItem as OrderItemType } from "@/types/baseTypes";
 import { formatPrice } from "@/utils/formatPrice";
 import { truncateText } from "@/utils/truncateText";
 import Image from "next/image";

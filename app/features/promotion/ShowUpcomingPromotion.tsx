@@ -11,13 +11,13 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { PromotionType } from "@/types/promotionTypes";
+import { Promotion } from "@/types/baseTypes";
 import ResponsiveImage from "@/components/shared/ResponsiveImage";
 import { PromotionCountdown } from "./PromotionCountdown";
 import { formatDateTimePromotion } from "@/utils/formatDate";
 
 type Props = {
-  promotions: PromotionType[];
+  promotions: Promotion[];
 };
 export function ShowUpcomingPromotion({ promotions }: Props) {
   const plugin = React.useRef(

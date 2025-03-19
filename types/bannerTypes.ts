@@ -1,10 +1,4 @@
-import { Banner } from "@/types/baseTypes";
-
-export type GetAllBannersResponse = {
-  data: Banner[];
-};
-
-export type UpdateBannerOrderType = {
+export type UpdateBannerOrderParam = {
   id: string;
   order: number;
 };

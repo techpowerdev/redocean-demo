@@ -6,7 +6,7 @@ import {
   getAllBanners,
   updateBannerOrder,
 } from "@/services/bannerServices";
-import { BannerType, FetchAllBannersResponseType } from "@/types/bannerTypes";
+import { Banner } from "@/types/baseTypes";
 import React, { useEffect, useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
@@ -19,7 +19,7 @@ export default function BannerManager() {
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [tag, setTag] = useState("");
-  const [banners, setBanners] = useState<BannerType[]>([]);
+  const [banners, setBanners] = useState<Banner[]>([]);
 
   const handleUpload = async () => {
     if (!file || !tag) return;
@@ -29,7 +29,7 @@ export default function BannerManager() {
       formData.append("image", file);
       formData.append("tag", tag); // ส่ง tag ไปพร้อมรูป
       await createBanner(formData);
-      const response: FetchAllBannersResponseType = await getAllBanners();
+      const response = await getAllBanners();
       setBanners(response.data);
       setFile(null);
       setTag("");
@@ -54,7 +54,7 @@ export default function BannerManager() {
     await updateNewBannerOrder(updatedBanners);
   };
 
-  const updateNewBannerOrder = async (updatedBanners: BannerType[]) => {
+  const updateNewBannerOrder = async (updatedBanners: Banner[]) => {
     // ส่งข้อมูลทั้งหมดที่มีการอัปเดตลำดับ
     const bannersWithUpdatedOrder = updatedBanners.map((banner, index) => ({
       id: banner.id,
@@ -83,7 +83,7 @@ export default function BannerManager() {
 
   useEffect(() => {
     const fetchAllBanners = async () => {
-      const response: FetchAllBannersResponseType = await getAllBanners();
+      const response = await getAllBanners();
       setBanners(response.data);
     };
     fetchAllBanners();

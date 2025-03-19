@@ -1,94 +1,75 @@
 import { ShippingAddress } from "./addressTypes";
-import { Address } from "./baseTypes";
-import { ProductType } from "./productTypes";
-import { PromotionActivityType } from "./promotionTypes";
-import { User } from "./userTypes";
+import { User, Address } from "@/types/baseTypes";
 
-// types based on the prisma schema
-export type OrderType = {
-  id: string;
-  orderType: string;
-  creditCardFee?: number | null;
-  shippingFee?: number | null;
-  totalAmount: number;
-  totalDiscount: number;
-  netAmount: number;
-  extraPayAmount?: number | null;
-  payAmount?: number | null;
-  returnAmount?: number | null;
-  status: string;
-  trackingNumber?: string | null;
-  shippingAddress: {
-    recipient: string;
-    phoneNumber: string;
-    address: string;
-    street: string;
-    subDistrict: string;
-    district: string;
-    province: string;
-    postalCode: string;
-  };
-  cancelReason: string | null;
-  createdAt: Date;
-  updatedAt: Date;
+// // types based on the prisma schema
+// export type OrderType = {
+//   id: string;
+//   orderType: string;
+//   creditCardFee?: number | null;
+//   shippingFee?: number | null;
+//   totalAmount: number;
+//   totalDiscount: number;
+//   netAmount: number;
+//   extraPayAmount?: number | null;
+//   payAmount?: number | null;
+//   returnAmount?: number | null;
+//   status: string;
+//   trackingNumber?: string | null;
+//   shippingAddress: {
+//     recipient: string;
+//     phoneNumber: string;
+//     address: string;
+//     street: string;
+//     subDistrict: string;
+//     district: string;
+//     province: string;
+//     postalCode: string;
+//   };
+//   cancelReason: string | null;
+//   createdAt: Date;
+//   updatedAt: Date;
 
-  userId: string;
+//   userId: string;
 
-  user?: User | null;
-  orderItems?: OrderItemType[] | null;
-  payments?: PaymentItemType[] | null;
-};
+//   user?: User | null;
+//   orderItems?: OrderItemType[] | null;
+//   payments?: Payment[] | null;
+// };
 
-export type OrderItemType = {
-  id: string;
-  sku: string;
-  quantity: number;
-  unitPrice: number;
-  discount: number;
-  // total: number;
-  createdAt: Date;
-  updatedAt: Date;
+// export type OrderItemType = {
+//   id: string;
+//   sku: string;
+//   quantity: number;
+//   unitPrice: number;
+//   discount: number;
+//   // total: number;
+//   createdAt: Date;
+//   updatedAt: Date;
 
-  orderId: string;
-  productId: string;
-  promotionActivityId?: string | null;
+//   orderId: string;
+//   productId: string;
+//   promotionActivityId?: string | null;
 
-  order?: OrderType | null;
-  product?: ProductType | null;
-  promotionActivity?: PromotionActivityType | null;
+//   order?: OrderType | null;
+//   product?: Product | null;
+//   promotionActivity?: PromotionActivity | null;
 
-  variantOptions?: string;
-  name: string;
-  description: string;
-  image?: string;
-};
+//   variantOptions?: string;
+//   name: string;
+//   description: string;
+//   image?: string;
+// };
 
-export type PaymentItemType = {
-  id: string;
-  amount: number;
-  amountRefunded: number;
-  captured: boolean;
-  chargeId: string | null;
-  orderId: string;
-  paymentState: string;
-  paymentStatus: string;
-  paymentType: string | null;
-  stripePaymentId: string;
-  createdAt: Date;
-  updatedAt: Date;
-};
-// end of types based on the prisma schema
+// // types for the client side
+// export type FetchOneOrderResponseType = {
+//   message?: string | null;
+//   data: OrderType;
+// };
 
-// types for the client side
-export type FetchOneOrderResponseType = {
-  message?: string | null;
-  data: OrderType;
-};
-
-export type FetchAllOrderResponseType = {
-  message?: string | null;
-  data: OrderType[];
-};
+// export type FetchAllOrderResponseType = {
+//   message?: string | null;
+//   data: OrderType[];
+// };
 
 export type CreateOderType = {
   orderType?: string;
@@ -129,11 +110,6 @@ export type OrderSummaryType = {
   confirmedOrders: number;
   preparingToShipOrders: number;
   cancelledAndRefundedOrders: number;
-};
-
-export type OrderSummaryReponseType = {
-  message: string | null;
-  data: OrderSummaryType;
 };
 
 // refractor type

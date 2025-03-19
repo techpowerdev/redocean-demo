@@ -5,10 +5,7 @@ import { Search } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import Loading from "@/components/shared/Loading";
 import { usePromotionStore } from "@/state-stores/admin/adminPromotionStore";
-import {
-  FetchAllPromotionResponseType,
-  PromotionType,
-} from "@/types/promotionTypes";
+import { Promotion } from "@/types/baseTypes";
 import { getAllPromotions } from "@/services/promotionServices";
 import { PromotionLists } from "@/app/features/promotion/PromotionLists";
 
@@ -18,9 +15,7 @@ export default function PromotionListComponent() {
     (state) => state.setPromotionLists
   );
   const [searchTerm, setSearchTerm] = useState(""); // State for search input
-  const [filteredPromotions, setFilteredPromotions] = useState<PromotionType[]>(
-    []
-  ); // State for filtered products
+  const [filteredPromotions, setFilteredPromotions] = useState<Promotion[]>([]); // State for filtered products
   const [loading, setLoading] = useState(true); // State for loading
   const [error, setError] = useState<string | null>(null); // State for error message
 
@@ -28,8 +23,7 @@ export default function PromotionListComponent() {
     const fetchAllPromotions = async () => {
       setLoading(true); // Set loading to true when fetching
       try {
-        const promotions: FetchAllPromotionResponseType =
-          await getAllPromotions();
+        const promotions = await getAllPromotions();
         setPromotionLists(promotions.data);
         setLoading(false); // Set loading to false after data is fetched
       } catch (error) {

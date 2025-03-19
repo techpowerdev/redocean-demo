@@ -2,27 +2,23 @@ import {
   changePromotionStatus,
   getAllPromotions,
 } from "@/services/promotionServices";
-import { ProductType } from "@/types/productTypes";
-import {
-  FetchAllPromotionResponseType,
-  PromotionType,
-} from "@/types/promotionTypes";
+import { Promotion, Product } from "@/types/baseTypes";
 import toast from "react-hot-toast";
 import { create } from "zustand";
 
 // สร้าง Zustand store
 type State = {
-  selectedProductInPromotion: ProductType | null;
+  selectedProductInPromotion: Product | null;
   selectedPromotionType: string;
-  promotionLists: PromotionType[] | null;
-  selectedPromotion: PromotionType | null;
+  promotionLists: Promotion[] | null;
+  selectedPromotion: Promotion | null;
 };
 
 type Action = {
-  selectProductInPromotion: (product: ProductType | null) => void;
+  selectProductInPromotion: (product: Product | null) => void;
   selectPromotionType: (promotionType: string) => void;
-  setPromotionLists: (promotions: PromotionType[]) => void;
-  selectPromotion: (promotion: PromotionType | null) => void;
+  setPromotionLists: (promotions: Promotion[]) => void;
+  selectPromotion: (promotion: Promotion | null) => void;
   changePromotionStatus: (id: string, status: boolean) => Promise<void>;
 };
 
@@ -37,8 +33,7 @@ export const usePromotionStore = create<State & Action>((set) => ({
   changePromotionStatus: async (id, status) => {
     try {
       await changePromotionStatus(id, status);
-      const updatedPromotion: FetchAllPromotionResponseType =
-        await getAllPromotions();
+      const updatedPromotion = await getAllPromotions();
       set({ promotionLists: updatedPromotion.data });
     } catch (error) {
       if (error instanceof Error) {

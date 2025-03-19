@@ -1,16 +1,18 @@
 import { Eye, SquarePen, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { deleteProductVariant } from "@/services/productServices";
+import {
+  deleteProductVariant,
+  getAllProducts,
+} from "@/services/productServices";
 import { ConfirmationPopup } from "@/components/shared/ConfirmationPopup";
-import axios from "axios";
 import { useProductStore } from "@/state-stores/admin/adminProductStore";
 import ActionToolbar from "@/app/(admin)/admin/components/shared/ActionToolbar";
 import EditVariantOptions from "./forms/EditVariantOptions";
-import { ProductVariantType } from "@/types/productTypes";
+import { ProductVariant } from "@/types/baseTypes";
 import ChangeBooleanStatusField from "@/components/shared/ChangeBooleanStatusField";
 
 type Props = {
-  productVariant: ProductVariantType;
+  productVariant: ProductVariant;
 };
 export function ProductVariantActionToolbar({ productVariant }: Props) {
   // global state
@@ -33,20 +35,19 @@ export function ProductVariantActionToolbar({ productVariant }: Props) {
   };
 
   const handleDelete = async () => {
-    const result = await deleteProductVariant(productVariant.id);
-    console.log(result);
-    if (result) {
-      const newProducts = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/products/all`
-      );
+    await deleteProductVariant(productVariant.id);
 
-      const updateSelectedProduct = newProducts.data.data.find(
-        (item: ProductVariantType) => item.id === productVariant?.productId
-      );
+    const newProducts = await getAllProducts();
 
+    const updateSelectedProduct = newProducts.data.find(
+      (item) => item.id === productVariant?.productId
+    );
+
+    if (updateSelectedProduct) {
       selectProduct(updateSelectedProduct);
-      setProductLists(newProducts.data.data);
     }
+
+    setProductLists(newProducts.data);
   };
 
   return (

@@ -7,18 +7,18 @@ import { formatDateTimePromotion } from "@/utils/formatDate";
 import NoOrder from "@/app/features/order/NoOrder";
 import OrderItem from "@/app/features/order/OrderItem";
 import { getUserOrders } from "@/services/orderServices";
-import { FetchAllOrderResponseType, OrderType } from "@/types/orderTypes";
+import { Order } from "@/types/baseTypes";
 import { Eye, Truck } from "lucide-react";
 import { formatPrice } from "@/utils/formatPrice";
 import { statuses } from "@/app/features/order/data/OrderStatuses";
 
 export default function OrderList() {
-  const [userOrders, setUserOrders] = useState<OrderType[] | null>(null);
+  const [userOrders, setUserOrders] = useState<Order[] | null>(null);
 
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const userOrders: FetchAllOrderResponseType = await getUserOrders();
+        const userOrders = await getUserOrders();
         setUserOrders(userOrders.data);
       } catch (error) {
         console.log(error);

@@ -6,11 +6,11 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { CalendarClock } from "lucide-react";
 import Loading from "@/components/shared/Loading";
 import { usePromotionStore } from "@/state-stores/admin/adminPromotionStore";
-import { PromotionType } from "@/types/promotionTypes";
+import { Promotion } from "@/types/baseTypes";
 import ChangeBooleanStatusField from "@/components/shared/ChangeBooleanStatusField";
 
 type Props = {
-  promotions: PromotionType[];
+  promotions: Promotion[];
 };
 
 export function PromotionLists({ promotions }: Props) {
@@ -33,7 +33,7 @@ export function PromotionLists({ promotions }: Props) {
     <ScrollArea className="h-[calc(100vh-180px)]">
       <div className="flex flex-col gap-2 p-4 pt-0">
         {promotions?.length ? (
-          promotions?.map((item: PromotionType) => (
+          promotions?.map((item) => (
             <div
               key={item.id}
               className={cn(

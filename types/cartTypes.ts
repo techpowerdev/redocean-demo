@@ -1,6 +1,4 @@
-import { ProductType } from "./productTypes";
-import { PromotionActivityType } from "./promotionTypes";
-import { User } from "./userTypes";
+import { User, Product, PromotionActivity } from "@/types/baseTypes";
 
 // types based on the prisma schema
 export type CartType = {
@@ -30,8 +28,8 @@ export type CartItemType = {
   promotionActivityId?: string | null;
 
   cart?: CartType | null;
-  product?: ProductType | null;
-  promotionActivity?: PromotionActivityType | null;
+  product?: Product | null;
+  promotionActivity?: PromotionActivity | null;
   promotionType?: string | null;
 
   // return from backend process
@@ -47,7 +45,7 @@ export type CartItemType = {
 // end of types based on the prisma schema
 
 // types for the client side
-export type FetchCartResponseType = {
+export type GetUserCartResponse = {
   message?: string | null;
   data: CartType & {
     cartTotalAmount: number;
@@ -60,7 +58,7 @@ export type CartProductType = CartType & {
   cartTotalQuantity: number;
 };
 
-export type AddProductToCardInputType = {
+export type AddProductToCardParam = {
   productId: string;
   sku: string;
   quantity: number;

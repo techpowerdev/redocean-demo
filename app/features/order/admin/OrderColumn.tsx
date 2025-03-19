@@ -23,7 +23,7 @@ import {
 import { formatPrice } from "@/utils/formatPrice";
 import { DataTableColumnHeader } from "@/components/shared/table/DataTableColumnHeader";
 import ChangeOrderStatus from "@/app/features/order/admin/ChangeOrderStatus";
-import { OrderType } from "@/types/orderTypes";
+import { Order } from "@/types/baseTypes";
 // import { DataTableRowActions } from "../../components/shared/DataTableRowActions";
 
 export const labels = [
@@ -91,8 +91,6 @@ export const statuses = [
     icon: CircleX,
   },
 ];
-
-export type Order = OrderType;
 
 // กำหนดหัวของคอลัมน์
 export const OrderColumn: ColumnDef<Order>[] = [

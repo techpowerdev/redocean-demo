@@ -32,10 +32,7 @@ import {
 } from "@/components/ui/select";
 import { formatDateToDatetimeLocal } from "@/utils/formatDate";
 import { Label } from "@/components/ui/label";
-import {
-  FetchAllPromotionResponseType,
-  PromotionType,
-} from "@/types/promotionTypes";
+import { Promotion } from "@/types/baseTypes";
 import {
   getAllPromotions,
   updatePromotion,
@@ -100,7 +97,7 @@ const PromotionFormSchema = z.object({
 type PromotionFormValues = z.infer<typeof PromotionFormSchema>;
 
 type Props = {
-  promotion: PromotionType;
+  promotion: Promotion;
 };
 
 export function EditPromotionForm({ promotion }: Props) {
@@ -233,12 +230,11 @@ export function EditPromotionForm({ promotion }: Props) {
       );
 
       if (promotionResult || promotionActivityResult) {
-        const newPromotions: FetchAllPromotionResponseType =
-          await getAllPromotions();
+        const newPromotions = await getAllPromotions();
         setPromotionLists(newPromotions.data);
 
         const updateSelectedPromotion = newPromotions.data.find(
-          (item: PromotionType) => item.id === promotion?.id
+          (item: Promotion) => item.id === promotion?.id
         );
 
         if (updateSelectedPromotion) {

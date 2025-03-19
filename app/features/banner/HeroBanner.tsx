@@ -3,10 +3,10 @@
 import React, { useEffect, useState, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import ResponsiveImage from "@/components/shared/ResponsiveImage";
-import { BannerType } from "@/types/bannerTypes";
+import { Banner } from "@/types/baseTypes";
 
 type Props = {
-  banners: BannerType[];
+  banners: Banner[];
 };
 
 export default function HeroBanner({ banners }: Props) {

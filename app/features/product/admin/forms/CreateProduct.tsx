@@ -31,10 +31,7 @@ import {
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { useProductStore } from "@/state-stores/admin/adminProductStore";
-import {
-  CreateProductResponseType,
-  FetchAllProductResponseType,
-} from "@/types/productTypes";
+import { CreateProductResponseType } from "@/types/productTypes";
 import { addProduct, getAllProducts } from "@/services/productServices";
 
 // Define the schema for validation using zod
@@ -191,8 +188,7 @@ export function CreateProduct() {
       );
 
       if (productResult) {
-        const updatedProducts: FetchAllProductResponseType =
-          await getAllProducts();
+        const updatedProducts = await getAllProducts();
 
         setProductLists(updatedProducts.data);
       }

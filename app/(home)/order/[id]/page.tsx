@@ -4,7 +4,7 @@ import { formatPrice } from "@/utils/formatPrice";
 import { truncateText } from "@/utils/truncateText";
 import { cancelOrderAndRefund, getOneOrder } from "@/services/orderServices";
 import { formatDateTimePromotion } from "@/utils/formatDate";
-import { FetchOneOrderResponseType, OrderType } from "@/types/orderTypes";
+import { Order } from "@/types/baseTypes";
 import Container from "@/components/shared/Container";
 import { useEffect, useState } from "react";
 import Loading from "@/components/shared/Loading";
@@ -18,7 +18,7 @@ import { useRouter } from "next/navigation";
 import { statuses } from "@/app/features/order/data/OrderStatuses";
 
 export default function OrderDetail({ params }: { params: { id: string } }) {
-  const [order, setOrder] = useState<OrderType | null>(null);
+  const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(false);
   const [canceling, setCanceling] = useState(false);
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
@@ -27,7 +27,7 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
 
   useEffect(() => {
     const fetchOrder = async () => {
-      const order: FetchOneOrderResponseType = await getOneOrder(params.id);
+      const order = await getOneOrder(params.id);
       setOrder(order.data);
     };
     fetchOrder();

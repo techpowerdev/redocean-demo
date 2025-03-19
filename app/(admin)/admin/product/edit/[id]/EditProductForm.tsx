@@ -21,18 +21,14 @@ import { CircleX } from "lucide-react";
 import toast from "react-hot-toast";
 
 import { useProductStore } from "@/state-stores/admin/adminProductStore";
-import {
-  EditProductResponseType,
-  FetchAllProductResponseType,
-  FetchOneProductResponseType,
-  ProductType,
-} from "@/types/productTypes";
+import { EditProductResponseType } from "@/types/productTypes";
 import {
   getAllProducts,
   getProductById,
   updateProduct,
 } from "@/services/productServices";
 import { useRouter } from "next/navigation";
+import { Product } from "@/types/baseTypes";
 
 // Define the schema for validation using zod
 const EditProductFormSchema = z.object({
@@ -79,7 +75,7 @@ const EditProductFormSchema = z.object({
 type EditProductFormValues = z.infer<typeof EditProductFormSchema>;
 
 type Props = {
-  product: ProductType;
+  product: Product;
 };
 
 export function EditProductForm({ product }: Props) {
@@ -160,12 +156,10 @@ export function EditProductForm({ product }: Props) {
       );
 
       if (updatedResult) {
-        const updatedproduct: FetchOneProductResponseType =
-          await getProductById(updatedResult.data.id);
+        const updatedproduct = await getProductById(updatedResult.data.id);
         selectProduct(updatedproduct.data);
 
-        const newProducdts: FetchAllProductResponseType =
-          await getAllProducts();
+        const newProducdts = await getAllProducts();
         setProductLists(newProducdts.data);
       }
       toast.success("บันทึกการแก้ไขแล้ว");

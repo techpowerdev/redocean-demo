@@ -4,7 +4,7 @@ import { EditProfileParam, EditProfileResponse } from "@/types/userTypes";
 
 export async function editProfile(
   profileData: EditProfileParam
-): Promise<{ data: EditProfileResponse; message: string }> {
+): Promise<EditProfileResponse> {
   try {
     const response = await apiClient.put(`/users/change-profile`, profileData);
     return response.data; // ส่งเฉพาะข้อมูลที่ได้รับจาก API

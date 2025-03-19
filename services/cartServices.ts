@@ -1,8 +1,8 @@
 import axios from "axios";
 import apiClient from "@/services/apiClient";
-import { AddProductToCardInputType } from "@/types/cartTypes";
+import { AddProductToCardParam, GetUserCartResponse } from "@/types/cartTypes";
 
-export const getUserCart = async () => {
+export const getUserCart = async (): Promise<GetUserCartResponse> => {
   try {
     const response = await apiClient.get(`/carts`);
     return response.data;
@@ -16,9 +16,7 @@ export const getUserCart = async () => {
   }
 };
 
-export const addProductItemToCart = async (
-  cartItem: AddProductToCardInputType
-) => {
+export const addProductItemToCart = async (cartItem: AddProductToCardParam) => {
   try {
     const response = await apiClient.post(`/carts`, cartItem);
 

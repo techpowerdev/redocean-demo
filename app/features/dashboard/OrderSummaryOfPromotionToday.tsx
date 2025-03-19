@@ -9,7 +9,7 @@ import {
   Package,
   ScrollText,
 } from "lucide-react";
-import { OrderSummaryReponseType, OrderSummaryType } from "@/types/orderTypes";
+import { OrderSummaryType } from "@/types/orderTypes";
 
 type Props = {
   promotionActivityId: string | null;
@@ -23,8 +23,9 @@ export default function OrderSummaryOfPromotionToday({
   );
   useEffect(() => {
     const fetchData = async () => {
-      const orderSummary: OrderSummaryReponseType =
-        await getOrderSummaryOfGroupBuying(promotionActivityId);
+      const orderSummary = await getOrderSummaryOfGroupBuying(
+        promotionActivityId
+      );
       setOrderSummary(orderSummary.data);
       console.log("orderSummary==", orderSummary);
     };

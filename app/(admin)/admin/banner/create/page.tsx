@@ -2,14 +2,12 @@
 
 import ImageLibrary from "@/app/features/image/ImageLibrary";
 import ResponsiveImage from "@/components/shared/ResponsiveImage";
-import { ImageType } from "@/types/imageTypes";
+import { Image } from "@/types/baseTypes";
 import { useState } from "react";
 
 export default function ProductForm() {
   const [isLibraryOpen, setLibraryOpen] = useState(false);
-  const [selectedImages, setSelectedImages] = useState<ImageType[] | null>(
-    null
-  );
+  const [selectedImages, setSelectedImages] = useState<Image[] | null>(null);
 
   return (
     <div>

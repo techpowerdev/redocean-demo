@@ -1,13 +1,13 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { ProductVariantType } from "@/types/productTypes";
+import { ProductVariant } from "@/types/baseTypes";
 import { CircleCheckBig, X } from "lucide-react";
 import React from "react";
 
 type Props = {
   selectedOptions: Record<string, string | undefined>;
-  productVariants: ProductVariantType[] | null | undefined;
+  productVariants: ProductVariant[] | null | undefined;
   handleOptionChange: (key: string, value: string | undefined) => void;
   handleResetOptions: () => void; // เพิ่มฟังก์ชันสำหรับรีเซ็ต
 };

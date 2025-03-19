@@ -1,12 +1,12 @@
 import ResponsiveImage from "@/components/shared/ResponsiveImage";
-import { BannerType } from "@/types/bannerTypes";
+import { Banner } from "@/types/baseTypes";
 import { Trash2 } from "lucide-react";
 import React from "react";
 import { useDrag, useDrop } from "react-dnd";
 
 type BannerCardProps = {
   index: number;
-  banner: BannerType;
+  banner: Banner;
   moveBanner: (dragIndex: number, hoverIndex: number) => void;
   deleteBanner: (id: string) => void;
 };

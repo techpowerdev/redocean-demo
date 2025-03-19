@@ -7,13 +7,13 @@ import { ProductList } from "./ProductList";
 import { useProductStore } from "@/state-stores/admin/adminProductStore";
 import Loading from "@/components/shared/Loading";
 import { getAllProducts } from "@/services/productServices";
-import { FetchAllProductResponseType, ProductType } from "@/types/productTypes";
+import { Product } from "@/types/baseTypes";
 
 export default function ProductListComponent() {
   const productLists = useProductStore((state) => state.productLists);
   const setProductLists = useProductStore((state) => state.setProductLists);
   const [searchTerm, setSearchTerm] = useState(""); // State for search input
-  const [filteredProducts, setFilteredProducts] = useState<ProductType[]>([]); // State for filtered products
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]); // State for filtered products
   const [loading, setLoading] = useState(true); // State for loading
   const [error, setError] = useState<string | null>(null); // State for error message
 
@@ -21,7 +21,7 @@ export default function ProductListComponent() {
     const fetchAllProducts = async () => {
       setLoading(true); // Set loading to true when fetching
       try {
-        const products: FetchAllProductResponseType = await getAllProducts();
+        const products = await getAllProducts();
         if (products) {
           setProductLists(products.data);
         }

@@ -35,7 +35,7 @@ import ResponsiveImage from "@/components/shared/ResponsiveImage";
 import { addPromotion, getAllPromotions } from "@/services/promotionServices";
 import { useRouter } from "next/navigation";
 import { SearchProductInPromotionForm } from "@/app/features/promotion/SearchProductInPromotionForm";
-import { ProductType } from "@/types/productTypes";
+import { Product } from "@/types/baseTypes";
 
 // Define the schema for validation using zod
 const PromotionFormSchema = z.object({
@@ -99,9 +99,7 @@ export default function CreatePromotionForm() {
 
   // local state
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
-  const [selectedProduct, setSelectedProduct] = useState<ProductType | null>(
-    null
-  );
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   // navigation
   const router = useRouter();

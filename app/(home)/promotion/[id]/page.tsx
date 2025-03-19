@@ -1,7 +1,6 @@
 import React from "react";
 import type { Metadata, ResolvingMetadata } from "next";
 import { getPromotionById } from "@/services/promotionServices";
-import { FetchOnePromotionResponseType } from "@/types/promotionTypes";
 import ResponsiveImage from "@/components/shared/ResponsiveImage";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -19,7 +18,7 @@ export async function generateMetadata(
   const id = (await params).id;
 
   // fetch data
-  const fetchData: FetchOnePromotionResponseType = await getPromotionById(id);
+  const fetchData = await getPromotionById(id);
   const promotion = fetchData.data;
 
   const imageUrl =
@@ -64,11 +63,7 @@ export async function generateMetadata(
 
 export default async function Campaign({ params }: Props) {
   // fetch data
-  const promotion: FetchOnePromotionResponseType = await getPromotionById(
-    (
-      await params
-    ).id
-  );
+  const promotion = await getPromotionById((await params).id);
 
   return (
     <div className="flex flex-col gap-4 justify-center items-center">

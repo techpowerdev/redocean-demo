@@ -3,11 +3,11 @@
 import React, { useEffect, useState } from "react";
 import { PromotionCountdown } from "@/app/features/promotion/PromotionCountdown";
 import { formatDateTimePromotion } from "@/utils/formatDate";
-import { PromotionType } from "@/types/promotionTypes";
 import PromotionProductCard from "@/app/features/promotion/PromotionProductCard";
+import { Promotion } from "@/types/baseTypes";
 
 type Props = {
-  promotion: PromotionType;
+  promotion: Promotion;
 };
 
 export default function PromotionItem({ promotion }: Props) {

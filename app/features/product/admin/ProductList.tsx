@@ -7,11 +7,11 @@ import Image from "next/image";
 import { useProductStore } from "@/state-stores/admin/adminProductStore";
 import Loading from "@/components/shared/Loading";
 import { Eye } from "lucide-react";
-import { ProductType } from "@/types/productTypes";
+import { Product } from "@/types/baseTypes";
 import ChangeBooleanStatusField from "@/components/shared/ChangeBooleanStatusField";
 
 interface Props {
-  items: ProductType[] | null;
+  items: Product[] | null;
 }
 
 export function ProductList({ items }: Props) {
