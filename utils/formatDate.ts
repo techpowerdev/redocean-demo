@@ -25,8 +25,9 @@ export const formatDayCount = (date: Date): string => {
 };
 
 // สำหรับจัดการเวลาใน promotion โดยแปลงเป็น ไทย
-export const formatDateTimePromotion = (dateString: string): string => {
-  const date = new Date(dateString);
+export const formatDateTimePromotion = (dateInput: Date | string): string => {
+  const date = typeof dateInput === "string" ? new Date(dateInput) : dateInput;
+
   const formattedDate = date.toLocaleDateString("th-TH", {
     day: "2-digit",
     month: "2-digit",
@@ -36,6 +37,7 @@ export const formatDateTimePromotion = (dateString: string): string => {
     hour: "2-digit",
     minute: "2-digit",
   });
+
   return `${formattedDate}, ${formattedTime}`;
 };
 
