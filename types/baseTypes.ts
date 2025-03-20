@@ -199,7 +199,7 @@ export type OrderItem = {
   product?: Product | null;
   promotionActivity?: PromotionActivity | null;
 
-  // addition field sending from backend
+  // Additional fields sent from the backend
   variantOptions?: string;
   name: string;
   description: string;
@@ -351,82 +351,3 @@ type PaymentType = "promptpay" | "card";
  *
  */
 type PaymentState = "initial_payment" | "additional_payment";
-
-// // include type of relation data
-// export type UserWithRelations = User & {
-//   refreshToken?: RefreshToken | null;
-//   addresses?: Address[] | null;
-//   orders?: Order[] | null;
-//   cart?: Cart | null;
-// };
-
-// export type RefreshTokenWithRelation = RefreshToken & {
-//   user?: User | null;
-// };
-
-// export type AddressWithRelation = Address & {
-//   user?: User | null;
-// };
-
-// export type CategoryWithRelation = Category & {
-//   products?: Product[] | null;
-// };
-
-// export type ProductWithRelation = Product & {
-//   category?: Category | null;
-//   productVariants?: ProductVariant[] | null;
-//   promotionActivities?: PromotionActivity[] | null;
-//   orderItems?: OrderItem[] | null;
-//   cartItems?: CartItem[] | null;
-// };
-
-// export type ProductVariantWithRelation = ProductVariant & {
-//   product?: Product | null;
-// };
-
-// export type CartWithRelation = Cart & {
-//   user?: User | null;
-//   cartItems?: CartItem[] | null;
-// };
-// export type CartItemWithRelation = CartItem & {
-//   cart?: Cart | null;
-//   product?: Product | null;
-//   promotionActivity?: PromotionActivity | null;
-// };
-
-// export type OrderWithRelation = Order & {
-//   user?: User | null;
-//   orderItems?: OrderItem[] | null;
-//   payments?: Payment[] | null;
-// };
-
-// export type OrderItemWithRelation = OrderItem & {
-//   order?: Order | null;
-//   product?: Product | null;
-//   promotionActivity?: PromotionActivity | null;
-// };
-
-// export type ImageWithRelation = Image & {
-//   promotion?: Promotion | null;
-//   banner?: Banner | null;
-// };
-
-// export type PromotionWithRelation = Promotion & {
-//   promotionActivities?: PromotionActivity[] | null;
-//   images?: Image[] | null;
-// };
-
-// export type PromotionActivityWithRelation = PromotionActivity & {
-//   promotion?: Promotion | null;
-//   product?: Product | null;
-//   cartItems?: CartItem[] | null;
-//   orderItems?: OrderItem[] | null;
-// };
-
-// export type BannerWithRelation = Banner & {
-//   image?: Image | null;
-// };
-
-// export type PaymentWithRelation = Payment & {
-//   order?: Order | null;
-// };
