@@ -1,9 +1,13 @@
 import axios from "axios";
 import apiClient from "./apiClient";
-import { UpdateBannerOrderParam } from "@/types/bannerTypes";
-import { Banner } from "@/types/baseTypes";
+import {
+  CreateBannerResponse,
+  GetAllBannersResponse,
+  UpdateBannerOrderParam,
+  UpdateBannerOrderResponse,
+} from "@/types/bannerTypes";
 
-export const getAllBanners = async (): Promise<{ data: Banner[] }> => {
+export const getAllBanners = async (): Promise<GetAllBannersResponse> => {
   try {
     const response = await apiClient.get(`/banners/all`);
     return response.data;
@@ -19,7 +23,7 @@ export const getAllBanners = async (): Promise<{ data: Banner[] }> => {
 
 export const createBanner = async (
   formData: FormData
-): Promise<{ data: Banner }> => {
+): Promise<CreateBannerResponse> => {
   try {
     const response = await apiClient.post(`/banners`, formData, {
       headers: {
@@ -39,7 +43,7 @@ export const createBanner = async (
 
 export const updateBannerOrder = async (
   banners: UpdateBannerOrderParam[]
-): Promise<{ data: Banner[] }> => {
+): Promise<UpdateBannerOrderResponse> => {
   try {
     const response = await apiClient.put(`/banners`, { banners });
     return response.data;
