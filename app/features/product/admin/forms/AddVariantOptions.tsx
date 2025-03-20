@@ -37,7 +37,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { useProductStore } from "@/state-stores/admin/adminProductStore";
 import {
-  addProductVariant,
+  createProductVariant,
   getAllProducts,
   getProductById,
 } from "@/services/productServices";
@@ -215,7 +215,7 @@ export default function AddVariantOptions() {
     try {
       setLoading(true);
 
-      const productResult = await addProductVariant(ProductVariantFormData);
+      const productResult = await createProductVariant(ProductVariantFormData);
 
       if (productResult) {
         const updateSelectedProduct = await getProductById(

@@ -21,7 +21,7 @@ import ResponsiveImage from "@/components/shared/ResponsiveImage";
 import { CircleX } from "lucide-react";
 import toast from "react-hot-toast";
 import { useProductStore } from "@/state-stores/admin/adminProductStore";
-import { addProduct, getAllProducts } from "@/services/productServices";
+import { createProduct, getAllProducts } from "@/services/productServices";
 import { useRouter } from "next/navigation";
 
 // Define the schema for validation using zod
@@ -135,7 +135,7 @@ export default function CreateProduct() {
     });
 
     try {
-      const productResult = await addProduct(ProductFormData);
+      const productResult = await createProduct(ProductFormData);
 
       if (productResult) {
         const updatedProducts = await getAllProducts();

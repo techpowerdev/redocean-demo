@@ -21,7 +21,6 @@ import { CircleX } from "lucide-react";
 import toast from "react-hot-toast";
 
 import { useProductStore } from "@/state-stores/admin/adminProductStore";
-import { EditProductResponseType } from "@/types/productTypes";
 import {
   getAllProducts,
   getProductById,
@@ -150,7 +149,7 @@ export function EditProductForm({ product }: Props) {
 
     try {
       // Step 1: สร้าง Event ก่อน
-      const updatedResult: EditProductResponseType = await updateProduct(
+      const updatedResult = await updateProduct(
         product?.id || "",
         ProductFormData
       );

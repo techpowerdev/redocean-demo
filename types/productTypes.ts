@@ -1,46 +1,50 @@
 import { Product, ProductVariant } from "@/types/baseTypes";
 
-export type GetAllProductResponse = {
-  message?: string | null;
+export type GetAllProductsForSellResponse = {
+  data: Product[];
+};
+
+export type GetOneProductForSellResponse = {
+  data: Product;
+};
+
+export type GetAllProductsResponse = {
   data: Product[];
 };
 
 export type GetProductByIdResponse = {
-  message?: string | null;
   data: Product;
 };
 
-export type CreateProductResponseType = {
-  message?: string | null;
+export type CreateProductResponse = {
   data: Product;
 };
 
-export type EditProductResponseType = {
-  message?: string | null;
+export type UpdateProductResponse = {
   data: Product;
 };
 
-export type ChangeHasVariantStatusResponseType = {
-  message?: string | null;
+export type ChangeProductStatusResponse = {
   data: Product;
 };
 
-export type ChangeVariantStatusResponseType = {
-  message?: string | null;
+export type ChangeHasVariantStatusResponse = {
+  data: Product;
+};
+
+export type CreateProductVariantResponse = {
   data: ProductVariant;
 };
 
-export type CartProductType = {
-  productId: string;
-  promotionActivityId?: string;
-  sku: string;
-  unitPrice: number;
-  discount?: number;
-  specialDiscount?: number;
-  quantity: number;
+export type UpdateProductVariantResponse = {
+  data: ProductVariant;
 };
 
-export type CheckProductAvailabilityForUserPayloadType = {
+export type ChangeVariantStatusResponse = {
+  data: ProductVariant;
+};
+
+export type CheckProductAvailabilityForUserParams = {
   items: {
     productId: string;
     sku: string;
@@ -50,7 +54,7 @@ export type CheckProductAvailabilityForUserPayloadType = {
   }[];
 };
 
-export type CheckProductAvailabilityForUserResponseType = {
+export type CheckProductAvailabilityForUserResponse = {
   items: {
     productId: string;
     sku: string;

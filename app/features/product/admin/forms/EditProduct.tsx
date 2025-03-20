@@ -29,7 +29,6 @@ import {
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { useProductStore } from "@/state-stores/admin/adminProductStore";
-import { EditProductResponseType } from "@/types/productTypes";
 import {
   getAllProducts,
   getProductById,
@@ -180,7 +179,7 @@ export function EditProduct({
 
     try {
       // Step 1: สร้าง Event ก่อน
-      const updatedResult: EditProductResponseType = await updateProduct(
+      const updatedResult = await updateProduct(
         selectedProduct?.id || "",
         ProductFormData
       );

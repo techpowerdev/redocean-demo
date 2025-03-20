@@ -31,8 +31,7 @@ import {
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { useProductStore } from "@/state-stores/admin/adminProductStore";
-import { CreateProductResponseType } from "@/types/productTypes";
-import { addProduct, getAllProducts } from "@/services/productServices";
+import { createProduct, getAllProducts } from "@/services/productServices";
 
 // Define the schema for validation using zod
 const ProductFormSchema = z.object({
@@ -183,9 +182,7 @@ export function CreateProduct() {
     });
 
     try {
-      const productResult: CreateProductResponseType = await addProduct(
-        ProductFormData
-      );
+      const productResult = await createProduct(ProductFormData);
 
       if (productResult) {
         const updatedProducts = await getAllProducts();

@@ -1,31 +1,40 @@
 import axios from "axios";
 import apiClient from "./apiClient";
 import {
-  CheckProductAvailabilityForUserPayloadType,
-  CheckProductAvailabilityForUserResponseType,
-  GetAllProductResponse,
+  CheckProductAvailabilityForUserResponse,
+  GetAllProductsResponse,
+  GetAllProductsForSellResponse,
   GetProductByIdResponse,
+  GetOneProductForSellResponse,
+  CreateProductResponse,
+  UpdateProductResponse,
+  ChangeProductStatusResponse,
+  ChangeHasVariantStatusResponse,
+  CreateProductVariantResponse,
+  UpdateProductVariantResponse,
+  ChangeVariantStatusResponse,
+  CheckProductAvailabilityForUserParams,
 } from "@/types/productTypes";
-import { Product, ProductVariant } from "@/types/baseTypes";
 
 // specific for user
-export const getAllProductForSell = async (): Promise<{ data: Product[] }> => {
-  try {
-    const response = await apiClient.get(`/products/for-sell/all`);
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      throw new Error(
-        error.response?.data?.message || "ดึงข้อมูลสินค้าไม่สำเร็จ"
-      );
+export const getAllProductForSell =
+  async (): Promise<GetAllProductsForSellResponse> => {
+    try {
+      const response = await apiClient.get(`/products/for-sell/all`);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(
+          error.response?.data?.message || "ดึงข้อมูลสินค้าไม่สำเร็จ"
+        );
+      }
+      throw new Error("เกิดข้อผิดพลาดบางอย่าง");
     }
-    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
-  }
-};
+  };
 
 export const getOneProductForSell = async (
   productId: string
-): Promise<{ data: Product }> => {
+): Promise<GetOneProductForSellResponse> => {
   try {
     const response = await apiClient.get(`/products/for-sell/${productId}`);
     return response.data;
@@ -41,9 +50,9 @@ export const getOneProductForSell = async (
 
 // end of specific for user
 
-export const addProduct = async (
+export const createProduct = async (
   formData: FormData
-): Promise<{ data: Product }> => {
+): Promise<CreateProductResponse> => {
   try {
     const response = await apiClient.post(`/products`, formData, {
       headers: {
@@ -59,7 +68,7 @@ export const addProduct = async (
   }
 };
 
-export const getAllProducts = async (): Promise<GetAllProductResponse> => {
+export const getAllProducts = async (): Promise<GetAllProductsResponse> => {
   try {
     const response = await apiClient.get(`/products/all`);
     return response.data;
@@ -92,7 +101,7 @@ export const getProductById = async (
 export const updateProduct = async (
   id: string,
   formData: FormData
-): Promise<{ data: Product }> => {
+): Promise<UpdateProductResponse> => {
   try {
     const response = await apiClient.put(`/products/${id}`, formData, {
       headers: {
@@ -111,7 +120,7 @@ export const updateProduct = async (
 export const changeProductStatus = async (
   id: string,
   status: boolean
-): Promise<{ data: Product }> => {
+): Promise<ChangeProductStatusResponse> => {
   try {
     const response = await apiClient.patch(`/products/change-status/${id}`, {
       isActive: status,
@@ -130,7 +139,7 @@ export const changeProductStatus = async (
 export const changeHasVariantStatus = async (
   id: string,
   status: boolean
-): Promise<{ data: Product }> => {
+): Promise<ChangeHasVariantStatusResponse> => {
   try {
     const response = await apiClient.patch(
       `/products/change-hasvariant-status/${id}`,
@@ -161,9 +170,9 @@ export const deleteProduct = async (productId: string): Promise<void> => {
   }
 };
 
-export const addProductVariant = async (
+export const createProductVariant = async (
   formData: FormData
-): Promise<{ data: ProductVariant }> => {
+): Promise<CreateProductVariantResponse> => {
   try {
     const response = await apiClient.post(`/products/variants`, formData, {
       headers: {
@@ -184,7 +193,7 @@ export const addProductVariant = async (
 export const updateProductVariant = async (
   id: string,
   formData: FormData
-): Promise<{ data: ProductVariant }> => {
+): Promise<UpdateProductVariantResponse> => {
   try {
     const response = await apiClient.put(`/products/variants/${id}`, formData, {
       headers: {
@@ -205,7 +214,7 @@ export const updateProductVariant = async (
 export const changeVariantStatus = async (
   id: string,
   status: boolean
-): Promise<{ data: ProductVariant }> => {
+): Promise<ChangeVariantStatusResponse> => {
   try {
     const response = await apiClient.patch(
       `/products/variants/change-status/${id}`,
@@ -285,9 +294,9 @@ export const searchProductVariant = async (
 
 // validation
 export const checkProductAvailabilityForUser = async (
-  data: CheckProductAvailabilityForUserPayloadType
+  data: CheckProductAvailabilityForUserParams
 ): Promise<{
-  data: CheckProductAvailabilityForUserResponseType;
+  data: CheckProductAvailabilityForUserResponse;
   message?: string | null;
 }> => {
   try {
