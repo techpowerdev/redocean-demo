@@ -1,16 +1,20 @@
 import {
-  // CreateOderType,
+  // CreateOder,
   CreateOrderWithPaymentIntentParams,
   CreateOrderWithPaymentIntentResponse,
-  OrderSummaryType,
+  GetAllOrdersResponse,
+  GetOneOrderResponse,
+  GetOrderSummaryOfGroupBuyingResponse,
+  GetPromotionOrderResponse,
+  GetUserOrdersResponse,
 } from "@/types/orderTypes";
 import apiClient from "@/services/apiClient";
 import axios from "axios";
-import { CartItem, Order } from "@/types/baseTypes";
+import { CartItem } from "@/types/baseTypes";
 
 export async function createOrderWithPaymentIntent(
   CreateData: CreateOrderWithPaymentIntentParams
-): Promise<{ data: CreateOrderWithPaymentIntentResponse; message: string }> {
+): Promise<CreateOrderWithPaymentIntentResponse> {
   try {
     const response = await apiClient.post(`/orders`, CreateData);
     return response.data; // ดึง data จาก axios แล้วส่งเฉพาะข้อมูลที่ได้รับจาก API
@@ -54,7 +58,7 @@ export async function captureOrder(
   }
 }
 
-// export const createOrder = async (data: CreateOderType) => {
+// export const createOrder = async (data: CreateOder) => {
 //   try {
 //     const response = await apiClient.post(`/orders`, data);
 //     return response.data;
@@ -68,7 +72,7 @@ export async function captureOrder(
 //   }
 // };
 
-export const getUserOrders = async (): Promise<{ data: Order[] }> => {
+export const getUserOrders = async (): Promise<GetUserOrdersResponse> => {
   try {
     const response = await apiClient.get(`/users/orders/all`);
     return response.data;
@@ -102,9 +106,7 @@ export const changeTrackingNumber = async (
   }
 };
 
-export const getOneOrder = async (
-  id: string
-): Promise<{ data: Order; message?: string | null }> => {
+export const getOneOrder = async (id: string): Promise<GetOneOrderResponse> => {
   try {
     const response = await apiClient.get(`/orders/${id}`);
     console.log("get one order === ", response.data);
@@ -119,7 +121,7 @@ export const getOneOrder = async (
   }
 };
 
-export const getAllOrders = async (): Promise<{ data: Order[] }> => {
+export const getAllOrders = async (): Promise<GetAllOrdersResponse> => {
   try {
     const response = await apiClient.get(`/orders/all`);
     return response.data;
@@ -135,7 +137,7 @@ export const getAllOrders = async (): Promise<{ data: Order[] }> => {
 
 export const getOrderSummaryOfGroupBuying = async (
   promotionActivityId: string | null
-): Promise<{ data: OrderSummaryType }> => {
+): Promise<GetOrderSummaryOfGroupBuyingResponse> => {
   try {
     const response = await apiClient.get(
       `/orders/summary/today/${promotionActivityId}`
@@ -165,7 +167,7 @@ export type SearchFilters = {
 // get order on each promotion
 export const getPromotionOrder = async (
   promotionActivityId: string
-): Promise<{ data: Order[] }> => {
+): Promise<GetPromotionOrderResponse> => {
   try {
     // เรียก API ด้วย axios
     const response = await apiClient.get(

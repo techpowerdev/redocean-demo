@@ -1,77 +1,17 @@
 import { ShippingAddress } from "./addressTypes";
-import { User, Address } from "@/types/baseTypes";
+import { Order } from "@/types/baseTypes";
 
-// // types based on the prisma schema
-// export type OrderType = {
-//   id: string;
-//   orderType: string;
-//   creditCardFee?: number | null;
-//   shippingFee?: number | null;
-//   totalAmount: number;
-//   totalDiscount: number;
-//   netAmount: number;
-//   extraPayAmount?: number | null;
-//   payAmount?: number | null;
-//   returnAmount?: number | null;
-//   status: string;
-//   trackingNumber?: string | null;
-//   shippingAddress: {
-//     recipient: string;
-//     phoneNumber: string;
-//     address: string;
-//     street: string;
-//     subDistrict: string;
-//     district: string;
-//     province: string;
-//     postalCode: string;
-//   };
-//   cancelReason: string | null;
-//   createdAt: Date;
-//   updatedAt: Date;
+export type GetOneOrderResponse = { data: Order; message?: string | null };
 
-//   userId: string;
+export type GetAllOrdersResponse = { data: Order[] };
 
-//   user?: User | null;
-//   orderItems?: OrderItemType[] | null;
-//   payments?: Payment[] | null;
-// };
+export type GetUserOrdersResponse = { data: Order[] };
 
-// export type OrderItemType = {
-//   id: string;
-//   sku: string;
-//   quantity: number;
-//   unitPrice: number;
-//   discount: number;
-//   // total: number;
-//   createdAt: Date;
-//   updatedAt: Date;
+export type GetOrderSummaryOfGroupBuyingResponse = { data: OrderSummary };
 
-//   orderId: string;
-//   productId: string;
-//   promotionActivityId?: string | null;
+export type GetPromotionOrderResponse = { data: Order[] };
 
-//   order?: OrderType | null;
-//   product?: Product | null;
-//   promotionActivity?: PromotionActivity | null;
-
-//   variantOptions?: string;
-//   name: string;
-//   description: string;
-//   image?: string;
-// };
-
-// // types for the client side
-// export type FetchOneOrderResponseType = {
-//   message?: string | null;
-//   data: OrderType;
-// };
-
-// export type FetchAllOrderResponseType = {
-//   message?: string | null;
-//   data: OrderType[];
-// };
-
-export type CreateOderType = {
+export type CreateOder = {
   orderType?: string;
   creditCardFee?: number | null;
   shippingFee?: number | null;
@@ -90,10 +30,10 @@ export type CreateOderType = {
     postalCode: string | undefined;
   };
 
-  orderItems: CreateOderItemType[];
+  orderItems: CreateOderItem[];
 };
 
-export type CreateOderItemType = {
+export type CreateOderItem = {
   sku: string;
   quantity: number;
   unitPrice: number;
@@ -103,7 +43,7 @@ export type CreateOderItemType = {
   promotionActivityId?: string | null;
 };
 
-export type OrderSummaryType = {
+export type OrderSummary = {
   totalOrders: number;
   pendingOrders: number;
   awaitingConfirmationOrders: number;
@@ -132,15 +72,8 @@ export interface CreateOrderItem {
 }
 
 export type PaymentState = "initial_payment" | "additional_payment";
-export interface AddressResponse extends Address {
-  id: string;
-  createdAt: Date;
-  updatedAt: Date;
-  userId: string;
-  user?: User | null;
-}
 
-export interface CreateOrderWithPaymentIntentResponse {
+export type OrderWithPaymentIntent = {
   paymentIntent: {
     id: string;
     client_secret: string;
@@ -171,4 +104,9 @@ export interface CreateOrderWithPaymentIntentResponse {
   netAmount: number;
   totalQuantity: number;
   nextProcess: boolean;
-}
+};
+
+export type CreateOrderWithPaymentIntentResponse = {
+  data: OrderWithPaymentIntent;
+  message: string | null;
+};

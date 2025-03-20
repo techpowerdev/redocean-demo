@@ -18,7 +18,7 @@ import { createOrderWithPaymentIntent } from "@/services/orderServices";
 import {
   CreateOrderItem,
   CreateOrderWithPaymentIntentParams,
-  CreateOrderWithPaymentIntentResponse,
+  OrderWithPaymentIntent,
 } from "@/types/orderTypes";
 import { useCartServerStore } from "@/state-stores/cartServerStore";
 import { ShippingAddress } from "@/types/addressTypes";
@@ -36,7 +36,7 @@ export default function PlaceOrderCheckout({ singleItem, cartItems }: Props) {
 
   // local state
   const [summaryProducts, setSummaryProducts] =
-    useState<CreateOrderWithPaymentIntentResponse | null>(null);
+    useState<OrderWithPaymentIntent | null>(null);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false); // จัดการสถานะของ Sheet
   const [isOpen2, setIsOpen2] = useState(false); // จัดการสถานะของ Sheet
