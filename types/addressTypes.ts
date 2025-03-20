@@ -24,6 +24,12 @@ export type UpdateAddressParam = {
   isActive: boolean;
 };
 
+export type CreateAddressResponse = { data: Address; message: string };
+export type UpdateAddressResponse = { data: Address; message: string };
+export type ChangeActiveAddressResponse = { data: Address; message: string };
+export type DeleteAddressResponse = { data: Address; message: string };
+export type GetAllAddressesResponse = { data: Address[]; message: string };
+
 export type ShippingAddress = Omit<
   Address,
   "id" | "isActive" | "createdAt" | "updatedAt" | "userId" | "user"

@@ -1,11 +1,18 @@
-import { CreateAddressParam, UpdateAddressParam } from "@/types/addressTypes";
+import {
+  ChangeActiveAddressResponse,
+  CreateAddressParam,
+  CreateAddressResponse,
+  DeleteAddressResponse,
+  GetAllAddressesResponse,
+  UpdateAddressParam,
+  UpdateAddressResponse,
+} from "@/types/addressTypes";
 import axios from "axios";
 import apiClient from "./apiClient";
-import { Address } from "@/types/baseTypes";
 
 export const createAddress = async (
   data: CreateAddressParam
-): Promise<{ data: Address; message: string }> => {
+): Promise<CreateAddressResponse> => {
   try {
     const response = await apiClient.post(`/addresses`, data);
     return response.data;
@@ -20,7 +27,7 @@ export const createAddress = async (
 export const updateAddress = async (
   id: string,
   data: UpdateAddressParam
-): Promise<{ data: Address; message: string }> => {
+): Promise<UpdateAddressResponse> => {
   try {
     const response = await apiClient.put(`/addresses/${id}`, data);
     return response.data;
@@ -35,10 +42,7 @@ export const updateAddress = async (
 export const changeActiveAddress = async (
   id: string,
   isActive: boolean
-): Promise<{
-  data: Address;
-  message: string;
-}> => {
+): Promise<ChangeActiveAddressResponse> => {
   try {
     const response = await apiClient.patch(`/addresses/${id}`, {
       isActive,
@@ -56,7 +60,7 @@ export const changeActiveAddress = async (
 
 export const deleteAddress = async (
   id: string
-): Promise<{ data: Address; message: string }> => {
+): Promise<DeleteAddressResponse> => {
   try {
     const response = await apiClient.delete(`/addresses/${id}`);
     return response.data;
@@ -68,10 +72,7 @@ export const deleteAddress = async (
   }
 };
 
-export const getAddress = async (): Promise<{
-  data: Address[];
-  message: string;
-}> => {
+export const getAllAddresses = async (): Promise<GetAllAddressesResponse> => {
   try {
     const response = await apiClient.get(`/addresses`);
     return response.data;

@@ -8,7 +8,7 @@ import {
   changeActiveAddress,
   createAddress,
   deleteAddress,
-  getAddress,
+  getAllAddresses,
   updateAddress,
 } from "@/services/addressServices";
 import { Address } from "@/types/baseTypes";
@@ -51,7 +51,9 @@ export const useAddressStore = create<State & Action>()(
             const response = await createAddress(address);
             toast.success(response?.message || "เพิ่มที่อยู่ใหม่แล้ว");
             // await refreshAddresses(set);
-            const updatedAddress = await getAddress().then((res) => res.data);
+            const updatedAddress = await getAllAddresses().then(
+              (res) => res.data
+            );
             set({ addresses: updatedAddress });
           } catch (error) {
             toast.error(handleApiError(error, "เพิ่มที่อยู่ไม่สำเร็จ"));
@@ -63,7 +65,9 @@ export const useAddressStore = create<State & Action>()(
             const response = await updateAddress(id, address);
             toast.success(response?.message || "แก้ไขที่อยู่แล้ว");
             // await refreshAddresses(set);
-            const updatedAddress = await getAddress().then((res) => res.data);
+            const updatedAddress = await getAllAddresses().then(
+              (res) => res.data
+            );
             set({ addresses: updatedAddress });
           } catch (error) {
             toast.error(handleApiError(error, "แก้ไขที่อยู่ไม่สำเร็จ"));
@@ -75,7 +79,9 @@ export const useAddressStore = create<State & Action>()(
             const response = await changeActiveAddress(id, isActive);
             set({ selectedAddress: response.data });
             toast.success(response?.message || "แก้ไขเป็นที่อยู่หลักแล้ว");
-            const updatedAddress = await getAddress().then((res) => res.data);
+            const updatedAddress = await getAllAddresses().then(
+              (res) => res.data
+            );
             set({ addresses: updatedAddress });
           } catch (error) {
             toast.error(handleApiError(error, "แก้ไขที่อยู่ไม่สำเร็จ"));
@@ -87,7 +93,9 @@ export const useAddressStore = create<State & Action>()(
             const response = await deleteAddress(id);
             toast.success(response?.message || "ลบที่อยู่แล้ว");
             // await refreshAddresses(set);
-            const updatedAddress = await getAddress().then((res) => res.data);
+            const updatedAddress = await getAllAddresses().then(
+              (res) => res.data
+            );
             set({ addresses: updatedAddress });
           } catch (error) {
             toast.error(handleApiError(error, "ลบที่อยู่ไม่สำเร็จ"));

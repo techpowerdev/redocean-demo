@@ -5,7 +5,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import AddressCard from "./AddressCard";
 import { useAddressStore } from "@/state-stores/addressStore";
-import { getAddress } from "@/services/addressServices";
+import { getAllAddresses } from "@/services/addressServices";
 
 export default function AddressSelector() {
   // global state
@@ -16,7 +16,7 @@ export default function AddressSelector() {
 
   useEffect(() => {
     const fetchAddress = async () => {
-      const result = await getAddress();
+      const result = await getAllAddresses();
       const primaryAddress = result.data.find((address) => address.isActive);
       selectAddress(primaryAddress ?? result.data?.[0] ?? null);
       setAddresses(result.data);
