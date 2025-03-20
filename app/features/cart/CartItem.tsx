@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import SetProductQuantity from "@/app/features/cart/SetProductQuantity";
 import { useCartServerStore } from "@/state-stores/cartServerStore";
 import { Trash2 } from "lucide-react";
-import { CartItemType } from "@/types/cartTypes";
+import { CartItem as CartItemType } from "@/types/baseTypes";
 
 interface Props {
   item: CartItemType;

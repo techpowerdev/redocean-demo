@@ -14,7 +14,7 @@ import ProductOptions from "@/app/features/product/ProductOptions";
 import { VariantOption } from "@/types/baseTypes";
 import { Product, PromotionActivity, Promotion } from "@/types/baseTypes";
 import PlaceOrderCheckout from "@/app/features/checkout/forms/PlaceOrderCheckout";
-// import AddProductToCart from "@/app/features/product/AddProductToCart";
+import AddProductToCart from "@/app/features/product/AddProductToCart";
 import PromotionRules from "@/app/features/promotion/PromotionRules";
 interface Props {
   isActive: boolean;
@@ -226,11 +226,11 @@ export default function PromotionProductCard({
             handleQtyIncrease={handleQtyIncrease}
             handleQtyDecrease={handleQtyDecrease}
           />
-          {/* <AddProductToCart
+          <AddProductToCart
             isActive={isActive}
             product={createOrderData}
             stock={selectedVariant?.stock || 0}
-          /> */}
+          />
           {isActive && <PlaceOrderCheckout singleItem={createOrderData} />}
           {promotionActivity.minimumPurchaseQuantity
             ? promotionActivity.minimumPurchaseQuantity > 0 && (

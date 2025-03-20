@@ -148,6 +148,15 @@ export type CartItem = {
   cart?: Cart | null;
   product?: Product | null;
   promotionActivity?: PromotionActivity | null;
+
+  // Additional fields sent from the backend
+  unitPrice: number;
+  discount?: number | null;
+  variantOptions?: string | null;
+  name: string | null;
+  description: string;
+  image?: string | null;
+  warningMessage: string;
 };
 /**
  * Model Order

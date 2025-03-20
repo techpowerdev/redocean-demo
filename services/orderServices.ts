@@ -1,4 +1,3 @@
-import { CartItemType } from "@/types/cartTypes";
 import {
   // CreateOderType,
   CreateOrderWithPaymentIntentParams,
@@ -7,7 +6,7 @@ import {
 } from "@/types/orderTypes";
 import apiClient from "@/services/apiClient";
 import axios from "axios";
-import { Order } from "@/types/baseTypes";
+import { CartItem, Order } from "@/types/baseTypes";
 
 export async function createOrderWithPaymentIntent(
   CreateData: CreateOrderWithPaymentIntentParams
@@ -182,9 +181,7 @@ export const getPromotionOrder = async (
   }
 };
 
-export const checkStockAndPromotionForCheckout = async (
-  data: CartItemType[]
-) => {
+export const checkStockAndPromotionForCheckout = async (data: CartItem[]) => {
   try {
     const response = await apiClient.post(
       `/products/variants/stock/for-checkout`,

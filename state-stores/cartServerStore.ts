@@ -9,16 +9,16 @@ import {
 import toast from "react-hot-toast";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
-import { AddProductToCardParam, CartProductType } from "@/types/cartTypes";
+import { AddProductToCardParam, CartProduct } from "@/types/cartTypes";
 
 export type State = {
-  cart: CartProductType | null;
+  cart: CartProduct | null;
   cartTotalQty: number;
   cartTotalAmount: number;
 };
 
 export type Action = {
-  setCart: (cart: CartProductType) => void;
+  setCart: (cart: CartProduct) => void;
   clearCart: () => void;
   handleAddProductToCart: (product: AddProductToCardParam) => void;
   handleRemoveProductFromCart: (id: string) => void;

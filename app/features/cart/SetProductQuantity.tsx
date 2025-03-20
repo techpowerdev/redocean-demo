@@ -1,11 +1,11 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { CartItemType } from "@/types/cartTypes";
+import { CartItem } from "@/types/baseTypes";
 
 interface SetQtyProps {
   cartCounter?: boolean;
-  cartProduct: CartItemType;
+  cartProduct: CartItem;
   handleQtyIncrease: () => void;
   handleQtyDecrease: () => void;
 }
