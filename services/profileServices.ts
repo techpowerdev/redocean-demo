@@ -6,7 +6,7 @@ export async function editProfile(
   profileData: EditProfileParam
 ): Promise<EditProfileResponse> {
   try {
-    const response = await apiClient.put(`/users/change-profile`, profileData);
+    const response = await apiClient.patch(`/users/edit-profile`, profileData);
     return response.data; // ส่งเฉพาะข้อมูลที่ได้รับจาก API
   } catch (error) {
     if (axios.isAxiosError(error)) {

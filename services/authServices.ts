@@ -14,7 +14,7 @@ import {
 
 export async function signUp(signUpData: SignUpParam): Promise<SignUpResponse> {
   try {
-    const response = await apiClient.post(`/register`, signUpData);
+    const response = await apiClient.post(`/auth/register`, signUpData);
     return response.data; // ส่งเฉพาะข้อมูลที่ได้รับจาก API
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -28,7 +28,7 @@ export async function signUp(signUpData: SignUpParam): Promise<SignUpResponse> {
 
 export async function login(loginData: LoginParam): Promise<LoginResponse> {
   try {
-    const response = await apiClient.post(`/login`, loginData);
+    const response = await apiClient.post(`/auth/login`, loginData);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -42,7 +42,10 @@ export async function lineLogin(
   lineLoginData: LineLoginParam
 ): Promise<LineLoginResponse> {
   try {
-    const response = await apiClient.post(`/login/line`, lineLoginData);
+    const response = await apiClient.post(
+      `/auth/lineliff/login`,
+      lineLoginData
+    );
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -54,7 +57,7 @@ export async function lineLogin(
 
 export async function getCurrentUser(): Promise<GetCurrentUserResponse> {
   try {
-    const response = await apiClient.get(`/users/current-user`);
+    const response = await apiClient.get(`/users/profile`);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {

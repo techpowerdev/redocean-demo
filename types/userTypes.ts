@@ -15,14 +15,15 @@ export type LoginParam = {
   password: string;
 };
 
-export type AuthResponse = {
-  accessToken: string;
-  refreshToken: string;
-  user: User;
-};
+// export type AuthResponse = {
+//   accessToken: string;
+//   // refreshToken: string;
+//   // user: User;
+// };
 
 export type LoginResponse = {
-  data: AuthResponse;
+  // data: AuthResponse;
+  data: { accessToken: string };
   message: string;
 };
 
@@ -35,7 +36,10 @@ export type LineLoginParam = {
 };
 
 export type LineLoginResponse = {
-  data: AuthResponse;
+  // data: AuthResponse;
+  // message: string;
+  data: { accessToken: string };
+  message: string;
 };
 
 export type EditProfileParam = {

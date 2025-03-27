@@ -2,12 +2,11 @@
 import { useEffect } from "react";
 import { useCurrentUserStore } from "@/state-stores/useCurrentUserStore";
 import liff from "@line/liff";
-import { lineLogin } from "@/services/authServices";
+import { getCurrentUser, lineLogin } from "@/services/authServices";
 
 export default function CheckLogined() {
   const setCurrentUser = useCurrentUserStore((state) => state.setCurrentUser);
   const setToken = useCurrentUserStore((state) => state.setToken);
-  const setRefreshToken = useCurrentUserStore((state) => state.setRefreshToken);
   const clearCurrentUser = useCurrentUserStore(
     (state) => state.clearCurrentUser
   );
@@ -21,6 +20,7 @@ export default function CheckLogined() {
         // If already logged in, retrieve the user profile
         if (liff.isLoggedIn()) {
           const profile = await liff.getProfile();
+          console.log(profile);
           // try {
           const response = await lineLogin({
             lineUid: profile.userId,
@@ -28,9 +28,9 @@ export default function CheckLogined() {
             email: liff.getDecodedIDToken()?.email || null,
             pictureUrl: profile.pictureUrl || null, // Add profile picture URL
           });
-          setCurrentUser(response.data.user);
+          const user = await getCurrentUser();
+          setCurrentUser(user.data);
           setToken(response.data.accessToken);
-          setRefreshToken(response.data.refreshToken);
         } else {
           clearCurrentUser();
         }
