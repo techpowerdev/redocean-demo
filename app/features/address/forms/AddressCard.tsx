@@ -26,7 +26,7 @@ export default function AddressCard({ address }: Props) {
       <div className="w-full flex justify-between items-center gap-2">
         <div className="font-semibold">
           {address.recipient}{" "}
-          {address.isActive && (
+          {address.isDefault && (
             <Badge variant={"destructive"} className="mx-1 rounded-full">
               ที่อยู่หลัก
             </Badge>

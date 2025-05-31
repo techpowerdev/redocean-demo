@@ -87,7 +87,7 @@ const AddressSchema = z.object({
     .string()
     .regex(/^\d{5}$/, "รหัสไปรษณีย์ต้องเป็นตัวเลข 5 หลัก")
     .refine((value) => value.trim() !== "", "กรุณากรอกรหัสไปรษณีย์"),
-  isActive: z.boolean().default(false).optional(),
+  isDefault: z.boolean().default(false).optional(),
 });
 
 export default function CreateAddressForm() {
@@ -105,7 +105,7 @@ export default function CreateAddressForm() {
     district: "",
     province: "",
     postalCode: "",
-    isActive: false,
+    isDefault: false,
   });
 
   // local state
@@ -130,7 +130,7 @@ export default function CreateAddressForm() {
         district: val.district,
         province: val.province,
         postalCode: val.postalCode,
-        isActive: val.isActive,
+        isDefault: val.isDefault,
       };
 
       await createAddress(formData);
@@ -143,7 +143,7 @@ export default function CreateAddressForm() {
         district: "",
         province: "",
         postalCode: "",
-        isActive: false,
+        isDefault: false,
       });
       setIsOpen(false); // ปิด Sheet เมื่อบันทึกสำเร็จ
     } catch (error) {
@@ -280,11 +280,11 @@ export default function CreateAddressForm() {
               <label className="flex justify-start items-center gap-2">
                 <input
                   type="checkbox"
-                  id="isActive"
-                  name="isActive"
-                  checked={val.isActive}
+                  id="isDefault"
+                  name="isDefault"
+                  checked={val.isDefault}
                   onChange={(e) =>
-                    setVal({ ...val, isActive: e.target.checked })
+                    setVal({ ...val, isDefault: e.target.checked })
                   }
                   className="h-4 w-4 accent-primary"
                 />

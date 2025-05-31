@@ -89,7 +89,7 @@ const AddressSchema = z.object({
     .string()
     .regex(/^\d{5}$/, "รหัสไปรษณีย์ต้องเป็นตัวเลข 5 หลัก")
     .refine((value) => value.trim() !== "", "กรุณากรอกรหัสไปรษณีย์"),
-  isActive: z.boolean().default(false).optional(),
+  isDefault: z.boolean().default(false).optional(),
 });
 
 type Props = {
@@ -111,7 +111,7 @@ export default function EditAddressForm({ address }: Props) {
     district: address.district,
     province: address.province,
     postalCode: address.postalCode,
-    isActive: address.isActive,
+    isDefault: address.isDefault,
   });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -134,7 +134,7 @@ export default function EditAddressForm({ address }: Props) {
         district: val.district,
         province: val.province,
         postalCode: val.postalCode,
-        isActive: val.isActive,
+        isDefault: val.isDefault,
       };
 
       updateAddress(address.id, formData);
@@ -267,11 +267,11 @@ export default function EditAddressForm({ address }: Props) {
               <label className="flex justify-start items-center gap-2">
                 <input
                   type="checkbox"
-                  id="isActive"
-                  name="isActive"
-                  checked={val.isActive}
+                  id="isDefault"
+                  name="isDefault"
+                  checked={val.isDefault}
                   onChange={(e) =>
-                    setVal({ ...val, isActive: e.target.checked })
+                    setVal({ ...val, isDefault: e.target.checked })
                   }
                   className="h-4 w-4 accent-primary"
                 />

@@ -17,12 +17,12 @@ export default function AddressSelector() {
   useEffect(() => {
     const fetchAddress = async () => {
       const result = await getAllAddresses();
-      const primaryAddress = result.data.find((address) => address.isActive);
+      const primaryAddress = result.data?.find((address) => address.isDefault);
       selectAddress(primaryAddress ?? result.data?.[0] ?? null);
       setAddresses(result.data);
     };
     fetchAddress();
-  }, []);
+  }, [selectAddress, setAddresses]);
 
   return (
     <div>
@@ -40,10 +40,14 @@ export default function AddressSelector() {
             {addresses.map((address) => (
               <div
                 key={address.id}
-                onClick={() => selectAddress(address)}
+                // onClick={() => selectAddress(address)}
                 className="flex justify-start items-center p-2 border rounded-sm"
               >
-                <RadioGroupItem value={address.id} id={address.id} />
+                <RadioGroupItem
+                  value={address.id}
+                  id={address.id}
+                  onClick={() => selectAddress(address)}
+                />
                 <Label htmlFor={address.id} className="w-full font-light">
                   <AddressCard address={address} />
                 </Label>
