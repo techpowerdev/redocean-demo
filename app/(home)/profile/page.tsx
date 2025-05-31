@@ -1,74 +1,69 @@
 "use client";
-
-import { Mail, Phone, Power, UserRoundPen } from "lucide-react";
+import { Edit, Mail, Phone, Power, UserRoundPen } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import toast from "react-hot-toast";
-import { EditProfile } from "@/app/features/profile/forms/EditProfile";
-import { useCurrentUserStore } from "@/state-stores/useCurrentUserStore";
-import liff from "@line/liff";
-import LineLogin from "@/app/features/auth/LineLogin";
 import Container from "@/components/shared/Container";
-// import { logoutUser } from "@/services/authServices";
+import { getCurrentUser } from "@/services/authServices";
+import { useEffect, useState } from "react";
+import { GetCurrentUserResponse } from "@/types/userTypes";
+import liff from "@line/liff";
+import Link from "next/link";
 
 export default function Profile() {
-  const currentUser = useCurrentUserStore((state) => state.currentUser);
-  // const refreshToken = useCurrentUserStore((state) => state.refreshToken);
-  const clearCurrentUser = useCurrentUserStore(
-    (state) => state.clearCurrentUser
-  );
+  const [user, setUser] = useState<GetCurrentUserResponse["data"] | null>(null);
 
-  // logout
-  const logout = async () => {
-    if (liff.isLoggedIn()) {
-      try {
+  const logoutLiff = async () => {
+    try {
+      if (liff.isLoggedIn()) {
         liff.logout();
-        // if (refreshToken) {
-        //   await logoutUser(refreshToken);
-        // }
-        clearCurrentUser();
-        toast.success("ออกจากระบบแล้ว");
-      } catch (error) {
-        console.error("Error logging out", error);
-        toast.error("เกิดข้อผิดพลาดบางอย่าง");
       }
+      setUser(null);
+    } catch (error) {
+      console.error("Error logging out from line liff", error);
     }
   };
 
-  if (!currentUser) {
-    return <LineLogin />;
+  useEffect(() => {
+    const fetch = async () => {
+      const currentUser = await getCurrentUser();
+      setUser(currentUser.data);
+    };
+    fetch();
+  }, []);
+
+  if (!user) {
+    return;
   }
 
   return (
     <Container>
-      <div className="flex flex-col items-center">
-        <div className="flex flex-col gap-2">
-          {currentUser?.pictureUrl && (
-            <Image
-              className="h-12 w-12 rounded-full border-2 border-primary"
-              src={currentUser.pictureUrl}
-              alt={currentUser.displayName || ""}
-              width={48}
-              height={48}
-            />
-          )}
-          <span>{currentUser?.displayName}</span>
+      <div className="flex flex-col items-center py-4">
+        <div className="flex flex-col items-center gap-2">
+          <Image
+            className="h-12 w-12 rounded-full border-2 border-primary"
+            src={user.pictureUrl || "/user-profile.png"}
+            alt={user.displayName || ""}
+            width={48}
+            height={48}
+          />
+          <span>{user.displayName}</span>
         </div>
         <div className="w-full flex flex-col gap-4 rounded-xl border bg-card text-card-foreground shadow p-4 my-2">
           <div className="flex justify-between gap-2 items-center">
             <h3 className="font-semibold leading-none tracking-tight">
               ข้อมูลส่วนตัว
             </h3>
-            <EditProfile />
+
+            <Link href={`/profile/${user.id}`}>
+              <Edit size={16} />
+            </Link>
           </div>
 
           <div className="flex justify-start gap-2 items-center">
             <UserRoundPen />
             <div className="space-y-1">
               <p className="text-sm font-medium leading-none">ชื่อ-สกุล</p>
-              <p className="text-sm text-muted-foreground">
-                {currentUser.fullName}
-              </p>
+              <p className="text-sm text-muted-foreground">{user.fullName}</p>
             </div>
           </div>
           <div className="flex justify-start gap-2 items-center">
@@ -76,7 +71,7 @@ export default function Profile() {
             <div className="space-y-1">
               <p className="text-sm font-medium leading-none">เบอร์โทร</p>
               <p className="text-sm text-muted-foreground">
-                {currentUser.phoneNumber}
+                {user.phoneNumber}
               </p>
             </div>
           </div>
@@ -84,21 +79,21 @@ export default function Profile() {
             <Mail />
             <div className="space-y-1">
               <p className="text-sm font-medium leading-none">อีเมล</p>
-              <p className="text-sm text-muted-foreground">
-                {currentUser.email}
-              </p>
+              <p className="text-sm text-muted-foreground">{user.email}</p>
             </div>
           </div>
         </div>
         <div className="flex justify-end p-2">
-          <Button
-            onClick={logout}
-            variant={"outline"}
-            className="flex gap-1 hover:text-primary rounded-full"
-          >
-            <Power size={15} />
-            ออกจากระบบ
-          </Button>
+          <a href={"/api/auth/signout"}>
+            <Button
+              onClick={logoutLiff}
+              variant={"outline"}
+              className="flex gap-1 hover:text-primary rounded-full"
+            >
+              <Power size={15} />
+              ออกจากระบบ
+            </Button>
+          </a>
         </div>
       </div>
     </Container>
