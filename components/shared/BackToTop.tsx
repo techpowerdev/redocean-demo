@@ -26,12 +26,12 @@ export default function BackToTop() {
 
   return (
     <button
-      className={`fixed right-6 bottom-6 p-3 rounded-sm bg-primary hover:bg-primary-focus ${
+      className={`fixed right-6 bottom-6 p-3 rounded-full bg-primary hover:bg-primary-focus ${
         showBackToTop ? "block" : "hidden"
       }`}
       onClick={backToTop}
     >
-      <div className="text-site-bgBase text-sm">
+      <div className="text-white text-sm">
         <FaArrowUp />
       </div>
     </button>
