@@ -160,18 +160,18 @@ export const OrderColumn: ColumnDef<Order>[] = [
       return value.includes(row.getValue(id));
     },
   },
-  {
-    accessorKey: "totalDiscount",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Total Discount" />
-    ),
-    cell: ({ row }) => (
-      <div className="">{formatPrice(row.getValue("totalDiscount"))}</div>
-    ),
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
-    },
-  },
+  // {
+  //   accessorKey: "totalDiscount",
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader column={column} title="Total Discount" />
+  //   ),
+  //   cell: ({ row }) => (
+  //     <div className="">{formatPrice(row.getValue("totalDiscount"))}</div>
+  //   ),
+  //   filterFn: (row, id, value) => {
+  //     return value.includes(row.getValue(id));
+  //   },
+  // },
 
   {
     accessorKey: "status",
