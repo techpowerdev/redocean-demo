@@ -1,22 +1,30 @@
 "use client";
 
-import { getProductById } from "@/services/productServices";
-import { Product } from "@/types/baseTypes";
+import { getProductItemById } from "@/services/productServices";
+import { ProductItem } from "@/types/baseTypes";
 import React, { useEffect, useState } from "react";
-import { EditProductForm } from "./EditProductForm";
+// import PageTitle from "@/components/shared/PageTitle";
+import EditProductWithVariantsForm from "./EditProductWithVariantsForm";
 
 type Props = {
   params: { id: string };
 };
 
 export default function EditProduct({ params }: Props) {
-  const [product, setProduct] = useState<Product | null>(null);
+  const [productItem, setProductItem] = useState<ProductItem | null>(null);
   useEffect(() => {
     const fetchProduct = async () => {
-      const product = await getProductById(params.id);
-      setProduct(product.data);
+      const product = await getProductItemById(params.id);
+      setProductItem(product.data);
+      console.log("fetch product form useEffect", product);
     };
+
     fetchProduct();
-  }, []);
-  return <div>{product && <EditProductForm product={product} />}</div>;
+  }, [params.id]);
+  return (
+    <div className="p-4">
+      {/* <PageTitle title="แก้ไขสินค้า" className="mb-4" /> */}
+      {productItem && <EditProductWithVariantsForm productItem={productItem} />}
+    </div>
+  );
 }

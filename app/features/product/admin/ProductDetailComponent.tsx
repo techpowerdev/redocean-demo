@@ -3,12 +3,13 @@ import { Separator } from "@/components/ui/separator";
 
 import { useProductStore } from "@/state-stores/admin/adminProductStore";
 import Image from "next/image";
-import { ProductVariantActionToolbar } from "./ProductVariantActionToolbar";
+// import { ProductVariantActionToolbar } from "./ProductVariantActionToolbar";
 import { formatPrice } from "@/utils/formatPrice";
-import AddVariantOptions from "./forms/AddVariantOptions";
+// import AddVariantOptions from "./forms/AddVariantOptions";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ListPlus } from "lucide-react";
 import ChangeBooleanStatusField from "@/components/shared/ChangeBooleanStatusField";
+// import CreateProductVariantForm from "./forms/CreateProductVariantForm";
 
 export default function ProductDetailComponent() {
   const selectedProduct = useProductStore((state) => state.selectedProduct);
@@ -23,19 +24,23 @@ export default function ProductDetailComponent() {
           <div className="grid grid-cols-[15%_1fr] gap-4 p-4">
             <div className="flex items-start gap-4 text-sm">
               <div className="relative w-full aspect-square">
-                <Image
-                  fill
-                  src={
-                    selectedProduct?.image
-                      ? `${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}${selectedProduct.image}`
-                      : selectedProduct?.productVariants?.[0]?.image
-                      ? `${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}${selectedProduct.productVariants[0].image}`
-                      : "/no-image.png" // A fallback image path
-                  }
-                  alt={selectedProduct?.name || "Product image"}
-                  className="object-contain"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                />
+                {selectedProduct.images?.length === 0 ? (
+                  <Image
+                    fill
+                    src={"/no-image.jpg"}
+                    alt={"default image"}
+                    className="object-contain"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  />
+                ) : (
+                  <Image
+                    fill
+                    src={`${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}/${selectedProduct?.images?.[0]}`}
+                    alt={selectedProduct?.name || "Product image"}
+                    className="object-contain"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  />
+                )}
               </div>
             </div>
             <div className="flex flex-col items-start justify-between">
@@ -51,50 +56,41 @@ export default function ProductDetailComponent() {
                 <span className="font-semibold">รายละเอียด : </span>
                 {selectedProduct.description}
               </div>
-              <div>
-                <span className="font-semibold">ราคา : </span>
-                {formatPrice(selectedProduct.price)}
-              </div>
-              <div>
-                <span className="font-semibold"> จำนวนคงเหลือ : </span>
-                <span className="text-primary">{selectedProduct.stock}</span>
-              </div>
+              {!selectedProduct.hasVariants && (
+                <>
+                  <div>
+                    <span className="font-semibold">ราคา : </span>
+                    {formatPrice(selectedProduct.originalPrice)}
+                  </div>
+                  <div>
+                    <span className="font-semibold"> จำนวนคงเหลือ : </span>
+                    <span className="text-primary">
+                      {selectedProduct.stock}
+                    </span>
+                  </div>
+                </>
+              )}
             </div>
           </div>
           {/* end header */}
-          <div className="flex justify-end items-center mx-2 p-2">
-            <ChangeBooleanStatusField
-              initialStatus={selectedProduct.hasVariant}
-              id={selectedProduct.id} // ส่งค่า ID ที่ถูกต้อง
-              changeStatus={changeHasVariantStatus}
-              label="ตั้งค่าชนิดสินค้า"
-              icon={ListPlus}
-            />
-          </div>
           <Separator />
-          {selectedProduct.hasVariant && (
+          {selectedProduct.hasVariants && (
             <div className="px-4 py-2">
-              <div className="flex justify-between items-center gap-2 ">
-                <div className="text-xl font-bold">ตัวเลือกสินค้า</div>
-                <AddVariantOptions />
-              </div>
-
+              <h1 className="text-xl font-bold">ตัวเลือกสินค้า</h1>
               <ScrollArea className="h-[450px] ">
                 {/* product variants */}
-                {selectedProduct.productVariants?.map((variant) => (
-                  <div key={variant.id} className="my-2 border rounded-sm">
+                {selectedProduct.models?.map((model) => (
+                  <div key={model.id} className="my-2 border rounded-sm">
                     <div className="grid grid-cols-[12%_1fr] items-center gap-2 p-2">
                       <div className="relative w-full aspect-square">
                         <Image
                           fill
                           src={
-                            variant?.image
-                              ? `${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}${variant.image}`
-                              : variant.product?.image
-                              ? `${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}${variant.product?.image}`
+                            model?.image
+                              ? `${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}/${model.image}`
                               : "/no-image.png" // A fallback image path
                           }
-                          alt={variant?.sku || "Variant image"}
+                          alt={model?.sku || "model image"}
                           className="object-contain"
                           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         />
@@ -102,30 +98,23 @@ export default function ProductDetailComponent() {
                       <div className="flex flex-col items-start gap-2">
                         <div>
                           <span className="font-semibold">รหัสสินค้า : </span>
-                          {variant.sku}
+                          {model.sku}
                         </div>
-                        {variant.variantOptions && (
-                          <div>
-                            <span className="font-semibold">ตัวเลือก : </span>
-                            {JSON.stringify(variant.variantOptions)}
-                          </div>
-                        )}
+
                         <div>
-                          <span className="font-semibold">ราคา : </span>
-                          {formatPrice(variant.price)}
-                        </div>
-                        <div>
-                          <span className="font-semibold">
-                            {" "}
-                            จำนวนคงเหลือ :{" "}
+                          <span className="font-semibold text-primary">
+                            {model.name}
                           </span>
-                          <span className="text-primary">{variant.stock}</span>
+                        </div>
+                        <div>
+                          <span className="font-semibold">ราคา </span>
+                          {formatPrice(model.originalPrice)}
+                        </div>
+                        <div>
+                          <span className="font-semibold">จำนวนคงเหลือ </span>
+                          <span className="text-primary">{model.stock}</span>
                         </div>
                       </div>
-                    </div>
-
-                    <div className="flex justify-end">
-                      <ProductVariantActionToolbar productVariant={variant} />
                     </div>
                   </div>
                 ))}

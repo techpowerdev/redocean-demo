@@ -7,11 +7,11 @@ import Image from "next/image";
 import { useProductStore } from "@/state-stores/admin/adminProductStore";
 import Loading from "@/components/shared/Loading";
 import { Eye } from "lucide-react";
-import { Product } from "@/types/baseTypes";
+import { ProductItem } from "@/types/baseTypes";
 import ChangeBooleanStatusField from "@/components/shared/ChangeBooleanStatusField";
 
 interface Props {
-  items: Product[] | null;
+  items: ProductItem[] | null;
 }
 
 export function ProductList({ items }: Props) {
@@ -48,14 +48,14 @@ export function ProductList({ items }: Props) {
                 <div className="flex items-center">
                   <div className="flex items-center gap-2">
                     <div className="font-semibold">{item.name}</div>
-                    {item.isActive ? (
+                    {/* {item.isActive ? (
                       <span className="relative flex h-3 w-3">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                         <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
                       </span>
                     ) : (
                       <span className="flex h-2 w-2 rounded-full bg-red-400" />
-                    )}
+                    )} */}
                   </div>
                   <div className="ml-auto text-xs">
                     {formatDistanceToNow(new Date(item.updatedAt), {
@@ -71,13 +71,11 @@ export function ProductList({ items }: Props) {
                     <Image
                       fill
                       src={
-                        item?.image
-                          ? `${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}${item.image}`
-                          : item.productVariants?.[0]?.image
-                          ? `${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}${item.productVariants[0].image}`
-                          : "/no-image.jpg" // A fallback image path
+                        item.images && item.images?.length > 0
+                          ? `${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}/${item?.images?.[0]}`
+                          : "/no-image.png"
                       }
-                      alt={item?.name || "Product image"}
+                      alt={item?.name}
                       className="object-contain"
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
@@ -85,13 +83,13 @@ export function ProductList({ items }: Props) {
                 </div>
               </div>
 
-              <ChangeBooleanStatusField
+              {/* <ChangeBooleanStatusField
                 initialStatus={item.isActive}
                 id={item.id}
                 changeStatus={changeProductStatus}
                 label="Active"
                 icon={Eye}
-              />
+              /> */}
             </div>
           ))
         ) : (
