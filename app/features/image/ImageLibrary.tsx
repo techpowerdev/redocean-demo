@@ -11,8 +11,8 @@ import { Button } from "@/components/ui/button";
 import { Image } from "@/types/baseTypes";
 import {
   getAllImages,
-  uploadImage,
   deleteImages,
+  uploadSingleImage,
 } from "@/services/imageService";
 import ResponsiveImage from "@/components/shared/ResponsiveImage";
 import { Input } from "@/components/ui/input";
@@ -37,6 +37,7 @@ export default function ImageLibrary({ isOpen, onClose, onSelect }: Props) {
   useEffect(() => {
     const fetchImages = async () => {
       const response = await getAllImages();
+      console.log(response);
       setImages(response.data);
     };
     fetchImages();
@@ -46,10 +47,7 @@ export default function ImageLibrary({ isOpen, onClose, onSelect }: Props) {
     if (!file || !tag) return;
     setIsUploading(true);
     try {
-      const formData = new FormData();
-      formData.append("image", file);
-      formData.append("tag", tag); // ส่ง tag ไปพร้อมรูป
-      await uploadImage(formData);
+      await uploadSingleImage(file, tag);
       const response = await getAllImages();
       setImages(response.data);
       setFile(null);
@@ -164,7 +162,7 @@ export default function ImageLibrary({ isOpen, onClose, onSelect }: Props) {
                     >
                       <div className="w-full h-auto">
                         <ResponsiveImage
-                          src={`${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}/${image.url}`}
+                          src={`${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}/${image.id}`}
                           alt="Image"
                         />
                       </div>
@@ -191,7 +189,7 @@ export default function ImageLibrary({ isOpen, onClose, onSelect }: Props) {
                 >
                   <div className="w-full h-auto">
                     <ResponsiveImage
-                      src={`${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}/${image.url}`}
+                      src={`${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}/${image.id}`}
                       alt="Image"
                     />
                   </div>

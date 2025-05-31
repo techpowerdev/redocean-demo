@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Image } from "@/types/baseTypes";
 import {
   getAllImages,
-  uploadImage,
+  uploadSingleImage,
   deleteImages,
   updateImage,
   deleteImage,
@@ -25,7 +25,7 @@ export default function EditImageLibrary() {
   const [searchTag, setSearchTag] = useState("");
 
   // ฟิลด์สำหรับจัดการแก้ไขแท็กของแต่ละภาพ
-  const [editedTags, setEditedTags] = useState<{ [key: string]: string }>({});
+  const [editedTags, setEditedTags] = useState<Record<string, string>>({});
 
   useEffect(() => {
     const fetchImages = async () => {
@@ -39,10 +39,7 @@ export default function EditImageLibrary() {
     if (!file || !tag) return;
     setIsUploading(true);
     try {
-      const formData = new FormData();
-      formData.append("image", file);
-      formData.append("tag", tag); // ส่ง tag ไปพร้อมรูป
-      await uploadImage(formData);
+      await uploadSingleImage(file, tag);
       const response = await getAllImages();
       setImages(response.data);
       setFile(null);
@@ -188,7 +185,7 @@ export default function EditImageLibrary() {
                     onClick={() => handleSelectImage(image)}
                   >
                     <ResponsiveImage
-                      src={`${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}/${image.url}`}
+                      src={`${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}/${image.id}`}
                       alt="Image"
                     />
                   </div>
@@ -220,8 +217,8 @@ export default function EditImageLibrary() {
       {/* รูปภาพทั้งหมด */}
       <div>
         <h3 className="font-semibold mb-2">รูปภาพทั้งหมด</h3>
-        <div className="grid grid-cols-6 gap-4">
-          {images.map((image) => (
+        <div className="grid grid-cols-5 gap-4">
+          {images?.map((image) => (
             <div
               key={image.id}
               className={`flex flex-col items-center justify-between gap-4 p-2 border rounded cursor-pointer ${
@@ -235,7 +232,7 @@ export default function EditImageLibrary() {
                 onClick={() => handleSelectImage(image)}
               >
                 <ResponsiveImage
-                  src={`${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}/${image.url}`}
+                  src={`${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}/${image.id}`}
                   alt="Image"
                 />
               </div>
