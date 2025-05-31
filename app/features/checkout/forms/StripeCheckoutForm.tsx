@@ -12,11 +12,9 @@ import {
   // StripeAddressElementOptions,
   StripePaymentElementOptions,
 } from "@stripe/stripe-js";
+import { useRouter } from "next/navigation";
 
-type Props = {
-  handleSetPaymentSuccess: (value: boolean) => void;
-};
-export default function StripeCheckoutForm({ handleSetPaymentSuccess }: Props) {
+export default function StripeCheckoutForm() {
   // stripe hook
   const stripe = useStripe();
   const elements = useElements();
@@ -24,6 +22,8 @@ export default function StripeCheckoutForm({ handleSetPaymentSuccess }: Props) {
   // local state
   const [message, setMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  const router = useRouter();
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
@@ -51,11 +51,13 @@ export default function StripeCheckoutForm({ handleSetPaymentSuccess }: Props) {
 
       console.log("result==>", result);
 
-      if (!result.error) {
-        // return router.push("/complete-checkout");
+      if (
+        result?.paymentIntent?.status === "succeeded" ||
+        result?.paymentIntent?.status === "requires_capture"
+      ) {
+        router.push("/checkout/success");
 
         // clear payment state
-        handleSetPaymentSuccess(true);
         // clear cart
         // send order data to queue
         // create order
@@ -64,6 +66,8 @@ export default function StripeCheckoutForm({ handleSetPaymentSuccess }: Props) {
         // setPaymentIntent(null);
         // setClientSecret(null);
         // setTotalAmount(0);
+      } else {
+        router.push("/checkout/failed");
       }
 
       if (result.error) {
