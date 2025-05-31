@@ -10,7 +10,10 @@ const nextConfig = {
         hostname: "images.unsplash.com",
       },
       {
-        hostname: "profile.line-scdn.net",
+        hostname: "profile.line-scdn.net", // line
+      },
+      {
+        hostname: "lh3.googleusercontent.com", // google
       },
       {
         hostname: "img.freepik.com",
@@ -23,6 +26,9 @@ const nextConfig = {
       },
       {
         hostname: "api.khumkha.com",
+      },
+      {
+        hostname: "via.placeholder.com",
       },
     ],
   },
