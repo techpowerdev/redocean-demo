@@ -31,7 +31,7 @@ export type Action = {
   selectAddress: (address: Address) => void;
   createAddress: (address: CreateAddressParam) => Promise<void>;
   updateAddress: (id: string, address: UpdateAddressParam) => Promise<void>;
-  changeActiveAddress: (id: string, isActive: boolean) => Promise<void>;
+  changeActiveAddress: (id: string, isDefault: boolean) => Promise<void>;
   deleteAddress: (id: string) => Promise<void>;
 };
 
@@ -74,9 +74,9 @@ export const useAddressStore = create<State & Action>()(
           }
         },
 
-        changeActiveAddress: async (id, isActive) => {
+        changeActiveAddress: async (id, isDefault) => {
           try {
-            const response = await changeActiveAddress(id, isActive);
+            const response = await changeActiveAddress(id, isDefault);
             set({ selectedAddress: response.data });
             toast.success(response?.message || "แก้ไขเป็นที่อยู่หลักแล้ว");
             const updatedAddress = await getAllAddresses().then(

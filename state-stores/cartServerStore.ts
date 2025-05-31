@@ -57,7 +57,6 @@ export const useCartServerStore = create<State & Action>()(
           try {
             const response = await removeProductItemFormCart(id);
             toast.success(response?.message || "ลบสินค้าแล้ว");
-            // const updatedCart = await getUserCart().then((res) => res.data);
             const updatedCart = await getUserCart();
             set({ cart: updatedCart.data });
           } catch (error) {

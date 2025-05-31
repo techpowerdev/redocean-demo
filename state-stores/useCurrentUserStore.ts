@@ -1,3 +1,4 @@
+import { getCurrentUser } from "@/services/authServices";
 import { CurrentUser } from "@/types/userTypes";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
@@ -14,6 +15,7 @@ export type Action = {
   setToken: (token: string | null) => void;
   setRefreshToken: (refreshToken: string | null) => void;
   clearCurrentUser: () => void;
+  getCurrentUser: () => Promise<CurrentUser>;
 };
 
 /* สร้าง store โดยมี types ของ state ตามที่กำหนดไว้ โดยใช้ฟังก์ชั่น create จาก zustand พร้อมกับกำหนดค่า state เริ่มต้น
@@ -40,6 +42,11 @@ export const useCurrentUserStore = create<State & Action>()(
         // Action to clear the currentUser (logout)
         clearCurrentUser: () =>
           set({ currentUser: null, token: null, refreshToken: null }),
+        getCurrentUser: async () => {
+          const userData = await getCurrentUser();
+          set(() => ({ currentUser: userData.data }));
+          return userData.data;
+        },
       }),
       { name: "currentUser" }
     )

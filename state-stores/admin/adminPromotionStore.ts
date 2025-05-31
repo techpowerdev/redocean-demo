@@ -1,7 +1,4 @@
-import {
-  changePromotionStatus,
-  getAllPromotions,
-} from "@/services/promotionServices";
+import { getPromotions, updatePromotion } from "@/services/promotionServices";
 import { Promotion, Product } from "@/types/baseTypes";
 import toast from "react-hot-toast";
 import { create } from "zustand";
@@ -32,8 +29,8 @@ export const usePromotionStore = create<State & Action>((set) => ({
 
   changePromotionStatus: async (id, status) => {
     try {
-      await changePromotionStatus(id, status);
-      const updatedPromotion = await getAllPromotions();
+      await updatePromotion(id, { isActive: status });
+      const updatedPromotion = await getPromotions("all");
       set({ promotionLists: updatedPromotion.data });
     } catch (error) {
       if (error instanceof Error) {
