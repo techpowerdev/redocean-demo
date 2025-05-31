@@ -21,12 +21,12 @@ import {
 import { useEffect, useState } from "react";
 import { useProductStore } from "@/state-stores/admin/adminProductStore";
 import Image from "next/image";
-import { Product } from "@/types/baseTypes";
-import { getAllProducts } from "@/services/productServices";
+import { ProductItem } from "@/types/baseTypes";
+import { getAllProductItems } from "@/services/productServices";
 
 type Props = {
-  selectedProduct: Product | null;
-  setSelectedProduct: (selectedProduct: Product) => void;
+  selectedProduct: ProductItem | null;
+  setSelectedProduct: (selectedProduct: ProductItem) => void;
 };
 export function SearchProductInPromotionForm({
   selectedProduct,
@@ -43,21 +43,21 @@ export function SearchProductInPromotionForm({
   useEffect(() => {
     const fetchAllProducts = async () => {
       try {
-        const products = await getAllProducts();
+        const products = await getAllProductItems();
         setProductLists(products.data);
       } catch (error) {
         console.error("Error fetching products:", error);
       }
     };
     fetchAllProducts();
-  }, []);
+  }, [setProductLists]);
 
   useEffect(() => {
     const product = productLists?.find((product) => product.id === value);
     if (product) {
       setSelectedProduct(product);
     }
-  }, [productLists, value]);
+  }, [productLists, value, setSelectedProduct]);
 
   return (
     <>
@@ -109,10 +109,8 @@ export function SearchProductInPromotionForm({
           <Image
             fill
             src={
-              selectedProduct?.image
-                ? `${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}${selectedProduct.image}`
-                : selectedProduct?.productVariants?.[0]?.image
-                ? `${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}${selectedProduct.productVariants[0].image}`
+              selectedProduct?.images
+                ? `${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}/${selectedProduct?.images?.[0]}`
                 : "/no-image.png" // A fallback image path
             }
             alt={selectedProduct?.name || "Product image"}

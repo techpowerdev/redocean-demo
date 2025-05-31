@@ -6,7 +6,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import axios from "axios";
 
 import {
   Form,
@@ -18,11 +17,11 @@ import {
 } from "@/components/ui/form";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { Label } from "@/components/ui/label";
 
 import { usePromotionStore } from "@/state-stores/admin/adminPromotionStore";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { DiscountType } from "@/utils/calculateDiscountedPrice";
 import {
   Select,
   SelectContent,
@@ -30,18 +29,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { formatDateToDatetimeLocal } from "@/utils/formatDate";
-import { Label } from "@/components/ui/label";
-import { Promotion } from "@/types/baseTypes";
 import {
-  getAllPromotions,
+  getPromotionById,
+  getPromotions,
   updatePromotion,
 } from "@/services/promotionServices";
-import { CircleX } from "lucide-react";
-import ResponsiveImage from "@/components/shared/ResponsiveImage";
-import { useDropzone } from "react-dropzone";
 import { useRouter } from "next/navigation";
 import { SearchProductInPromotionForm } from "@/app/features/promotion/SearchProductInPromotionForm";
+import { ProductItem, Promotion } from "@/types/baseTypes";
+import MultipleImageUpload, {
+  ImageStateType,
+} from "@/app/features/image/MultipleImageUpload";
+import { updatePromotionActivity } from "@/services/promotionActivityServices";
+import { formatDateToDatetimeLocal } from "@/utils/formatDate";
+import { DiscountType } from "@/utils/calculateDiscountedPrice";
 
 // Define the schema for validation using zod
 const PromotionFormSchema = z.object({
@@ -50,10 +51,9 @@ const PromotionFormSchema = z.object({
   description: z.string().min(1, "กรุณาระบุรายละเอียด"),
   startAt: z.string().min(1, "กรุณาระบุวันเวลาเริ่มต้น"),
   endAt: z.string().min(1, "กรุณาระบุวันเวลาสิ้นสุด"),
-  productId: z.string().min(1, "กรุณาเลือกสินค้า"),
+  productItemId: z.string().min(1, "กรุณาเลือกสินค้า"),
   discountType: z.enum(["fixed", "percent"], {
     required_error: "กรุณาเลือกประเภทส่วนลด",
-    invalid_type_error: "กรุณาเลือกประเภทส่วนลด",
   }),
   discountAmount: z.coerce
     .number({
@@ -65,35 +65,21 @@ const PromotionFormSchema = z.object({
     required_error: "กรุณาระบุจำนวนออเดอร์เป้าหมาย",
     invalid_type_error: "กรุณาระบุจำนวนออเดอร์เป้าหมาย",
   }),
-  limitQuantity: z.boolean().default(false).optional(),
+  limitQuantity: z.boolean().default(false),
   maxQuantity: z.coerce.number({
     required_error: "กรุณาระบุจำนวนสินค้า",
     invalid_type_error: "กรุณาระบุจำนวนสินค้า",
   }),
-  limitQuantityPerUser: z.boolean().default(false).optional(),
+  limitQuantityPerUser: z.boolean().default(false),
   maxQuantityPerUser: z.coerce.number({
     required_error: "กรุณาระบุสูงสุดที่สั่งซื้อได้ต่อคน",
     invalid_type_error: "กรุณาระบุสูงสุดที่สั่งซื้อได้ต่อคน",
   }),
-  images: z
-    .array(
-      z.object({
-        name: z.string(),
-        size: z.number().max(5 * 1024 * 1024, "Max file size is 5MB"),
-        type: z.enum([
-          "image/jpeg",
-          "image/jpg",
-          "image/png",
-          "image/gif",
-          "image/webp",
-        ]),
-        file: z.any(),
-      })
-    )
-    .optional()
-    .nullable(), // <--- ปรับให้เป็น optional
+  // images: z.array(z.string()),
+  images: z.array(z.string()).min(1, "อัปโหลดอย่างน้อย 1 รูป"),
 });
 
+// Create form input type
 type PromotionFormValues = z.infer<typeof PromotionFormSchema>;
 
 type Props = {
@@ -102,15 +88,19 @@ type Props = {
 
 export function EditPromotionForm({ promotion }: Props) {
   // global state
-  const selectPromotion = usePromotionStore((state) => state.selectPromotion);
   const setPromotionLists = usePromotionStore(
     (state) => state.setPromotionLists
   );
 
+  const selectPromotion = usePromotionStore((state) => state.selectPromotion);
+
   // local state
-  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
-  const [selectedProduct, setSelectedProduct] = useState(
-    promotion?.promotionActivities?.[0].product ?? null
+  const [selectedProduct, setSelectedProduct] = useState<ProductItem | null>(
+    promotion?.promotionActivities?.[0]?.productItem ?? null
+  );
+  // const [images, setImages] = useState<ImageStateType[]>([]);
+  const [images, setImages] = useState<ImageStateType[]>(
+    promotion.images?.map((item) => ({ id: item.id, url: item.url })) || []
   );
 
   // navigation
@@ -123,12 +113,13 @@ export function EditPromotionForm({ promotion }: Props) {
       type: promotion?.type || "",
       name: promotion?.name || "",
       description: promotion?.description || "",
+      images: [],
       startAt: promotion?.startAt
         ? formatDateToDatetimeLocal(promotion.startAt)
         : "",
       endAt: promotion?.endAt ? formatDateToDatetimeLocal(promotion.endAt) : "",
       // promotion activity data
-      productId: selectedProduct?.id ?? "",
+      productItemId: selectedProduct?.id ?? "",
       discountType:
         (promotion?.promotionActivities?.[0]?.discountType as DiscountType) ||
         "fixed",
@@ -141,39 +132,7 @@ export function EditPromotionForm({ promotion }: Props) {
         promotion?.promotionActivities?.[0]?.maxQuantityPerUser || 0,
       minimumPurchaseQuantity:
         promotion?.promotionActivities?.[0]?.minimumPurchaseQuantity || 0,
-      images: [],
     },
-  });
-
-  const onDrop = (acceptedFiles: File[]) => {
-    const newImages = acceptedFiles.map((file) => ({
-      name: file.name,
-      size: file.size,
-      type: file.type,
-      file: file,
-    }));
-
-    // Clear previous images and set the new image
-    form.setValue("images", newImages as never);
-    form.trigger("images");
-
-    // Update image previews to show the latest image
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setImagePreviews([reader.result as string]); // Only keep the latest image preview
-    };
-    reader.readAsDataURL(newImages[0].file);
-  };
-
-  const { getRootProps, getInputProps } = useDropzone({
-    onDrop,
-    accept: {
-      "image/jpeg": [],
-      "image/jpg": [],
-      "image/png": [],
-      "image/webp": [],
-    },
-    maxSize: 5 * 1024 * 1024, // 5MB
   });
 
   const type = useWatch({
@@ -185,90 +144,79 @@ export function EditPromotionForm({ promotion }: Props) {
     control: form.control,
     name: "limitQuantity",
   });
+
   const limitQuantityPerUser = useWatch({
     control: form.control,
     name: "limitQuantityPerUser",
   });
+
   const discountType = useWatch({
     control: form.control,
     name: "discountType",
   });
 
   async function onSubmit(data: PromotionFormValues) {
-    console.log("data===", data);
-    const PromotionFormData = new FormData();
-    if (data.images && data.images.length > 0) {
-      PromotionFormData.append("image", data.images[0].file);
-    }
-
-    PromotionFormData.append("type", data.type);
-    PromotionFormData.append("name", data.name);
-    PromotionFormData.append("description", data.description);
-    PromotionFormData.append("startAt", data.startAt);
-    PromotionFormData.append("endAt", data.endAt);
-
     try {
-      const promotionActivities = {
-        productId: data.productId,
-        discountType: data.discountType,
-        discountAmount: data.discountAmount,
-        limitQuantity: data.limitQuantity,
-        maxQuantity: data.maxQuantity,
-        limitQuantityPerUser: data.limitQuantityPerUser,
-        maxQuantityPerUser: data.maxQuantityPerUser,
-        minimumPurchaseQuantity: data.minimumPurchaseQuantity,
+      const promotionData = {
+        type: data?.type,
+        name: data?.name,
+        description: data?.description,
+        imageIds: data?.images,
+        startAt: data?.startAt,
+        endAt: data?.endAt,
       };
 
       const promotionResult = await updatePromotion(
-        promotion?.id || "",
-        PromotionFormData
+        promotion.id,
+        promotionData
       );
 
-      const promotionActivityResult = await axios.put(
-        `${process.env.NEXT_PUBLIC_API_URL}/promotions/activities/${promotion?.promotionActivities?.[0].id}`,
-        promotionActivities
-      );
+      if (promotionResult) {
+        const promotionActivityData = {
+          promotionId: promotionResult.data.id,
+          productItemId: data.productItemId,
+          discountType: data.discountType,
+          discountAmount: data.discountAmount,
+          limitQuantity: data.limitQuantity,
+          maxQuantity: data.maxQuantity,
+          limitQuantityPerUser: data.limitQuantityPerUser,
+          maxQuantityPerUser: data.maxQuantityPerUser,
+          minimumPurchaseQuantity: data.minimumPurchaseQuantity,
+        };
 
-      if (promotionResult || promotionActivityResult) {
-        const newPromotions = await getAllPromotions();
-        setPromotionLists(newPromotions.data);
-
-        const updateSelectedPromotion = newPromotions.data.find(
-          (item: Promotion) => item.id === promotion?.id
+        await updatePromotionActivity(
+          promotion?.promotionActivities?.[0]?.id || "",
+          promotionActivityData
         );
 
-        if (updateSelectedPromotion) {
-          selectPromotion(updateSelectedPromotion);
-        }
+        const updatedSelectPromotion = await getPromotionById(promotion.id);
+        selectPromotion(updatedSelectPromotion.data);
+
+        const updatedPromotions = await getPromotions("all");
+        setPromotionLists(updatedPromotions.data);
       }
       toast.success("แก้ไขกิจกรรมแล้ว");
       router.push("/admin/promotion");
     } catch (error) {
-      toast.error("แก้ไขกิจกรรมไม่สำเร็จ");
-
+      toast.success("เกิดข้อผิดพลาดบางอย่าง");
       console.error("Error occurred:", error);
     }
   }
 
   useEffect(() => {
-    form.setValue("productId", selectedProduct?.id ?? "");
-    form.trigger("productId"); // validate ทันทีเมื่อ value เปลี่ยน
+    form.setValue("productItemId", selectedProduct?.id ?? "");
+    form.trigger("productItemId"); // validate ทันทีเมื่อ value เปลี่ยน
   }, [form, selectedProduct?.id]);
 
   useEffect(() => {
-    // แสดงรูปภาพที่มีอยู่จาก promotion ถ้ามี
-    setImagePreviews(
-      promotion.images && promotion.images.length > 0
-        ? [process.env.NEXT_PUBLIC_IMAGE_HOST_URL + promotion.images[0].url]
-        : []
-    );
-  }, [promotion]);
+    // ใช้ filter และ map เพื่อดึงเฉพาะ id ที่ไม่เป็นค่าว่าง
+    const validImageIds = images
+      .filter((item) => item.id !== "")
+      .map((item) => item.id);
 
-  useEffect(() => {
-    if (Object.keys(form.formState.errors).length !== 0) {
-      toast.error("กรุณาตรวจสอบข้อมูลอีกครั้ง");
-    }
-  }, [form.formState.errors]);
+    form.setValue("images", validImageIds);
+    form.trigger("images");
+  }, [form, images]);
 
   return (
     <Form {...form}>
@@ -328,7 +276,7 @@ export function EditPromotionForm({ promotion }: Props) {
           )}
         />
 
-        {/* Promotion Title */}
+        {/* Title */}
         <FormField
           control={form.control}
           name="name"
@@ -343,7 +291,7 @@ export function EditPromotionForm({ promotion }: Props) {
           )}
         />
 
-        {/* Promotion Description */}
+        {/* Description */}
         <FormField
           control={form.control}
           name="description"
@@ -358,69 +306,19 @@ export function EditPromotionForm({ promotion }: Props) {
           )}
         />
 
-        {/* Image */}
         <FormField
           control={form.control}
           name="images"
           render={() => (
-            <div className="grid w-full items-center gap-1.5">
-              <FormLabel htmlFor="photo">รูปกิจกรรม</FormLabel>
-              <div
-                {...getRootProps()}
-                className="border-2 border-dashed border-gray-300 p-2 text-center"
-              >
-                <Input
-                  {...getInputProps()}
-                  id="photo"
-                  type="file"
-                  className=""
-                />
-                <span className="text-[14px] text-center font-semibold">
-                  ลากและวางรูปภาพที่นี่, หรือคลิกเพื่อเลือก
-                </span>
-                <FormMessage />
-                <div className="flex justify-start items-center gap-x-2 gap-y-4 flex-wrap my-2">
-                  {imagePreviews.map((preview, index) => (
-                    <div
-                      key={index}
-                      className="relative w-56 border-2 border-accent-800 rounded-md"
-                    >
-                      <ResponsiveImage src={preview} alt={`Preview ${index}`} />
-
-                      <CircleX
-                        onClick={(promotion) => {
-                          promotion.stopPropagation();
-
-                          // ตรวจสอบว่ามี images อยู่หรือไม่
-                          const currentImages = form.getValues("images") ?? [];
-
-                          // กรองข้อมูลเพื่อเอารูปภาพที่ไม่ต้องการออก
-                          const updatedImages =
-                            currentImages?.filter((_, i) => i !== index) ?? [];
-
-                          // ตั้งค่า images ใหม่
-                          form.setValue("images", updatedImages as never);
-
-                          // อัพเดท preview images
-                          setImagePreviews((prev) =>
-                            prev.filter((_, i) => i !== index)
-                          );
-
-                          // ตรวจสอบค่าของ images ใหม่อีกครั้ง
-                          form.trigger("images");
-                        }}
-                        size={20}
-                        className="text-red-400 hover:text-red-500 cursor-pointer absolute -top-3 -right-1"
-                      />
-                    </div>
-                  ))}
+            <FormItem>
+              <FormLabel>รูปกิจกรรม</FormLabel>
+              <FormControl>
+                <div className="flex justify-center sm:justify-start gap-2 flex-wrap">
+                  <MultipleImageUpload images={images} setImages={setImages} />
                 </div>
-                <span className="text-[12px] text-gray-400 text-center">
-                  อัพโหลดได้เฉพาะไฟล์ .jpg, .png, and .webp เท่านั้น
-                  และต้องมีขนาดไม่เกิน 5MB.
-                </span>
-              </div>
-            </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
           )}
         />
 
@@ -430,10 +328,9 @@ export function EditPromotionForm({ promotion }: Props) {
           selectedProduct={selectedProduct}
           setSelectedProduct={setSelectedProduct}
         />
-
         <FormField
           control={form.control}
-          name={`productId`}
+          name={`productItemId`}
           render={({ field }) => (
             <FormItem>
               <FormLabel className="hidden">สินค้าในกิจกรรม</FormLabel>
@@ -482,6 +379,7 @@ export function EditPromotionForm({ promotion }: Props) {
             </FormItem>
           )}
         />
+        {/* {selectedPromotionType === "flashsale" && ( */}
         <FormField
           control={form.control}
           name={`discountAmount`}
@@ -500,6 +398,7 @@ export function EditPromotionForm({ promotion }: Props) {
             </FormItem>
           )}
         />
+        {/* )} */}
 
         {/* show if promotion type is groupbuying */}
         {type === "groupbuying" && (
@@ -525,6 +424,45 @@ export function EditPromotionForm({ promotion }: Props) {
           </>
         )}
 
+        <FormField
+          control={form.control}
+          name="limitQuantityPerUser"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-start space-x-3 space-y-0  ">
+              <FormControl>
+                <Checkbox
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
+              <div className="space-y-1 leading-none">
+                <FormLabel>จำกัดจำนวนสั่งซื้อต่อคน</FormLabel>
+              </div>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        {/* show if limitQuantityPerUser is true */}
+        {limitQuantityPerUser && (
+          <FormField
+            control={form.control}
+            name={`maxQuantityPerUser`}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>จำนวนสูงสุดที่สั่งซื้อได้ต่อคน</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    min={0}
+                    placeholder="กรอกจำนวนสูงสุดที่สั่งซื้อได้ต่อคน"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
         {/* limit amount */}
         <FormField
           control={form.control}
@@ -545,68 +483,25 @@ export function EditPromotionForm({ promotion }: Props) {
           )}
         />
         {/* show if limitQuantity is true */}
-
         {limitQuantity && (
-          <>
-            <FormField
-              control={form.control}
-              name={`maxQuantity`}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>จำนวนสินค้า</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      min={0}
-                      placeholder="กรอกจำนวนสินค้า"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="limitQuantityPerUser"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0  ">
-                  <FormControl>
-                    <Checkbox
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                  <div className="space-y-1 leading-none">
-                    <FormLabel>จำกัดจำนวนสั่งซื้อต่อคน</FormLabel>
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            {/* show if limitQuantityPerUser is true */}
-            {limitQuantity && limitQuantityPerUser && (
-              <FormField
-                control={form.control}
-                name={`maxQuantityPerUser`}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>จำนวนสูงสุดที่สั่งซื้อได้ต่อคน</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        min={0}
-                        placeholder="กรอกจำนวนสูงสุดที่สั่งซื้อได้ต่อคน"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+          <FormField
+            control={form.control}
+            name={`maxQuantity`}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>จำนวนสินค้า</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    min={0}
+                    placeholder="กรอกจำนวนสินค้า"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
             )}
-          </>
+          />
         )}
 
         <div className="w-full flex justify-end">

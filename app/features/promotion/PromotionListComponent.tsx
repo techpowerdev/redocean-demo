@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import Loading from "@/components/shared/Loading";
 import { usePromotionStore } from "@/state-stores/admin/adminPromotionStore";
 import { Promotion } from "@/types/baseTypes";
-import { getAllPromotions } from "@/services/promotionServices";
+import { getPromotions } from "@/services/promotionServices";
 import { PromotionLists } from "@/app/features/promotion/PromotionLists";
 
 export default function PromotionListComponent() {
@@ -23,8 +23,8 @@ export default function PromotionListComponent() {
     const fetchAllPromotions = async () => {
       setLoading(true); // Set loading to true when fetching
       try {
-        const promotions = await getAllPromotions();
-        setPromotionLists(promotions.data);
+        const allPromotions = await getPromotions("all");
+        setPromotionLists(allPromotions.data);
         setLoading(false); // Set loading to false after data is fetched
       } catch (error) {
         console.error("Error fetching promotions:", error);

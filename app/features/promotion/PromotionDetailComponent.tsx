@@ -23,7 +23,7 @@ export default function PromotionDetailComponent() {
               ชื่อกิจกรรม : {selectedPromotion.name}
             </div>
             {selectedPromotion.promotionActivities?.[0]
-              .minimumPurchaseQuantity &&
+              ?.minimumPurchaseQuantity &&
             selectedPromotion.promotionActivities?.[0].minimumPurchaseQuantity >
               0 ? (
               <div className="text-lg font-semibold">
@@ -55,28 +55,26 @@ export default function PromotionDetailComponent() {
 
           <Separator />
 
-          {/* product in event */}
+          {/* productItem in event */}
           <div className="p-4 flex flex-col gap-2">
             <h1 className="font-bold text-lg mb-2">สินค้าในกิจกรรม</h1>
             {selectedPromotion.promotionActivities?.map((item) => (
               <div key={item.id}>
-                <h1>รหัสสินค้า: {item.product?.sku}</h1>
-                <h1>ชื่อสินค้า : {item.product?.name}</h1>
+                <h1>รหัสสินค้า: {item.productItem?.sku}</h1>
+                <h1>ชื่อสินค้า : {item.productItem?.name}</h1>
                 <p className="text-sm my-2">
-                  รายละเอียด : {item.product?.description}
+                  รายละเอียด : {item.productItem?.description}
                 </p>
                 <div className="grid grid-cols-[30%_1fr]">
                   <div className="relative w-full aspect-square">
                     <Image
                       fill
                       src={
-                        item.product?.image
-                          ? `${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}${item.product.image}`
-                          : item.product?.productVariants?.[0]?.image
-                          ? `${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}${item.product.productVariants[0].image}`
+                        item.productItem?.images
+                          ? `${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}/${item.productItem?.images?.[0]}`
                           : "/no-image.png" // A fallback image path
                       }
-                      alt={item.product?.id || ""}
+                      alt={item.productItem?.id || ""}
                       className="object-contain"
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />

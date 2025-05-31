@@ -6,6 +6,8 @@ import React, { useEffect, useState } from "react";
 interface CountdownProps {
   startTime: string; // start time in "DD/MM/YYYY, HH:MM" format
   endTime: string; // end time in "DD/MM/YYYY, HH:MM" format
+  showDataTimeDetail?: boolean;
+  showTimeUnit?: boolean;
 }
 
 interface TimeLeft {
@@ -43,28 +45,60 @@ const calculateTimeLeft = (targetDate: Date): TimeLeft => {
 export const PromotionCountdown: React.FC<CountdownProps> = ({
   startTime,
   endTime,
+  showDataTimeDetail = false,
+  showTimeUnit = true,
 }) => {
   const [timeLeft, setTimeLeft] = useState<TimeLeft>({});
   const [hasStarted, setHasStarted] = useState(false); // Track if countdown has started
   const [hasEnded, setHasEnded] = useState(false); // Track if countdown has ended
 
+  // useEffect(() => {
+  //   const start = parseDateString(startTime);
+  //   const end = parseDateString(endTime);
+
+  //   const timer = setInterval(() => {
+  //     const currentTime = new Date();
+
+  //     if (currentTime >= start && currentTime < end) {
+  //       setHasStarted(true);
+  //       setTimeLeft(calculateTimeLeft(end));
+  //     } else if (currentTime >= end) {
+  //       setHasEnded(true);
+  //       clearInterval(timer); // Stop countdown when time is up
+  //     } else {
+  //       setTimeLeft(calculateTimeLeft(start));
+  //       setHasStarted(false);
+  //     }
+  //   }, 100);
+
+  //   return () => clearInterval(timer);
+  // }, [startTime, endTime]);
+
   useEffect(() => {
     const start = parseDateString(startTime);
     const end = parseDateString(endTime);
 
-    const timer = setInterval(() => {
+    const updateTime = () => {
       const currentTime = new Date();
 
       if (currentTime >= start && currentTime < end) {
         setHasStarted(true);
+        setHasEnded(false);
         setTimeLeft(calculateTimeLeft(end));
       } else if (currentTime >= end) {
         setHasEnded(true);
-        clearInterval(timer); // Stop countdown when time is up
+        setHasStarted(false);
+        setTimeLeft({});
       } else {
+        setHasStarted(false);
+        setHasEnded(false);
         setTimeLeft(calculateTimeLeft(start));
       }
-    }, 1000);
+    };
+
+    updateTime(); // 👈 เรียกทันทีเมื่อ props เปลี่ยนก่อน 1 ครั้ง
+
+    const timer = setInterval(updateTime, 1000); // แล้วเรียกทุก ๆ วินาที
 
     return () => clearInterval(timer);
   }, [startTime, endTime]);
@@ -82,13 +116,18 @@ export const PromotionCountdown: React.FC<CountdownProps> = ({
   ];
 
   const timerComponents = timeValues.map((value, index) => (
-    <div key={timeUnits[index]} className="flex flex-col items-center mx-1">
+    <div
+      key={timeUnits[index]}
+      className="relative flex flex-col items-center mx-1"
+    >
       <span className="inline-block rounded-sm bg-foreground text-white text-center text-sm w-8 py-1">
         {value}
       </span>
-      <span className="text-xs font-semibold text-foreground mt-1">
-        {timeUnits[index]}
-      </span>
+      {showTimeUnit && (
+        <span className="text-xs font-semibold text-foreground mt-1">
+          {timeUnits[index]}
+        </span>
+      )}
     </div>
   ));
 
@@ -98,22 +137,28 @@ export const PromotionCountdown: React.FC<CountdownProps> = ({
         <span className="flex justify-start items-center gap-1 mb-1 text-red-500">
           <AlarmClockOff /> หมดเวลาแล้ว!
         </span>
-      ) : hasStarted ? (
-        timerComponents.length > 0 && (
-          <div className="flex flex-col items-center gap-y-1">
-            <span className="flex justify-center items-center gap-1 mb-1">
-              <AlarmClock /> ปิด : {endTime}
-            </span>
-            <div className="flex gap-x-2">{timerComponents}</div>
-          </div>
-        )
       ) : (
         timerComponents.length > 0 && (
           <div className="flex flex-col items-center gap-y-1">
-            <span className="flex justify-center items-center gap-1 mb-1">
-              <AlarmClock /> เปิด : {startTime}
-            </span>
-            <div className="flex gap-x-2">{timerComponents}</div>
+            <div className="flex flex-col items-center justify-center gap-2">
+              <span className="text-xs font-medium">
+                {hasStarted ? "หมดเวลาในอีก" : "เริ่มในอีก"}
+              </span>
+              <div className="flex"> {timerComponents}</div>
+            </div>
+            {showDataTimeDetail && (
+              <span className="text-xs text-gray-500 flex justify-center items-center gap-1 mb-1">
+                {hasStarted ? (
+                  <>
+                    <AlarmClock /> ปิด: {endTime}
+                  </>
+                ) : (
+                  <>
+                    <AlarmClock /> เปิด : {startTime}
+                  </>
+                )}
+              </span>
+            )}
           </div>
         )
       )}

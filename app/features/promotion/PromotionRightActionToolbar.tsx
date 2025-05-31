@@ -4,10 +4,7 @@ import { SquarePen, Trash2 } from "lucide-react";
 import ActionToolbar from "../../(admin)/admin/components/shared/ActionToolbar";
 import { ConfirmationPopup } from "@/components/shared/ConfirmationPopup";
 import { useState } from "react";
-import {
-  deletePromotion,
-  getAllPromotions,
-} from "@/services/promotionServices";
+import { deletePromotion, getPromotions } from "@/services/promotionServices";
 import { usePromotionStore } from "@/state-stores/admin/adminPromotionStore";
 import { useRouter } from "next/navigation";
 
@@ -33,7 +30,7 @@ export function PromotionRightActionToolbar() {
 
   const handleDelete = async () => {
     await deletePromotion(selectedPromotion?.id || "");
-    const newPromotions = await getAllPromotions();
+    const newPromotions = await getPromotions("all");
     selectPromotion(null);
     setPromotionLists(newPromotions.data);
   };
@@ -41,7 +38,7 @@ export function PromotionRightActionToolbar() {
   return (
     <>
       <ConfirmationPopup
-        title="ต้องการลบสินค้านี้?"
+        title="ต้องการลบกิจกรรมนี้?"
         open={openDeleteForm}
         setOpen={handleOpenDeleteForm}
         action={handleDelete}

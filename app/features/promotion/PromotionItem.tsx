@@ -5,6 +5,8 @@ import { PromotionCountdown } from "@/app/features/promotion/PromotionCountdown"
 import { formatDateTimePromotion } from "@/utils/formatDate";
 import PromotionProductCard from "@/app/features/promotion/PromotionProductCard";
 import { Promotion } from "@/types/baseTypes";
+import ProductItemDetail from "@/app/(home)/product/[id]/ProductItemDetail";
+import ProductItemWithDetail from "@/app/(home)/product/[id]/ProductItemWithDetail";
 
 type Props = {
   promotion: Promotion;
@@ -67,13 +69,20 @@ export default function PromotionItem({ promotion }: Props) {
               endTime={formatDateTimePromotion(promotion.endAt)}
             />
           </div>
-          {activity.product && (
-            <PromotionProductCard
-              promotion={promotion}
-              isActive={isActive}
-              promotionActivity={activity}
-              product={activity.product}
-            />
+          {activity.productItem && (
+            // <PromotionProductCard
+            //   promotion={promotion}
+            //   isActive={isActive}
+            //   promotionActivity={activity}
+            //   product={activity.productItem}
+            // />
+            // <ProductItemDetail product={activity.productItem} />
+            <div className="bg-white">
+              <ProductItemWithDetail
+                product={activity.productItem}
+                promotionActivity={activity}
+              />
+            </div>
           )}
         </div>
       ))}

@@ -1,61 +1,52 @@
 "use client";
 
 import * as React from "react";
-import Autoplay from "embla-carousel-autoplay";
 
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
 import { Promotion } from "@/types/baseTypes";
 import ResponsiveImage from "@/components/shared/ResponsiveImage";
 import { PromotionCountdown } from "./PromotionCountdown";
 import { formatDateTimePromotion } from "@/utils/formatDate";
+import SliderContainer from "@/components/shared/SliderContainer";
 
 type Props = {
   promotions: Promotion[];
 };
 export function ShowUpcomingPromotion({ promotions }: Props) {
-  const plugin = React.useRef(
-    Autoplay({ delay: 2000, stopOnInteraction: true })
-  );
-
   return (
-    <Carousel
-      plugins={[plugin.current]}
-      className="w-full max-w-xs"
-      onMouseEnter={plugin.current.stop}
-      onMouseLeave={plugin.current.reset}
-    >
-      <CarouselContent>
+    <div>
+      <SliderContainer
+        breakpoints={{
+          2000: { perPage: 3 },
+          768: { perPage: 2, arrows: false },
+          480: { perPage: 1, arrows: false },
+        }}
+      >
         {promotions.map((promotion) => (
-          <CarouselItem key={promotion.id}>
-            <Card>
-              <CardContent className="flex aspect-square items-center justify-center p-2">
-                <div>
-                  <PromotionCountdown
-                    startTime={formatDateTimePromotion(promotion.startAt)}
-                    endTime={formatDateTimePromotion(promotion.endAt)}
-                  />
-                  <ResponsiveImage
-                    src={
-                      process.env.NEXT_PUBLIC_IMAGE_HOST_URL +
-                      (promotion.images?.[0].url || "")
-                    }
-                    alt={`promotion-${promotion.id}`}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-          </CarouselItem>
+          <div
+            key={promotion.id}
+            className="relative bg-white w-full h-48 rounded-lg overflow-hidden"
+          >
+            <div className="w-full absolute top-0 left-1/2 -translate-x-1/2 bg-green-300 opacity-80 p-2">
+              <PromotionCountdown
+                startTime={formatDateTimePromotion(promotion.startAt)}
+                endTime={formatDateTimePromotion(promotion.endAt)}
+                showDataTimeDetail={false}
+                showTimeUnit={false}
+              />
+            </div>
+            <ResponsiveImage
+              src={
+                promotion?.images && promotion.images.length > 0
+                  ? `${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}/${promotion.images?.[0]?.id}
+                  `
+                  : "/no-image.png"
+              }
+              alt={`promotion-${promotion.id}`}
+            />
+          </div>
         ))}
-      </CarouselContent>
-      <CarouselPrevious />
-      <CarouselNext />
-    </Carousel>
+      </SliderContainer>
+    </div>
   );
 }
