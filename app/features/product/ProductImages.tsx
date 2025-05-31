@@ -19,7 +19,7 @@ export default function ProductImage({
   // หาภาพที่ตรงกับ selectedOption (match ทุก key-value ที่เลือก)
   useEffect(() => {
     if (!variants || variants.length === 0) {
-      setSelectedImage(product.image || null); // กรณีไม่มี variants
+      setSelectedImage(product?.images?.[0].url || null); // กรณีไม่มี variants
       return;
     }
 
@@ -32,7 +32,9 @@ export default function ProductImage({
 
     // หาก match หรือ fallback เป็นรูปแรก
     setSelectedImage(
-      matchedVariant?.image || variants.find((v) => v.image)?.image || null
+      matchedVariant?.image?.url ||
+        variants.find((v) => v.image)?.image?.url ||
+        null
     );
   }, [variants, selectedOption]);
 
@@ -45,7 +47,7 @@ export default function ProductImage({
           ?.map((variant) => (
             <div
               key={variant.id}
-              onClick={() => setSelectedImage(variant.image || null)}
+              onClick={() => setSelectedImage(variant?.image?.url || null)}
               className={`relative w-[80%] aspect-square rounded 
               ${
                 selectedImage === variant.image
@@ -56,7 +58,7 @@ export default function ProductImage({
               {variant.image ? (
                 <Image
                   priority
-                  src={`${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}${variant.image}`}
+                  src={`${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}/${variant.image.url}`}
                   alt={`Variant Image ${variant.sku}`}
                   fill
                   className="object-contain rounded"
@@ -77,7 +79,7 @@ export default function ProductImage({
           <Image
             priority
             fill
-            src={`${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}${selectedImage}`}
+            src={`${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}/${selectedImage}`}
             alt="Selected Product"
             className="w-full h-full object-contain max-h-[500px] min-h-[300px] sm:min-h-[400px] rounded"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

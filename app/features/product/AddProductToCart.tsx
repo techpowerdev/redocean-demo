@@ -26,7 +26,7 @@ export default function AddProductToCart({ isActive, product, stock }: Props) {
 
   const handleAddToCart = async () => {
     if (!currentUser) {
-      router.push("/login-line"); // ถ้า user เป็น null ให้ redirect ไปที่หน้าแรก
+      router.push("/login-line-liff"); // ถ้า user เป็น null ให้ redirect ไปที่หน้าแรก
       toast.error("กรุณาเชื่อมต่อไลน์");
       return;
     }
