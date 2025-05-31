@@ -1,4 +1,11 @@
-import { Cart } from "@/types/baseTypes";
+import {
+  Cart,
+  CartItem,
+  ProductItem,
+  ProductModel,
+  Promotion,
+  PromotionActivity,
+} from "@/types/baseTypes";
 
 export type GetUserCartResponse = {
   message?: string | null;
@@ -14,9 +21,10 @@ export type CartProduct = Cart & {
 };
 
 export type AddProductToCardParam = {
-  productId: string;
-  sku: string;
+  productItemId: string;
+  productModelId: string;
   quantity: number;
-  promotionActivityId?: string | null;
+  promotionId?: string | null;
   promotionType?: string | null;
+  promotionActivityId?: string | null;
 };

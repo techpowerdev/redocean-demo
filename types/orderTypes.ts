@@ -1,104 +1,47 @@
 import { ShippingAddress } from "./addressTypes";
-import { Order } from "@/types/baseTypes";
+import {
+  Order,
+  OrderItem,
+  OrderVoucher,
+  ProductModel,
+} from "@/types/baseTypes";
 
-export type GetOneOrderResponse = { data: Order; message?: string | null };
-
-export type GetAllOrdersResponse = { data: Order[] };
-
-export type GetUserOrdersResponse = { data: Order[] };
-
-export type GetOrderSummaryOfGroupBuyingResponse = { data: OrderSummary };
-
-export type GetPromotionOrderResponse = { data: Order[] };
-
-export type CreateOder = {
-  orderType?: string;
-  creditCardFee?: number | null;
-  shippingFee?: number | null;
-  totalAmount: number;
-  returnAmount: number;
-  status?: string;
-  trackingNumber?: string | null;
-  shippingAddress: {
-    recipient: string | undefined;
-    phoneNumber: string | undefined;
-    address: string | undefined;
-    street: string | undefined;
-    subDistrict: string | undefined;
-    district: string | undefined;
-    province: string | undefined;
-    postalCode: string | undefined;
-  };
-
-  orderItems: CreateOderItem[];
-};
-
-export type CreateOderItem = {
-  sku: string;
+export type CreateOrderItem = {
+  productItemId: string;
+  productModelId: string;
   quantity: number;
-  unitPrice: number;
-  discount?: number | null;
-  total: number;
-  productId: string;
-  promotionActivityId?: string | null;
-};
-
-export type OrderSummary = {
-  totalOrders: number;
-  pendingOrders: number;
-  awaitingConfirmationOrders: number;
-  confirmedOrders: number;
-  preparingToShipOrders: number;
-  cancelledAndRefundedOrders: number;
-};
-
-// refractor type
-
-// ลงท้ายด้วย param/params หากเป็น type ของ input ใน function
-export interface CreateOrderWithPaymentIntentParams {
-  items: CreateOrderItem[];
-  shippingAddress: ShippingAddress;
-  currency?: string;
-  captureLater?: boolean;
-  paymentState?: PaymentState;
-}
-
-export interface CreateOrderItem {
-  productId: string;
-  sku: string;
-  quantity: number;
-  promotionActivityId?: string | null;
   promotionType?: string | null;
-}
+  promotionId?: string | null;
+  promotionActivityId?: string | null;
+};
 
 export type PaymentState = "initial_payment" | "additional_payment";
 
-export type OrderWithPaymentIntent = {
-  paymentIntent: {
-    id: string;
-    client_secret: string;
-    status: string;
-    amount: number;
-    currency: string;
-    metadata: Record<string, string>;
-  };
-  items: {
-    productId: string;
-    sku: string;
-    name: string;
-    description: string;
-    variantOptions: string;
-    image: string;
-    promotionActivityId?: string | null;
-    promotionType?: string | null;
-    unitPrice: number;
-    quantity: number;
-    discount: number;
-    discountedPrice: number;
-    total: number;
-    warningMessage?: string | null;
-    isAvailableStock: boolean;
-  }[];
+export type PriceInfo = {
+  unitPrice: number;
+  discount: number;
+  discountedPrice: number;
+  totalDiscount: number;
+  totalAmount: number;
+  netAmount: number;
+};
+
+export type ValidatedOrderItem = {
+  productItemId: string;
+  productModelId: string;
+  quantity: number;
+  promotionId: string | null;
+  promotionType: string | null;
+  promotionActivityId: string | null;
+  priceInfo: PriceInfo;
+  productModelItem: ProductModel;
+  status: string;
+  warningMessage: string | null;
+};
+
+export type OrderSummary = {
+  couponId?: string | null;
+  items: ValidatedOrderItem[];
   totalAmount: number;
   totalDiscount: number;
   netAmount: number;
@@ -106,7 +49,69 @@ export type OrderWithPaymentIntent = {
   nextProcess: boolean;
 };
 
+export type SummaryOrderBeforeCheckoutParams = {
+  items: CreateOrderItem[];
+};
+
+export type SummaryOrderBeforeCheckoutResponse = {
+  data: OrderSummary;
+};
+
+// ลงท้ายด้วย param/params หากเป็น type ของ input ใน function
+export interface CreateOrderWithPaymentIntentParams {
+  couponCode?: string | null;
+  items: CreateOrderItem[];
+  shippingAddress: ShippingAddress;
+  currency?: string;
+  captureLater?: boolean;
+  paymentState?: PaymentState;
+}
+
+export type OrderWithPaymentIntent = OrderSummary & {
+  // กรณี validate ไม่ผ่าน จะไม่เกิดการสร้าง order และไม่มี paymentIntent ส่งกลับมา
+  paymentIntent?: {
+    id: string;
+    client_secret: string;
+    status: string;
+    amount: number;
+    currency: string;
+    metadata: Record<string, string>;
+  };
+};
+
 export type CreateOrderWithPaymentIntentResponse = {
-  data: OrderWithPaymentIntent;
+  data: OrderWithPaymentIntent | OrderSummary;
   message: string | null;
+};
+
+export type GetPromotionOrderSummaryResponse = {
+  data: {
+    orders: Order[];
+    orderItems: OrderItem[];
+    summary: {
+      totalOrders: number;
+      pendingOrders: number;
+      awaitingConfirmationOrders: number;
+      confirmedOrders: number;
+      preparingToShipOrders: number;
+      cancelledAndRefundedOrders: number;
+    };
+  };
+};
+
+export type GetOneOrderResponse = { data: Order };
+
+export type GetAllOrdersResponse = { data: Order[] };
+
+export type GetUserOrdersResponse = { data: Order[] };
+
+export type GetOrderVouchersOfUserParams = {
+  orderId: string;
+  voucherGroupId: string;
+};
+
+export type GetOrderVouchersOfUserResponse = {
+  data: {
+    orderVouchers: OrderVoucher[];
+  };
 };

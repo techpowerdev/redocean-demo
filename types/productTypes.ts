@@ -1,49 +1,90 @@
-import { Product, ProductVariant } from "@/types/baseTypes";
+import { ProductItem } from "@/types/baseTypes";
+import { ProductWithVariantionSchema } from "@/zod-schemas/productSchema";
+import { z } from "zod";
 
-export type GetAllProductsForSellResponse = {
-  data: Product[];
+type Prettify<T> = {
+  [K in keyof T]: T[K];
 };
 
-export type GetOneProductForSellResponse = {
-  data: Product;
+export type CreateProductWithVariants = z.infer<
+  typeof ProductWithVariantionSchema
+>;
+
+export type CreateProductWithVariantsParams = Prettify<
+  Omit<CreateProductWithVariants, "options" | "variations"> & {
+    tierVariations: CreateProductWithVariants["options"];
+    models: Omit<CreateProductWithVariants["variations"], "id">;
+  }
+>;
+
+export type CreateProductWithVariantsResponse = {
+  data: ProductItem;
 };
 
-export type GetAllProductsResponse = {
-  data: Product[];
+export type EditProductWithVariantsParams = Prettify<
+  Omit<CreateProductWithVariants, "options" | "variations"> & {
+    tierVariations: CreateProductWithVariants["options"];
+    models: CreateProductWithVariants["variations"];
+  }
+>;
+
+export type EditProductWithVariantsResponse = {
+  data: ProductItem;
 };
 
-export type GetProductByIdResponse = {
-  data: Product;
+export type GetProductItemByIdResponse = { data: ProductItem };
+export type GetAllProductItemsResponse = { data: ProductItem[] };
+
+// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+export type productOptionValue = {
+  optionId: string;
+  value: string;
+  image?: string | undefined;
 };
 
-export type CreateProductResponse = {
-  data: Product;
+export type productOption = {
+  name: string;
+  values: productOptionValue[];
 };
 
-export type UpdateProductResponse = {
-  data: Product;
+export type productVariation = {
+  id?: string | undefined;
+  key: string;
+  name: string;
+  tierIndex: number[];
+  stock: number;
+  originalPrice: number;
+  sku?: string | undefined;
 };
 
-export type ChangeProductStatusResponse = {
-  data: Product;
+export type productStatus = "normal" | "out_of_stock" | "unlisted" | "deleted";
+
+export type CreateProductItemParams = {
+  sku: string;
+  name: string;
+  description: string;
+  images: string[];
+  originalPrice: number;
+  stock?: number;
+  status?: productStatus;
+  hasVariants?: boolean;
+  productType?: string;
+  fileUrl?: string;
+  categoryId?: string;
 };
 
-export type ChangeHasVariantStatusResponse = {
-  data: Product;
+export type CreateProductItemResponse = {
+  data: ProductItem;
 };
 
-export type CreateProductVariantResponse = {
-  data: ProductVariant;
+export type UpdateProductItemParams = Partial<CreateProductItemParams>;
+
+export type UpdateProductItemResponse = {
+  data: ProductItem;
 };
 
-export type UpdateProductVariantResponse = {
-  data: ProductVariant;
-};
-
-export type ChangeVariantStatusResponse = {
-  data: ProductVariant;
-};
-
+// -----------------------------------------------
 export type CheckProductAvailabilityForUserParams = {
   items: {
     productId: string;

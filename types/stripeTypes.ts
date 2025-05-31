@@ -7,5 +7,10 @@ export interface CreatePaymentIntentParam {
   paymentState?: PaymentStateType; // default: "initial_payment"
 }
 export interface CreatePaymentIntentResponse {
-  clientSecret: string;
+  id: string;
+  client_secret: string;
+  status: string;
+  amount: number;
+  currency: string;
+  metadata: Record<string, string>;
 }

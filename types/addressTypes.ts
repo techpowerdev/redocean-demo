@@ -9,7 +9,7 @@ export type CreateAddressParam = {
   district: string;
   province: string;
   postalCode: string;
-  isActive?: boolean;
+  isDefault?: boolean;
 };
 
 export type UpdateAddressParam = {
@@ -21,7 +21,7 @@ export type UpdateAddressParam = {
   district: string;
   province: string;
   postalCode: string;
-  isActive: boolean;
+  isDefault: boolean;
 };
 
 export type CreateAddressResponse = { data: Address; message: string };
@@ -32,5 +32,5 @@ export type GetAllAddressesResponse = { data: Address[]; message: string };
 
 export type ShippingAddress = Omit<
   Address,
-  "id" | "isActive" | "createdAt" | "updatedAt" | "userId" | "user"
+  "id" | "isDefault" | "createdAt" | "updatedAt" | "userId" | "user"
 >;

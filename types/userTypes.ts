@@ -1,4 +1,4 @@
-import { User } from "@/types/baseTypes";
+import { User, USER_ROLE } from "@/types/baseTypes";
 
 export type SignUpParam = {
   email: string;
@@ -15,15 +15,19 @@ export type LoginParam = {
   password: string;
 };
 
-// export type AuthResponse = {
-//   accessToken: string;
-//   // refreshToken: string;
-//   // user: User;
-// };
+export type AuthResponse = {
+  user: {
+    id: string;
+    email: string;
+    displayName: string;
+    role: USER_ROLE;
+  };
+  accessToken: string;
+  refreshToken: string;
+};
 
 export type LoginResponse = {
-  // data: AuthResponse;
-  data: { accessToken: string };
+  data: AuthResponse;
   message: string;
 };
 
@@ -36,9 +40,7 @@ export type LineLoginParam = {
 };
 
 export type LineLoginResponse = {
-  // data: AuthResponse;
-  // message: string;
-  data: { accessToken: string };
+  data: AuthResponse;
   message: string;
 };
 

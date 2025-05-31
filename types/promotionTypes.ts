@@ -1,18 +1,16 @@
 import { Promotion } from "@/types/baseTypes";
 
-export type GetPromotionTodayResponse = {
-  data: Promotion[];
+export type CreatePromotionParams = {
+  name: string;
+  description: string;
+  type: string;
+  startAt: string;
+  endAt: string;
+  imageIds: string[];
+  isActive?: boolean;
 };
 
-export type GetUpcomingPromotionResponse = {
-  data: Promotion[];
-};
-
-export type GetPromotionByIdResponse = {
-  data: Promotion;
-};
-
-export type AddPromotionResponse = {
+export type CreatePromotionResponse = {
   data: Promotion;
 };
 
@@ -20,10 +18,12 @@ export type GetAllPromotionsResponse = {
   data: Promotion[];
 };
 
-export type UpdatePromotionResponse = {
+export type GetPromotionByIdResponse = {
   data: Promotion;
 };
 
-export type ChangePromotionStatusResponse = {
+export type UpdatePromotionParams = Partial<CreatePromotionParams>;
+
+export type UpdatePromotionResponse = {
   data: Promotion;
 };

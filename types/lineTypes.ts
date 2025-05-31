@@ -94,7 +94,10 @@ export type FlexAction =
     };
 
 export type SendMessageToLineParams = {
-  userId: string;
-  message?: string;
+  lineUid: string;
+  message: string;
+};
+export type SendFlexMessageToLineParams = {
+  lineUid: string;
   flexMessage?: FlexMessage;
 };
