@@ -1,8 +1,7 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import AuthButton from "@/app/features/auth/AuthButton";
 
 export default function Header() {
   return (
@@ -26,8 +25,9 @@ export default function Header() {
             height={256}
           />
         </div>
-        <h1>RED OCEAN MARKETING</h1>
+        <h1>khumkha.com</h1>
       </Link>
+      <AuthButton />
     </div>
   );
 }
