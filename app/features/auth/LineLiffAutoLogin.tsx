@@ -3,8 +3,10 @@ import { useEffect } from "react";
 import liff from "@line/liff";
 import { lineLogin } from "@/services/authServices";
 import { createSession } from "@/lib/session";
+import { useRouter } from "next/navigation";
 
-export default function CheckLogined() {
+export default function LineLiffAutoLogin() {
+  const router = useRouter();
   // Initialize LIFF and login if necessary
   useEffect(() => {
     const initializeLiff = async () => {
@@ -14,17 +16,16 @@ export default function CheckLogined() {
         // If already logged in, retrieve the user profile
         if (liff.isLoggedIn()) {
           const profile = await liff.getProfile();
-
-          // ส่งไป login ที่ backend
+          console.log(profile);
+          // try {
           const response = await lineLogin({
             lineUid: profile.userId,
             displayName: profile.displayName,
             email: liff.getDecodedIDToken()?.email || null,
             pictureUrl: profile.pictureUrl || null, // Add profile picture URL
           });
-          const { user, accessToken, refreshToken } = response.data;
 
-          // สร้าง session การ login
+          const { user, accessToken, refreshToken } = response.data;
           await createSession({
             user: {
               id: user.id,
@@ -35,8 +36,10 @@ export default function CheckLogined() {
             accessToken,
             refreshToken,
           });
+
+          router.push("/");
         } else {
-          console.log("line liff is not login");
+          liff.login();
         }
       } catch (error) {
         console.error("Home Failed to initialize LIFF", error);
