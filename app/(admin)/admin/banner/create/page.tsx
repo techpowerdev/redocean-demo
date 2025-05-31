@@ -11,14 +11,14 @@ export default function ProductForm() {
 
   return (
     <div>
-      <button onClick={() => setLibraryOpen(true)}>เลือกรูปภาพ</button>
+      <button onClick={() => setLibraryOpen(true)}>เลือกรูปภาพจากคลัง</button>
       <div className="grid grid-cols-6 gap-4">
         {selectedImages &&
           selectedImages.map((image) => (
             <div key={image.id}>
               <div className="w-full h-auto">
                 <ResponsiveImage
-                  src={`${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}/${image.url}`}
+                  src={`${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}/${image.id}`}
                   alt="Selected Image"
                 />
               </div>

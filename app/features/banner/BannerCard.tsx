@@ -55,7 +55,7 @@ export default function BannerCard({
           <ResponsiveImage
             src={`${
               banner.image
-                ? process.env.NEXT_PUBLIC_IMAGE_HOST_URL + banner.image?.url
+                ? `${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}/${banner.image?.id}`
                 : "/no-image.png"
             }`}
             alt="Banner Image"
