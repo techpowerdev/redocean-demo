@@ -1,5 +1,5 @@
 import axios from "axios";
-import apiClient from "./apiClient";
+import authAxios from "@/lib/authAxios";
 import {
   SignUpParam,
   SignUpResponse,
@@ -11,10 +11,11 @@ import {
   VerifyUserParam,
   VerifyUserResponse,
 } from "@/types/userTypes";
+import publicAxios from "@/lib/publicAxios";
 
 export async function signUp(signUpData: SignUpParam): Promise<SignUpResponse> {
   try {
-    const response = await apiClient.post(`/auth/register`, signUpData);
+    const response = await publicAxios.post(`/auth/register`, signUpData);
     return response.data; // ส่งเฉพาะข้อมูลที่ได้รับจาก API
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -28,11 +29,14 @@ export async function signUp(signUpData: SignUpParam): Promise<SignUpResponse> {
 
 export async function login(loginData: LoginParam): Promise<LoginResponse> {
   try {
-    const response = await apiClient.post(`/auth/login`, loginData);
+    const response = await publicAxios.post(`/auth/login`, loginData);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      throw new Error(error.response?.data?.message || "เข้าสู่ระบบไม่สำเร็จ");
+      console.log("axios error:", error.response?.data);
+      throw new Error(
+        error.response?.data?.message || "อีเมล หรือรหัสผ่านไม่ถูกต้อง"
+      );
     }
     throw new Error("เกิดข้อผิดพลาดบางอย่าง");
   }
@@ -42,7 +46,7 @@ export async function lineLogin(
   lineLoginData: LineLoginParam
 ): Promise<LineLoginResponse> {
   try {
-    const response = await apiClient.post(
+    const response = await publicAxios.post(
       `/auth/lineliff/login`,
       lineLoginData
     );
@@ -57,7 +61,7 @@ export async function lineLogin(
 
 export async function getCurrentUser(): Promise<GetCurrentUserResponse> {
   try {
-    const response = await apiClient.get(`/users/profile`);
+    const response = await authAxios.get(`/users/profile`);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -71,7 +75,7 @@ export async function logoutUser(
   refreshToken?: string
 ): Promise<{ message: string }> {
   try {
-    const response = await apiClient.post(`/logout`, { refreshToken });
+    const response = await authAxios.post(`/logout`, { refreshToken });
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -85,11 +89,28 @@ export async function verifyUser(
   verifyUserData: VerifyUserParam
 ): Promise<VerifyUserResponse> {
   try {
-    const response = await apiClient.put(`/verify-user`, verifyUserData);
+    const response = await authAxios.patch(
+      `/users/verify-user`,
+      verifyUserData
+    );
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       throw new Error(error.response?.data?.message || "ยืนยันตัวตนไม่สำเร็จ");
+    }
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
+  }
+}
+
+export async function test() {
+  try {
+    const response = await authAxios.get(`/auth/protected`);
+    console.log("Test response:", response);
+    return response;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      // throw new Error(error.response?.data?.message || "เข้าสู่ระบบไม่สำเร็จ");
+      throw new Error("อีเมล หรือรหัสผ่านไม่ถูกต้อง");
     }
     throw new Error("เกิดข้อผิดพลาดบางอย่าง");
   }

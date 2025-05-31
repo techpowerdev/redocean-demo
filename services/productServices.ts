@@ -1,5 +1,5 @@
 import axios from "axios";
-import apiClient from "./apiClient";
+import authAxios from "@/lib/authAxios";
 import {
   CheckProductAvailabilityForUserResponse,
   GetAllProductsResponse,
@@ -8,35 +8,40 @@ import {
   GetOneProductForSellResponse,
   CreateProductResponse,
   UpdateProductResponse,
-  ChangeProductStatusResponse,
-  ChangeHasVariantStatusResponse,
   CreateProductVariantResponse,
   UpdateProductVariantResponse,
-  ChangeVariantStatusResponse,
   CheckProductAvailabilityForUserParams,
+  CreateProductParams,
+  UpdateProductParams,
+  CreateProductVariantParams,
+  UpdateProductVariantParams,
+  CreateProductWithVariantsParams,
+  CreateProductWithVariantsResponse,
+  EditProductWithVariantsParams,
+  EditProductWithVariantsResponse,
+  GetProductItemByIdResponse,
+  GetAllProductItemsResponse,
 } from "@/types/productTypes";
 
-// specific for user
-export const getAllProductForSell =
-  async (): Promise<GetAllProductsForSellResponse> => {
-    try {
-      const response = await apiClient.get(`/products/for-sell/all`);
-      return response.data;
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        throw new Error(
-          error.response?.data?.message || "ดึงข้อมูลสินค้าไม่สำเร็จ"
-        );
-      }
-      throw new Error("เกิดข้อผิดพลาดบางอย่าง");
-    }
-  };
-
-export const getOneProductForSell = async (
-  productId: string
-): Promise<GetOneProductForSellResponse> => {
+export const createProductWithVariants = async (
+  data: CreateProductWithVariantsParams
+): Promise<CreateProductWithVariantsResponse> => {
   try {
-    const response = await apiClient.get(`/products/for-sell/${productId}`);
+    const response = await authAxios.post(`/product/items`, data);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message || "เพิ่มสินค้าไม่สำเร็จ");
+    }
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
+  }
+};
+
+export const getProductItemById = async (
+  productItemId: string
+): Promise<GetProductItemByIdResponse> => {
+  try {
+    const response = await authAxios.get(`/product/items/${productItemId}`);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -48,17 +53,30 @@ export const getOneProductForSell = async (
   }
 };
 
-// end of specific for user
+export const getAllProductItems =
+  async (): Promise<GetAllProductItemsResponse> => {
+    try {
+      const response = await authAxios.get(`/product/items`);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(
+          error.response?.data?.message || "ดึงข้อมูลสินค้าไม่สำเร็จ"
+        );
+      }
+      throw new Error("เกิดข้อผิดพลาดบางอย่าง");
+    }
+  };
 
-export const createProduct = async (
-  formData: FormData
-): Promise<CreateProductResponse> => {
+export const editProductWithVariants = async (
+  productItemId: string,
+  data: EditProductWithVariantsParams
+): Promise<EditProductWithVariantsResponse> => {
   try {
-    const response = await apiClient.post(`/products`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    const response = await authAxios.patch(
+      `/product/items/${productItemId}`,
+      data
+    );
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -68,9 +86,60 @@ export const createProduct = async (
   }
 };
 
-export const getAllProducts = async (): Promise<GetAllProductsResponse> => {
+export const deleteProductItem = async (
+  productItemId: string
+): Promise<void> => {
   try {
-    const response = await apiClient.get(`/products/all`);
+    const response = await authAxios.delete(`/product/items/${productItemId}`);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message || "ลบสินค้าไม่สำเร็จ");
+    }
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
+  }
+};
+
+// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+export const createProduct = async (
+  data: CreateProductParams
+): Promise<CreateProductResponse> => {
+  try {
+    const response = await authAxios.post(`/products`, data);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message || "เพิ่มสินค้าไม่สำเร็จ");
+    }
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
+  }
+};
+
+export const getAllProducts = async (
+  search?: string,
+  page?: number,
+  pageSize?: number,
+  sortBy?: string,
+  sortOrder?: string,
+  productCategoryId?: string,
+  isActive?: boolean
+): Promise<GetAllProductsResponse> => {
+  try {
+    // สร้าง params object สำหรับ query string
+    const params = {
+      search,
+      page,
+      pageSize,
+      sortBy,
+      sortOrder,
+      productCategoryId,
+      isActive,
+    };
+
+    // ทำการส่ง HTTP GET request พร้อม query parameters
+    const response = await authAxios.get(`/products`, { params });
+
+    // ส่งข้อมูลที่ได้จาก response กลับไป
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -86,7 +155,7 @@ export const getProductById = async (
   productId: string
 ): Promise<GetProductByIdResponse> => {
   try {
-    const response = await apiClient.get(`/products/${productId}`);
+    const response = await authAxios.get(`/products/${productId}`);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -100,14 +169,10 @@ export const getProductById = async (
 
 export const updateProduct = async (
   id: string,
-  formData: FormData
+  data: UpdateProductParams
 ): Promise<UpdateProductResponse> => {
   try {
-    const response = await apiClient.put(`/products/${id}`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    const response = await authAxios.patch(`/products/${id}`, data);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -117,50 +182,9 @@ export const updateProduct = async (
   }
 };
 
-export const changeProductStatus = async (
-  id: string,
-  status: boolean
-): Promise<ChangeProductStatusResponse> => {
-  try {
-    const response = await apiClient.patch(`/products/change-status/${id}`, {
-      isActive: status,
-    });
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      throw new Error(
-        error.response?.data?.message || "แก้ไขสถานะสินค้าไม่สำเร็จ"
-      );
-    }
-    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
-  }
-};
-
-export const changeHasVariantStatus = async (
-  id: string,
-  status: boolean
-): Promise<ChangeHasVariantStatusResponse> => {
-  try {
-    const response = await apiClient.patch(
-      `/products/change-hasvariant-status/${id}`,
-      {
-        hasVariant: status,
-      }
-    );
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      throw new Error(
-        error.response?.data?.message || "แก้ไขสถานะสินค้าไม่สำเร็จ"
-      );
-    }
-    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
-  }
-};
-
 export const deleteProduct = async (productId: string): Promise<void> => {
   try {
-    const response = await apiClient.delete(`/products/${productId}`);
+    const response = await authAxios.delete(`/products/${productId}`);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -169,16 +193,46 @@ export const deleteProduct = async (productId: string): Promise<void> => {
     throw new Error("เกิดข้อผิดพลาดบางอย่าง");
   }
 };
+// End of product
 
+// specific for user
+export const getAllProductForSell =
+  async (): Promise<GetAllProductsForSellResponse> => {
+    try {
+      const response = await authAxios.get(`/products/for-sell/all`);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(
+          error.response?.data?.message || "ดึงข้อมูลสินค้าไม่สำเร็จ"
+        );
+      }
+      throw new Error("เกิดข้อผิดพลาดบางอย่าง");
+    }
+  };
+
+export const getOneProductForSell = async (
+  productId: string
+): Promise<GetOneProductForSellResponse> => {
+  try {
+    const response = await authAxios.get(`/products/for-sell/${productId}`);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || "ดึงข้อมูลสินค้าไม่สำเร็จ"
+      );
+    }
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
+  }
+};
+
+// end of specific for user
 export const createProductVariant = async (
-  formData: FormData
+  data: CreateProductVariantParams
 ): Promise<CreateProductVariantResponse> => {
   try {
-    const response = await apiClient.post(`/products/variants`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    const response = await authAxios.post(`/product-variants`, data);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -192,14 +246,10 @@ export const createProductVariant = async (
 
 export const updateProductVariant = async (
   id: string,
-  formData: FormData
+  data: UpdateProductVariantParams
 ): Promise<UpdateProductVariantResponse> => {
   try {
-    const response = await apiClient.put(`/products/variants/${id}`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    const response = await authAxios.patch(`/product-variants/${id}`, data);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -211,34 +261,12 @@ export const updateProductVariant = async (
   }
 };
 
-export const changeVariantStatus = async (
-  id: string,
-  status: boolean
-): Promise<ChangeVariantStatusResponse> => {
-  try {
-    const response = await apiClient.patch(
-      `/products/variants/change-status/${id}`,
-      {
-        isActive: status,
-      }
-    );
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      throw new Error(
-        error.response?.data?.message || "แก้ไขสถานะตัวเลือกสินค้าไม่สำเร็จ"
-      );
-    }
-    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
-  }
-};
-
 export const deleteProductVariant = async (
   productVariantId: string
 ): Promise<void> => {
   try {
-    const response = await apiClient.delete(
-      `/products/variants/${productVariantId}`
+    const response = await authAxios.delete(
+      `/product-variants/${productVariantId}`
     );
     return response.data;
   } catch (error) {
@@ -276,7 +304,7 @@ export const searchProductVariant = async (
     }
 
     // ส่งคำขอ API พร้อม query string
-    const response = await apiClient.get(
+    const response = await authAxios.get(
       `/products/${productId}/variants/search/q?${query.toString()}`
     );
 
@@ -300,7 +328,7 @@ export const checkProductAvailabilityForUser = async (
   message?: string | null;
 }> => {
   try {
-    const response = await apiClient.post(
+    const response = await authAxios.post(
       `/products/check-available-for-user`,
       data
     );

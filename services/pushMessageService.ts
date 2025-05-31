@@ -1,15 +1,26 @@
 import axios from "axios";
-import apiClient from "./apiClient";
-import { FlexBox, SendMessageToLineParams } from "@/types/lineTypes";
+import authAxios from "@/lib/authAxios";
+import {
+  FlexBox,
+  SendFlexMessageToLineParams,
+  SendMessageToLineParams,
+} from "@/types/lineTypes";
 
-export async function sendMessageToLine(
-  SendMessageToLineParams: SendMessageToLineParams
-) {
+export async function sendMessageToLine(data: SendMessageToLineParams) {
   try {
-    const response = await apiClient.post(
-      `/push-message`,
-      SendMessageToLineParams
-    );
+    const response = await authAxios.post(`/line/send-text-message`, data);
+    return response.data; // ส่งเฉพาะข้อมูลที่ได้รับจาก API
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message || "แก้ไขไม่สำเร็จ");
+    }
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
+  }
+}
+
+export async function sendFlexMessageToLine(data: SendFlexMessageToLineParams) {
+  try {
+    const response = await authAxios.post(`/line/send-flex-message`, data);
     return response.data; // ส่งเฉพาะข้อมูลที่ได้รับจาก API
   } catch (error) {
     if (axios.isAxiosError(error)) {

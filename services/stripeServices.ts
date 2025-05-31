@@ -1,5 +1,5 @@
 import axios from "axios";
-import apiClient from "./apiClient";
+import authAxios from "@/lib/authAxios";
 import {
   CreatePaymentIntentResponse,
   CreatePaymentIntentParam,
@@ -9,7 +9,7 @@ export async function createPaymentIntent(
   CreateData: CreatePaymentIntentParam
 ): Promise<{ data: CreatePaymentIntentResponse; message: string }> {
   try {
-    const response = await apiClient.post(
+    const response = await authAxios.post(
       `/stripe/payment_intents`,
       CreateData
     );
@@ -29,7 +29,7 @@ export async function getPaymentIntentById(
   paymentIntentId: string
 ): Promise<{ data: any }> {
   try {
-    const response = await apiClient.get(
+    const response = await authAxios.get(
       `/stripe/payment_intents/${paymentIntentId}`
     );
     console.log("get payment intent==>", response.data);

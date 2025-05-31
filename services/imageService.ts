@@ -1,10 +1,10 @@
 import axios from "axios";
-import apiClient from "./apiClient";
+import authAxios from "@/lib/authAxios";
 import { Image } from "@/types/baseTypes";
 
 export const getAllImages = async (): Promise<{ data: Image[] }> => {
   try {
-    const response = await apiClient.get(`/images/all`);
+    const response = await authAxios.get(`/images`);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -14,11 +14,36 @@ export const getAllImages = async (): Promise<{ data: Image[] }> => {
   }
 };
 
+export const uploadSingleImage = async (
+  file: File,
+  tag?: string
+): Promise<{ data: Image }> => {
+  try {
+    const formData = new FormData();
+    formData.append("file", file); // เพิ่มไฟล์ใน FormData
+    tag && formData.append("tag", tag); // ส่ง tag ไปพร้อมรูป
+
+    const response = await authAxios.post(`/images/single`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || "อัปโหลดรูปภาพไม่สำเร็จ"
+      );
+    }
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
+  }
+};
+
 export const uploadImage = async (
   formData: FormData
 ): Promise<{ data: Image }> => {
   try {
-    const response = await apiClient.post(`/images`, formData, {
+    const response = await authAxios.post(`/images`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -39,15 +64,7 @@ export const updateImage = async (
   tag: string
 ): Promise<{ data: Image }> => {
   try {
-    const response = await apiClient.put(
-      `/images/${imageId}`,
-      { tag },
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
+    const response = await authAxios.patch(`/images/${imageId}`, { tag });
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -59,11 +76,9 @@ export const updateImage = async (
   }
 };
 
-export const deleteImages = async (imageIds: string[]): Promise<void> => {
+export const deleteImage = async (imageId: string): Promise<void> => {
   try {
-    const response = await apiClient.delete(`/images`, {
-      data: { ids: imageIds },
-    });
+    const response = await authAxios.delete(`/images/single/${imageId}`);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -73,9 +88,11 @@ export const deleteImages = async (imageIds: string[]): Promise<void> => {
   }
 };
 
-export const deleteImage = async (imageId: string): Promise<void> => {
+export const deleteImages = async (imageIds: string[]): Promise<void> => {
   try {
-    const response = await apiClient.delete(`/images/${imageId}`);
+    const response = await authAxios.delete(`/images/multiple`, {
+      data: { ids: imageIds },
+    });
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {

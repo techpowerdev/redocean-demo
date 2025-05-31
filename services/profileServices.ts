@@ -1,12 +1,12 @@
 import axios from "axios";
-import apiClient from "./apiClient";
+import authAxios from "@/lib/authAxios";
 import { EditProfileParam, EditProfileResponse } from "@/types/userTypes";
 
 export async function editProfile(
   profileData: EditProfileParam
 ): Promise<EditProfileResponse> {
   try {
-    const response = await apiClient.patch(`/users/edit-profile`, profileData);
+    const response = await authAxios.patch(`/users/edit-profile`, profileData);
     return response.data; // ส่งเฉพาะข้อมูลที่ได้รับจาก API
   } catch (error) {
     if (axios.isAxiosError(error)) {

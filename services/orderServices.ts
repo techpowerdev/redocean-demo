@@ -4,19 +4,40 @@ import {
   CreateOrderWithPaymentIntentResponse,
   GetAllOrdersResponse,
   GetOneOrderResponse,
-  GetOrderSummaryOfGroupBuyingResponse,
-  GetPromotionOrderResponse,
+  GetOrderVouchersOfUserParams,
+  GetOrderVouchersOfUserResponse,
+  // GetOrderSummaryOfGroupBuyingResponse,
+  // GetPromotionOrderResponse,
+  GetPromotionOrderSummaryResponse,
   GetUserOrdersResponse,
+  SummaryOrderBeforeCheckoutParams,
+  SummaryOrderBeforeCheckoutResponse,
 } from "@/types/orderTypes";
-import apiClient from "@/services/apiClient";
+import authAxios from "@/lib/authAxios";
 import axios from "axios";
 import { CartItem } from "@/types/baseTypes";
+
+export async function summaryOrderBeforeCheckout(
+  CreateData: SummaryOrderBeforeCheckoutParams
+): Promise<SummaryOrderBeforeCheckoutResponse> {
+  try {
+    const response = await authAxios.post(`/orders/validate`, CreateData);
+    return response.data; // ดึง data จาก axios แล้วส่งเฉพาะข้อมูลที่ได้รับจาก API
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || "สร้างรายการคำสั่งซื้อไม่สำเร็จ"
+      );
+    }
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
+  }
+}
 
 export async function createOrderWithPaymentIntent(
   CreateData: CreateOrderWithPaymentIntentParams
 ): Promise<CreateOrderWithPaymentIntentResponse> {
   try {
-    const response = await apiClient.post(`/orders`, CreateData);
+    const response = await authAxios.post(`/orders`, CreateData);
     return response.data; // ดึง data จาก axios แล้วส่งเฉพาะข้อมูลที่ได้รับจาก API
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -32,7 +53,7 @@ export async function cancelOrderAndRefund(
   orderId: string
 ): Promise<{ data: any; message: string }> {
   try {
-    const response = await apiClient.patch(`/orders/${orderId}/cancel`);
+    const response = await authAxios.patch(`/orders/${orderId}/cancel`);
     return response.data; // ดึง data จาก axios แล้วส่งเฉพาะข้อมูลที่ได้รับจาก API
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -48,7 +69,7 @@ export async function captureOrder(
   orderId: string
 ): Promise<{ data: any; message: string }> {
   try {
-    const response = await apiClient.post(`/orders/${orderId}/capture`);
+    const response = await authAxios.post(`/orders/${orderId}/capture`);
     return response.data; // ดึง data จาก axios แล้วส่งเฉพาะข้อมูลที่ได้รับจาก API
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -60,7 +81,7 @@ export async function captureOrder(
 
 // export const createOrder = async (data: CreateOder) => {
 //   try {
-//     const response = await apiClient.post(`/orders`, data);
+//     const response = await authAxios.post(`/orders`, data);
 //     return response.data;
 //   } catch (error) {
 //     if (axios.isAxiosError(error)) {
@@ -74,7 +95,23 @@ export async function captureOrder(
 
 export const getUserOrders = async (): Promise<GetUserOrdersResponse> => {
   try {
-    const response = await apiClient.get(`/users/orders/all`);
+    const response = await authAxios.get(`/users/orders`);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || "ดึงข้อมูลคำสั่งซื้อไม่สำเร็จ"
+      );
+    }
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
+  }
+};
+
+export const getOrderVouchersOfUser = async (
+  data: GetOrderVouchersOfUserParams
+): Promise<GetOrderVouchersOfUserResponse> => {
+  try {
+    const response = await authAxios.post(`/users/orders/order-vouchers`, data);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -91,10 +128,9 @@ export const changeTrackingNumber = async (
   trackingNumber: string
 ): Promise<void> => {
   try {
-    const response = await apiClient.patch(
-      `/orders/${orderId}/change-trackingnumber`,
-      { trackingNumber }
-    );
+    const response = await authAxios.patch(`/orders/${orderId}`, {
+      trackingNumber,
+    });
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -108,7 +144,7 @@ export const changeTrackingNumber = async (
 
 export const getOneOrder = async (id: string): Promise<GetOneOrderResponse> => {
   try {
-    const response = await apiClient.get(`/orders/${id}`);
+    const response = await authAxios.get(`/orders/${id}`);
     console.log("get one order === ", response.data);
     return response.data;
   } catch (error) {
@@ -123,7 +159,7 @@ export const getOneOrder = async (id: string): Promise<GetOneOrderResponse> => {
 
 export const getAllOrders = async (): Promise<GetAllOrdersResponse> => {
   try {
-    const response = await apiClient.get(`/orders/all`);
+    const response = await authAxios.get(`/orders`);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -135,12 +171,12 @@ export const getAllOrders = async (): Promise<GetAllOrdersResponse> => {
   }
 };
 
-export const getOrderSummaryOfGroupBuying = async (
-  promotionActivityId: string | null
-): Promise<GetOrderSummaryOfGroupBuyingResponse> => {
+export const getPromotionOrderSummary = async (
+  promotionActivityId: string
+): Promise<GetPromotionOrderSummaryResponse> => {
   try {
-    const response = await apiClient.get(
-      `/orders/summary/today/${promotionActivityId}`
+    const response = await authAxios.get(
+      `/orders/promotion-orders/${promotionActivityId}`
     );
     return response.data;
   } catch (error) {
@@ -165,27 +201,27 @@ export type SearchFilters = {
 };
 
 // get order on each promotion
-export const getPromotionOrder = async (
-  promotionActivityId: string
-): Promise<GetPromotionOrderResponse> => {
-  try {
-    // เรียก API ด้วย axios
-    const response = await apiClient.get(
-      `/orders/promotion-orders/${promotionActivityId}`
-    );
-    // ส่งคืนผลลัพธ์
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      throw new Error(error.response?.data?.message || "ดึงข้อมูลไม่สำเร็จ");
-    }
-    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
-  }
-};
+// export const getPromotionOrder = async (
+//   promotionActivityId: string
+// ): Promise<GetPromotionOrderResponse> => {
+//   try {
+//     // เรียก API ด้วย axios
+//     const response = await authAxios.get(
+//       `/orders/promotion-orders/${promotionActivityId}`
+//     );
+//     // ส่งคืนผลลัพธ์
+//     return response.data;
+//   } catch (error) {
+//     if (axios.isAxiosError(error)) {
+//       throw new Error(error.response?.data?.message || "ดึงข้อมูลไม่สำเร็จ");
+//     }
+//     throw new Error("เกิดข้อผิดพลาดบางอย่าง");
+//   }
+// };
 
 export const checkStockAndPromotionForCheckout = async (data: CartItem[]) => {
   try {
-    const response = await apiClient.post(
+    const response = await authAxios.post(
       `/products/variants/stock/for-checkout`,
       { cartItems: data }
     );
@@ -277,7 +313,7 @@ export async function createOrderFullfillment(
 
 export async function changeOrderStatus(id: string, status: string) {
   try {
-    const response = await apiClient.patch(`/orders/${id}/change-status`, {
+    const response = await authAxios.patch(`/orders/${id}`, {
       status,
     });
     return response.data;

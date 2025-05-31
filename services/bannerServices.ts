@@ -1,35 +1,19 @@
 import axios from "axios";
-import apiClient from "./apiClient";
+import authAxios from "@/lib/authAxios";
 import {
-  CreateBannerResponse,
+  CreateManyBannerParams,
+  CreateManyBannerResponse,
   GetAllBannersResponse,
-  UpdateBannerOrderParam,
-  UpdateBannerOrderResponse,
+  UpdateManyBannerParams,
+  UpdateManyBannerResponse,
 } from "@/types/bannerTypes";
-
-export const getAllBanners = async (): Promise<GetAllBannersResponse> => {
-  try {
-    const response = await apiClient.get(`/banners/all`);
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      throw new Error(
-        error.response?.data?.message || "ดึงรูปภาพแบนเนอร์ไม่สำเร็จ"
-      );
-    }
-    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
-  }
-};
+import publicAxios from "@/lib/publicAxios";
 
 export const createBanner = async (
-  formData: FormData
-): Promise<CreateBannerResponse> => {
+  data: CreateManyBannerParams
+): Promise<CreateManyBannerResponse> => {
   try {
-    const response = await apiClient.post(`/banners`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    const response = await authAxios.post(`/banners/bulk`, data);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -41,11 +25,25 @@ export const createBanner = async (
   }
 };
 
-export const updateBannerOrder = async (
-  banners: UpdateBannerOrderParam[]
-): Promise<UpdateBannerOrderResponse> => {
+export const getAllBanners = async (): Promise<GetAllBannersResponse> => {
   try {
-    const response = await apiClient.put(`/banners`, { banners });
+    const response = await authAxios.get(`/banners`);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || "ดึงรูปภาพแบนเนอร์ไม่สำเร็จ"
+      );
+    }
+    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
+  }
+};
+
+export const updateBannerOrder = async (
+  data: UpdateManyBannerParams
+): Promise<UpdateManyBannerResponse> => {
+  try {
+    const response = await authAxios.patch(`/banners/update/bulk`, data);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -59,7 +57,7 @@ export const updateBannerOrder = async (
 
 export const deleteBanner = async (bannerId: string): Promise<void> => {
   try {
-    const response = await apiClient.delete(`/banners/${bannerId}`);
+    const response = await authAxios.delete(`/banners/${bannerId}`);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {

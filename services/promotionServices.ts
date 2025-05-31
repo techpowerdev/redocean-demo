@@ -1,54 +1,20 @@
 import axios from "axios";
-import apiClient from "./apiClient";
+import authAxios from "@/lib/authAxios";
 import {
-  AddPromotionResponse,
-  ChangePromotionStatusResponse,
+  CreatePromotionParams,
+  CreatePromotionResponse,
   GetAllPromotionsResponse,
   GetPromotionByIdResponse,
-  GetPromotionTodayResponse,
-  GetUpcomingPromotionResponse,
+  UpdatePromotionParams,
   UpdatePromotionResponse,
 } from "@/types/promotionTypes";
+import publicAxios from "@/lib/publicAxios";
 
-export const getPromotionToday =
-  async (): Promise<GetPromotionTodayResponse> => {
-    try {
-      const response = await apiClient.get(`/promotions/today`);
-      return response.data;
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        throw new Error(
-          error.response?.data?.message || "ไม่สามารถดึงข้อมูลโปรโมชั่นได้"
-        );
-      }
-      throw new Error("เกิดข้อผิดพลาดบางอย่าง");
-    }
-  };
-
-export const getUpcomingPromotion =
-  async (): Promise<GetUpcomingPromotionResponse> => {
-    try {
-      const response = await apiClient.get(`/promotions/upcoming`);
-      return response.data;
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        throw new Error(
-          error.response?.data?.message || "ไม่สามารถดึงข้อมูลโปรโมชั่นได้"
-        );
-      }
-      throw new Error("เกิดข้อผิดพลาดบางอย่าง");
-    }
-  };
-
-export const addPromotion = async (
-  formData: FormData
-): Promise<AddPromotionResponse> => {
+export const createPromotion = async (
+  data: CreatePromotionParams
+): Promise<CreatePromotionResponse> => {
   try {
-    const response = await apiClient.post(`/promotions`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    const response = await authAxios.post(`/promotions`, data);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -60,9 +26,15 @@ export const addPromotion = async (
   }
 };
 
-export const getAllPromotions = async (): Promise<GetAllPromotionsResponse> => {
+export type PromotionFilter = "today" | "upcoming" | "all";
+
+export const getPromotions = async (
+  filter: PromotionFilter
+): Promise<GetAllPromotionsResponse> => {
   try {
-    const response = await apiClient.get(`/promotions/all`);
+    const response = await publicAxios.get<GetAllPromotionsResponse>(
+      `/promotions/?filter=${filter}`
+    );
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -70,7 +42,7 @@ export const getAllPromotions = async (): Promise<GetAllPromotionsResponse> => {
         error.response?.data?.message || "ไม่สามารถดึงข้อมูลโปรโมชั่นได้"
       );
     }
-    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
+    throw new Error("เกิดข้อผิดพลาดที่ไม่คาดคิด");
   }
 };
 
@@ -78,7 +50,7 @@ export const getPromotionById = async (
   promotionId: string
 ): Promise<GetPromotionByIdResponse> => {
   try {
-    const response = await apiClient.get(`/promotions/${promotionId}`);
+    const response = await authAxios.get(`/promotions/${promotionId}`);
 
     return response.data;
   } catch (error) {
@@ -93,14 +65,10 @@ export const getPromotionById = async (
 
 export const updatePromotion = async (
   id: string,
-  formData: FormData
+  data: UpdatePromotionParams
 ): Promise<UpdatePromotionResponse> => {
   try {
-    const response = await apiClient.put(`/promotions/${id}`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    const response = await authAxios.patch(`/promotions/${id}`, data);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -112,28 +80,9 @@ export const updatePromotion = async (
   }
 };
 
-export const changePromotionStatus = async (
-  id: string,
-  status: boolean
-): Promise<ChangePromotionStatusResponse> => {
-  try {
-    const response = await apiClient.patch(`/promotions/change-status/${id}`, {
-      isActive: status,
-    });
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      throw new Error(
-        error.response?.data?.message || "แก้ไขสถานะโปรโมชั่นไม่สำเร็จ"
-      );
-    }
-    throw new Error("เกิดข้อผิดพลาดบางอย่าง");
-  }
-};
-
 export const deletePromotion = async (promotionId: string): Promise<void> => {
   try {
-    const response = await apiClient.delete(`/promotions/${promotionId}`);
+    const response = await authAxios.delete(`/promotions/${promotionId}`);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {

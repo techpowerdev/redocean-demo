@@ -8,13 +8,13 @@ import {
   UpdateAddressResponse,
 } from "@/types/addressTypes";
 import axios from "axios";
-import apiClient from "./apiClient";
+import authAxios from "@/lib/authAxios";
 
 export const createAddress = async (
   data: CreateAddressParam
 ): Promise<CreateAddressResponse> => {
   try {
-    const response = await apiClient.post(`/addresses`, data);
+    const response = await authAxios.post(`/addresses`, data);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -29,7 +29,7 @@ export const updateAddress = async (
   data: UpdateAddressParam
 ): Promise<UpdateAddressResponse> => {
   try {
-    const response = await apiClient.put(`/addresses/${id}`, data);
+    const response = await authAxios.patch(`/addresses/${id}`, data);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -41,11 +41,11 @@ export const updateAddress = async (
 
 export const changeActiveAddress = async (
   id: string,
-  isActive: boolean
+  isDefault: boolean
 ): Promise<ChangeActiveAddressResponse> => {
   try {
-    const response = await apiClient.patch(`/addresses/${id}`, {
-      isActive,
+    const response = await authAxios.patch(`/addresses/${id}`, {
+      isDefault,
     });
     return response.data;
   } catch (error) {
@@ -62,7 +62,7 @@ export const deleteAddress = async (
   id: string
 ): Promise<DeleteAddressResponse> => {
   try {
-    const response = await apiClient.delete(`/addresses/${id}`);
+    const response = await authAxios.delete(`/addresses/${id}`);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -74,7 +74,7 @@ export const deleteAddress = async (
 
 export const getAllAddresses = async (): Promise<GetAllAddressesResponse> => {
   try {
-    const response = await apiClient.get(`/addresses`);
+    const response = await authAxios.get(`/addresses`);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
