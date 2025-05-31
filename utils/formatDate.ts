@@ -40,6 +40,17 @@ export const formatDateTimePromotion = (dateInput: Date | string): string => {
 
   return `${formattedDate}, ${formattedTime}`;
 };
+export const formatDateTH = (dateInput: Date | string): string => {
+  const date = typeof dateInput === "string" ? new Date(dateInput) : dateInput;
+
+  const formattedDate = date.toLocaleDateString("th-TH", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+
+  return `${formattedDate}`;
+};
 
 export const convertUtcToLocal = (
   utcDate: string,
