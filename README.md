@@ -6,9 +6,21 @@
 
 # Token/authentication
 
-- apiClient : axios แบบที่ใช้ token จาก cookie ที่ส่งมาจาก api
+- getSession เรียกใช้ได้ใน layout หรือ server component
 
-จะใช้ได้กับ client component เท่านั้น ถ้ามีการเรียก api ที่ server component ได้ไม่มี token ใน cookie ส่งไปด้วย (อาจต้องใช้ middleware ช่วยได้หรือไม่ ?)
+- function fetch api ที่สร้างจาก authAxios (axios instance) ใช้ได้ถูกต้อง และรองรับ refresh token ได้ภายใต้ client component เท่านั้น ไม่สามารถใช้ใน server component หรือ page ตรงๆได้
+
+- authAxios : axios แบบที่ใช้ accessToken จาก cookie ที่ส่งมาจาก api
+
+จะใช้ได้กับ client component เท่านั้น (ใช้ useEffect เรียก api) ถ้ามีการเรียก api ที่ server component ได้ไม่มี token ใน cookie ส่งไปด้วย (อาจต้องใช้ middleware ช่วยได้หรือไม่ ?)
+
+- authAxios : axios แบบที่แนบ accessToken จาก session ใน cookie ของ nextjs ที่สร้างไว้
+
+จะใช้ได้กับ client component เท่านั้น (ใช้ useEffect เรียก api) ถ้ามีการเรียก api ที่ server component ได้ไม่มี token ใน cookie ส่งไปด้วย (อาจต้องใช้ middleware ช่วยได้หรือไม่ ?) อาจเกิด error: 401 authorized และ ui ค้าง error ได้
+
+- การอ่านหรือเปลี่ยนแปลงค่า cookie ใน nextjs จะต้องทำผ่าน server action หรือ route handler เท่านั้น
+
+การพยายาม set cookie (เช่น setSession() หรือ cookies().set(...)) ใน Server Component หรือฟังก์ชัน fetch ธรรมดา ใน Next.js ไม่อนุญาต ใน App Router และจะ error
 
 # ui
 
@@ -39,3 +51,18 @@
 # ปัญหาโปรโมชั่นรวมออเดอร์
 
 ## หากมีสินค้าที่กำลังจัดโปรรวมออเดอร์ในตะกร้าอยู่ก่อนหน้านี้ ตอนสั่งจากตะกร้า มันจะได้ราคานั้นๆในโปรรวมออเดอร์ไปเลย ทำไง? เช็คและลบออกจากตะกร้าตอนซื้อในโปรรวมออเดอร์ไหม หรือลบตอนดึงตะกร้าแล้วพบว่าติดโปรรวมออเดอร์อยู่ หรือตอนดึงโปรมาอัปเดตตะกร้า ให้ยกเว้น type : groupbuying (แก้ได้โดยไม่ต้อง apply โปรในตะกร้าอัตโนมัติ แต่ apply เมื่อกดเพิ่มสินค้าจากเวลาจัดโปร แล้วอัปเดตไปในตะกร้าอีกที)
+
+# แก้ bug ใน splidejs (slide lib)
+
+## ให้เพิ่ม "types": "./dist/types/index.d.ts" ใน package.json ใน node_modules/splidejs/react-splide/package.json
+
+### "exports": {
+
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "require": "./dist/js/react-splide.cjs.js",
+      "import": "./dist/js/react-splide.esm.js",
+      "default": "./dist/js/react-splide.esm.js"
+    },
+
+}
