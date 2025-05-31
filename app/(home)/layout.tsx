@@ -50,7 +50,7 @@ export default function RootLayout({
           <Header />
 
           {/* Main content with scroll */}
-          <main className="flex-1 overflow-y-auto p-2">{children}</main>
+          <main className="flex-1 overflow-y-auto">{children}</main>
 
           {/* Footer */}
           <MobileMenu />
