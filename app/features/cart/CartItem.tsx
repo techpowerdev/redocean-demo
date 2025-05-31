@@ -24,24 +24,26 @@ export default function CartItem({ item }: Props) {
 
   return (
     <div className="flex flex-col items-start gap-4 border-t-[1.5px] border-slate-200 py-4 ">
-      <div className="w-full flex justify-between items-center">
+      <div className="w-full flex justify-between items-center gap-2">
         <div className="relative min-w-[70px] aspect-square">
           <Image
             src={
-              item?.image
-                ? `${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}${item.image}`
+              item?.productModel?.image
+                ? `${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}/${item?.productModel?.image}`
                 : "/no-image.png" // A fallback image path
             }
-            alt={item?.name || "Product image"}
+            alt={item?.productModel?.name || "Product image"}
             fill
             className="object-contain"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         </div>
-        <div className="w-full flex gap-2 flex-wrap">
-          <div>{item.name}</div>
+        <div className="w-full flex flex-col gap-2 flex-wrap">
+          <div>{item.productItem?.name}</div>
 
-          <div>{item.variantOptions && `${item.variantOptions}`}</div>
+          {!item.productModel?.isDefault && (
+            <div>{item.productModel?.name}</div>
+          )}
         </div>
 
         <Button

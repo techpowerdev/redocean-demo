@@ -9,8 +9,9 @@ import { getUserCart } from "@/services/cartServices";
 import CartItem from "@/app/features/cart/CartItem";
 import { useCartServerStore } from "@/state-stores/cartServerStore";
 import { ShoppingCart } from "lucide-react";
-import PlaceOrderCheckout from "@/app/features/checkout/forms/PlaceOrderCheckout";
 import { CreateOrderItem } from "@/types/orderTypes";
+import PlaceOrder from "../checkout/forms/PlaceOrder";
+import { getCart } from "@/lib/actions";
 
 export default function CartClient() {
   // cart
@@ -21,7 +22,8 @@ export default function CartClient() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getUserCart();
+        // const response = await getUserCart();
+        const response = await getCart();
         console.log("cart", response.data);
         setCart(response.data);
       } catch (error) {
@@ -38,12 +40,20 @@ export default function CartClient() {
 
   const items: CreateOrderItem[] =
     cart?.cartItems?.map(
-      ({ productId, sku, quantity, promotionActivityId, promotionType }) => ({
-        productId,
-        sku,
+      ({
+        productItemId,
+        productModelId,
         quantity,
-        promotionActivityId,
         promotionType,
+        promotionId,
+        promotionActivityId,
+      }) => ({
+        productItemId,
+        productModelId,
+        quantity,
+        promotionType,
+        promotionId,
+        promotionActivityId,
       })
     ) ?? [];
 
@@ -75,7 +85,7 @@ export default function CartClient() {
             <span>{formatPrice(cart.cartTotalAmount)}</span>
           </div>
           <p className="text-slate-500">ยังไม่รวมค่าธรรมเนียมและค่าขนส่ง</p>
-          <PlaceOrderCheckout cartItems={items} />
+          <PlaceOrder cartItems={items} />
         </div>
       </div>
     </div>
