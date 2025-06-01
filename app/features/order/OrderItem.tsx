@@ -15,20 +15,22 @@ export default function OrderItem({ item }: ItemContentProps) {
         <Image
           src={
             item?.image
-              ? `${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}${item.image}`
+              ? `${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}/${item.image}`
               : "/no-image.png" // A fallback image path
           }
-          alt={item?.name || "No image available"}
+          alt={item?.productName || "No image available"}
           fill
           className="object-contain"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
       </div>
       <div className="text-sm pl-2">
-        <p className="font-semibold">{truncateText(75, item.name)}</p>
-        <div className="my-2 bg-gray-200 px-2 w-fit rounded-sm">
-          {item.variantOptions}
-        </div>
+        <p className="font-semibold">{truncateText(75, item.productName)}</p>
+        {item.modelName && (
+          <div className="my-2 bg-gray-200 px-2 w-fit rounded-sm">
+            {item.modelName}
+          </div>
+        )}
         <div className="mt-4">
           <div className="flex justify-between items-center">
             <div className="flex flex-col gap-2">

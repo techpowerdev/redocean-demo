@@ -1,7 +1,6 @@
 "use client";
 
 import { OrderColumn } from "@/app/features/order/admin/OrderColumn";
-import Loading from "@/components/shared/Loading";
 import { DataTable } from "@/components/shared/table/DataTable";
 import { getAllOrders } from "@/services/orderServices";
 import { useAdminOrderStore } from "@/state-stores/admin/adminOrderStore";
@@ -20,10 +19,6 @@ export default function Orders() {
     fetchOrders();
   }, [setOrders]);
 
-  if (!orders) {
-    <Loading />;
-  }
-
   return (
     <div className="hidden h-full flex-1 flex-col space-y-8 p-2 md:p-4 md:flex">
       <div className="flex items-center justify-between space-y-2">
@@ -36,7 +31,7 @@ export default function Orders() {
       {orders ? (
         <DataTable data={orders} columns={OrderColumn} />
       ) : (
-        <div>ไม่พบข้อมูล</div>
+        <div className="text-red-500">ยังไม่มีคำสั่งซื้อ</div>
       )}
     </div>
   );
