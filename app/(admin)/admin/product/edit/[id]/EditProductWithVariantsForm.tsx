@@ -43,8 +43,6 @@ type Props = {
 
 export default function EditProductWithVariantsForm({ productItem }: Props) {
   // global state
-  const setProductLists = useProductStore((state) => state.setProductLists);
-
   const selectProduct = useProductStore((state) => state.selectProduct);
 
   // local state
