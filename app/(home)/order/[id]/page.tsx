@@ -31,39 +31,6 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
 
   const router = useRouter();
 
-  useEffect(() => {
-    const fetchOrder = async () => {
-      const order = await getOneOrder(params.id);
-      setOrder(order.data);
-    };
-    fetchOrder();
-  }, [params.id]);
-
-  useEffect(() => {
-    if (!order) return;
-
-    getVoucherCard();
-
-    const orderTimestamp = new Date(order?.createdAt).getTime(); // แปลงเวลาที่รับมาเป็น timestamp
-    const expiryTimestamp = orderTimestamp + 15 * 60 * 1000; // บวก 15 นาที
-
-    const updateTimer = () => {
-      const currentTime = new Date().getTime();
-      const remainingTime = expiryTimestamp - currentTime;
-
-      if (remainingTime <= 0) {
-        setTimeLeft(null); // หมดเวลาแล้ว
-      } else {
-        setTimeLeft(Math.floor(remainingTime / 1000));
-      }
-    };
-
-    updateTimer(); // อัปเดตทันที
-    const timer = setInterval(updateTimer, 1000);
-
-    return () => clearInterval(timer);
-  }, [order]);
-
   // แปลงวินาทีเป็น mm:ss
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
@@ -74,12 +41,11 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
     )}`;
   };
 
-  if (!order) {
-    return <Loading />;
-  }
-
   const checkout = async () => {
-    console.log("checkout");
+    if (!order) {
+      return;
+    }
+
     const paymentIntent = order.payments?.find(
       (payment) => payment.paymentState === "initial_payment"
     );
@@ -142,7 +108,6 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
   const getVoucherCard = async () => {
     if (!order || !order.orderVouchers?.[0]?.voucherGroup?.id) return;
     try {
-      console.log(order);
       const result = await getOrderVouchersOfUser({
         orderId: order.id,
         voucherGroupId: order.orderVouchers[0].voucherGroup.id,
@@ -154,6 +119,54 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    const fetchOrder = async () => {
+      const order = await getOneOrder(params.id);
+      setOrder(order.data);
+    };
+    fetchOrder();
+  }, [params.id]);
+
+  useEffect(() => {
+    if (!order) return;
+
+    const fetchVoucher = async () => {
+      try {
+        await getVoucherCard();
+      } catch (err) {
+        console.error("Failed to fetch voucher:", err);
+      }
+    };
+
+    fetchVoucher();
+  }, [order]);
+
+  useEffect(() => {
+    if (!order) return;
+    const orderTimestamp = new Date(order?.createdAt).getTime(); // แปลงเวลาที่รับมาเป็น timestamp
+    const expiryTimestamp = orderTimestamp + 15 * 60 * 1000; // บวก 15 นาที
+
+    const updateTimer = () => {
+      const currentTime = new Date().getTime();
+      const remainingTime = expiryTimestamp - currentTime;
+
+      if (remainingTime <= 0) {
+        setTimeLeft(null); // หมดเวลาแล้ว
+      } else {
+        setTimeLeft(Math.floor(remainingTime / 1000));
+      }
+    };
+
+    updateTimer(); // อัปเดตทันที
+    const timer = setInterval(updateTimer, 1000);
+
+    return () => clearInterval(timer);
+  }, [order]);
+
+  if (!order) {
+    return <Loading />;
+  }
 
   return (
     <Container>
