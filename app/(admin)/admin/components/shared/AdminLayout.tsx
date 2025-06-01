@@ -20,7 +20,9 @@ import {
   // CircleX,
   Flame,
   GalleryVertical,
+  Gift,
   Images,
+  LayoutList,
   // LayoutDashboard,
   LucideIcon,
   // PackageOpen,
@@ -113,13 +115,7 @@ export function AdminLayout({
       icon: ShoppingCart,
       variant: "default",
     },
-    // {
-    //   href: "/admin/packing",
-    //   title: "กำลังแพ็ค",
-    //   label: "99",
-    //   icon: PackageOpen,
-    //   variant: "default",
-    // },
+
     // {
     //   href: "/admin/shipping",
     //   title: "อยู่ระหว่างจัดส่ง",
@@ -157,6 +153,20 @@ export function AdminLayout({
       title: "สินค้า",
       // label: `${productLists ? productLists.length : 0}`,
       icon: ShoppingBag,
+      variant: "default",
+    },
+    {
+      href: "/admin/category",
+      title: "หมวดหมู่",
+      // label: "99",
+      icon: LayoutList,
+      variant: "default",
+    },
+    {
+      href: "/admin/voucher",
+      title: "Gift Voucher",
+      // label: `${productLists ? productLists.length : 0}`,
+      icon: Gift,
       variant: "default",
     },
 
