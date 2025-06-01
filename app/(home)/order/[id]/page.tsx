@@ -2,9 +2,13 @@
 
 import { formatPrice } from "@/utils/formatPrice";
 import { truncateText } from "@/utils/truncateText";
-import { cancelOrderAndRefund, getOneOrder } from "@/services/orderServices";
+import {
+  cancelOrderAndRefund,
+  getOneOrder,
+  getOrderVouchersOfUser,
+} from "@/services/orderServices";
 import { formatDateTimePromotion } from "@/utils/formatDate";
-import { Order } from "@/types/baseTypes";
+import { Order, OrderVoucher } from "@/types/baseTypes";
 import Container from "@/components/shared/Container";
 import { useEffect, useState } from "react";
 import Loading from "@/components/shared/Loading";
@@ -16,9 +20,11 @@ import {
 } from "@/services/stripeServices";
 import { useRouter } from "next/navigation";
 import { statuses } from "@/app/features/order/data/OrderStatuses";
+import GiftVoucherCard from "@/app/features/voucher/GiftVoucherCard";
 
 export default function OrderDetail({ params }: { params: { id: string } }) {
   const [order, setOrder] = useState<Order | null>(null);
+  const [orderVouchers, setOrderVouchers] = useState<OrderVoucher[]>([]);
   const [loading, setLoading] = useState(false);
   const [canceling, setCanceling] = useState(false);
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
@@ -35,6 +41,8 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
 
   useEffect(() => {
     if (!order) return;
+
+    getVoucherCard();
 
     const orderTimestamp = new Date(order?.createdAt).getTime(); // แปลงเวลาที่รับมาเป็น timestamp
     const expiryTimestamp = orderTimestamp + 15 * 60 * 1000; // บวก 15 นาที
@@ -54,7 +62,7 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
     const timer = setInterval(updateTimer, 1000);
 
     return () => clearInterval(timer);
-  }, [order?.createdAt]);
+  }, [order]);
 
   // แปลงวินาทีเป็น mm:ss
   const formatTime = (seconds: number) => {
@@ -71,6 +79,7 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
   }
 
   const checkout = async () => {
+    console.log("checkout");
     const paymentIntent = order.payments?.find(
       (payment) => payment.paymentState === "initial_payment"
     );
@@ -98,8 +107,11 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
         paymentState: "additional_payment",
       });
 
-      if (data.clientSecret) {
-        router.push(`/checkout/${data.clientSecret}`);
+      const clientSecret = data?.client_secret;
+
+      if (clientSecret) {
+        console.log("clientSecret == ", clientSecret);
+        router.push(`/checkout/${clientSecret}`);
       }
     } catch (error) {
       console.log("error create paymentIntent ==", error);
@@ -127,11 +139,27 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
     }
   };
 
+  const getVoucherCard = async () => {
+    if (!order || !order.orderVouchers?.[0]?.voucherGroup?.id) return;
+    try {
+      console.log(order);
+      const result = await getOrderVouchersOfUser({
+        orderId: order.id,
+        voucherGroupId: order.orderVouchers[0].voucherGroup.id,
+      });
+      if (result.data.orderVouchers) {
+        setOrderVouchers(result.data.orderVouchers);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <Container>
       {/* <MobileContainer> */}
-      <div className="p-2 md:p-8 bg-white text-black">
-        <h1 className="text-xl md:text-2xl font-bold mb-4 text-center">
+      <div className="bg-white text-black">
+        <h1 className="text-xl md:text-2xl font-bold my-4 text-center">
           รายละเอียดคำสั่งซื้อ
         </h1>
 
@@ -146,15 +174,16 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
             {formatDateTimePromotion(order?.createdAt.toString())}
           </p>
           <p className="flex flex-wrap gap-2">
-            <span className="font-semibold">เลขติดตามพัสดุ:</span>
-            <span>{order?.trackingNumber ?? "ยังไม่มีข้อมูล"}</span>
-          </p>
-          <p className="flex flex-wrap gap-2">
             <span className="font-semibold">สถานะ:</span>
             <span>
               {statuses.find((status) => status.value === order.status)
                 ?.label || "อยู่ระหว่างดำเนินการ"}
             </span>
+          </p>
+          <p className="flex flex-wrap gap-2">
+            <span className="font-semibold">เลขติดตามพัสดุ:</span>
+            {/* <span>{order?.trackingNumber ?? "ไม่มีข้อมูล"}</span> */}
+            <span>{order?.trackingNumber}</span>
           </p>
           {order.cancelReason && (
             <p className="flex flex-wrap gap-2">
@@ -199,19 +228,21 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                           <ResponsiveImage
                             src={
                               item?.image
-                                ? `${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}${item.image}`
+                                ? `${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}/${item.image}`
                                 : "/no-image.jpg"
                             }
-                            alt={item.name ?? "Product image"}
+                            alt={item.productName ?? "Product image"}
                           />
                         </div>
                         <div>
                           <p className="font-semibold">
-                            {truncateText(30, item.name)}
+                            {truncateText(30, item.productName)}
                           </p>
-                          <p className="text-sm text-gray-600">
-                            {item.variantOptions}
-                          </p>
+                          {item.modelName && (
+                            <p className="text-sm text-gray-600">
+                              {item.modelName}
+                            </p>
+                          )}
                         </div>
                       </div>
                     </td>
@@ -234,8 +265,60 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                     </td>
                   </tr>
                 ))}
+                {order.orderVouchers?.length ? (
+                  <tr className="border-b">
+                    <td className="border border-gray-300 px-2 py-2 md:px-4">
+                      <div className="flex items-center gap-2 md:gap-4">
+                        <div>
+                          <p className="font-semibold">
+                            {truncateText(
+                              30,
+                              `บัตรกำนัล ${order.orderVouchers?.[0].voucherGroup?.storeName}`
+                            )}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            มูลค่า
+                            {formatPrice(
+                              order.orderVouchers?.[0].voucherGroup?.amount || 0
+                            )}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="border border-gray-300 px-2 py-2 md:px-4 text-right">
+                      {formatPrice(
+                        order.orderVouchers?.[0].voucherGroup?.amount || 0
+                      )}
+                    </td>
+                    <td className="border border-gray-300 px-2 py-2 md:px-4 text-right">
+                      {formatPrice(0)}
+                    </td>
+                    <td className="border border-gray-300 px-2 py-2 md:px-4 text-right">
+                      {formatPrice(
+                        (order.orderVouchers?.[0].voucherGroup?.amount || 0) - 0
+                      )}
+                    </td>
+                    <td className="border border-gray-300 px-2 py-2 md:px-4 text-center">
+                      {order.orderVouchers.length}
+                    </td>
+                    <td className="border border-gray-300 px-2 py-2 md:px-4 text-right">
+                      {formatPrice(
+                        (order.orderVouchers?.[0].voucherGroup?.amount || 0) *
+                          order.orderVouchers.length
+                      )}
+                    </td>
+                  </tr>
+                ) : null}
                 <tr className="bg-gray-300 text-right font-bold">
                   <td colSpan={6} className="py-2 px-4">
+                    {order.couponDiscount > 0 && (
+                      <p className="text-[14px] text-end font-semibold text-red-500 my-2">
+                        โค้ดส่วนลด :
+                        <span className="ml-2">
+                          -{formatPrice(order.couponDiscount)}
+                        </span>
+                      </p>
+                    )}
                     รวมเป็นเงินทั้งหมด: {formatPrice(order?.netAmount || 0)}
                   </td>
                 </tr>
@@ -293,6 +376,20 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
             )}
           </div>
         </div>
+        {orderVouchers.length ? (
+          <div className="my-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {orderVouchers.map((orderVoucher) => (
+              <div key={orderVoucher.id}>
+                <GiftVoucherCard
+                  storeName={orderVoucher.voucherGroup?.storeName || ""}
+                  value={orderVoucher.voucherGroup?.amount ?? 0}
+                  expiryDate={orderVoucher.voucherGroup?.expiresAt || ""}
+                  serialNumber={orderVoucher?.voucher?.code}
+                />
+              </div>
+            ))}
+          </div>
+        ) : null}
       </div>
       {/* </MobileContainer> */}
     </Container>

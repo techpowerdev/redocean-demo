@@ -170,19 +170,21 @@ export default function PrintOrderDetail({
                       <ResponsiveImage
                         src={
                           item?.image
-                            ? `${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}${item.image}`
+                            ? `${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}/${item.image}`
                             : "/no-image.jpg"
                         }
-                        alt={item.name || "Product image"}
+                        alt={item.productName || "Product image"}
                       />
                     </div>
                     <div>
                       <p className="font-semibold">
-                        {truncateText(30, item.name)}
+                        {truncateText(30, item.productName)}
                       </p>
-                      <p className="text-sm text-gray-600">
-                        {item.variantOptions}
-                      </p>
+                      {item.modelName && (
+                        <p className="text-sm text-gray-600">
+                          {item.modelName}
+                        </p>
+                      )}
                     </div>
                   </div>
                 </td>
@@ -210,6 +212,14 @@ export default function PrintOrderDetail({
               className="text-end border-b bg-green-600"
             >
               <td colSpan={6} className="font-bold bg-gray-300 py-2 px-4">
+                {order.couponDiscount > 0 && (
+                  <p className="text-[14px] text-end font-semibold text-red-500 my-2">
+                    โค้ดส่วนลด :
+                    <span className="ml-2">
+                      -{formatPrice(order.couponDiscount)}
+                    </span>
+                  </p>
+                )}
                 <span className="mr-2">รวมเป็นเงินทั้งหมด</span>
                 {formatPrice(order.netAmount || 0)}
               </td>
