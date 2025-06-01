@@ -652,6 +652,8 @@ export type PayoutChannel = {
 export type ProductCategory = {
   id: string;
   name: string;
+  createdAt: Date;
+  updatedAt: Date;
 
   // Relation
   productItems?: ProductItem[];
