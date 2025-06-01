@@ -171,7 +171,9 @@ export function EditPromotionForm({ promotion }: Props) {
         promotionData
       );
 
-      if (promotionResult) {
+      console.log(promotionResult);
+
+      if (promotionResult.data.promotionActivities) {
         const promotionActivityData = {
           promotionId: promotionResult.data.id,
           productItemId: data.productItemId,
