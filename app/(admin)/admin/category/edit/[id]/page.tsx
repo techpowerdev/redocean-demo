@@ -26,14 +26,18 @@ export default function EditCategoryPage({ params }: Props) {
     fetchData();
   }, []);
 
+  if (!category) {
+    return (
+      <div className="text-red-500 flex justify-center items-center h-screen">
+        ไม่พบหมวดหมู่สินค้านี้
+      </div>
+    );
+  }
+
   return (
     <div className="p-4">
       <PageTitle title="แก้ไขหมวดหมู่สินค้า" className="mb-4" />
-      {category ? (
-        <EditCategoryForm category={category} />
-      ) : (
-        <div className="text-red-500">ไม่พบหมวดหมู่สินค้านี้</div>
-      )}
+      <EditCategoryForm category={category} />
     </div>
   );
 }
