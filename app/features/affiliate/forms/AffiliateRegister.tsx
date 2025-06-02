@@ -153,7 +153,7 @@ export default function AffiliateRegister() {
     } else {
       form.setValue("channelCode", "");
     }
-  }, [selectedBankName, form.setValue]);
+  }, [selectedBankName, form, payoutChannels]);
 
   return (
     <div className="container mx-auto flex flex-col items-center justify-start min-h-screen py-12 px-4 md:px-6">
