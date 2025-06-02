@@ -6,8 +6,6 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { BarChart3, Coins, HandCoins, LogOut, Menu, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useCurrentUserStore } from "@/state-stores/useCurrentUserStore";
-import LineLogin from "@/app/features/auth/LineLogin";
 import AffiliateNavbar from "../(infuencer)/AffiliateNavbar";
 
 export default function AffiliateLayout({
@@ -45,16 +43,6 @@ export default function AffiliateLayout({
       variant: "default" as const,
     },
   ];
-
-  const currentUser = useCurrentUserStore((state) => state.currentUser);
-
-  if (!currentUser) {
-    return (
-      <div className="flex justify-center items-center h-screen w-full">
-        <LineLogin />
-      </div>
-    );
-  }
 
   return (
     <div className="flex min-h-screen flex-col">
