@@ -24,7 +24,7 @@ export default function EditCategoryPage({ params }: Props) {
       setCategory(category.data);
     };
     fetchData();
-  }, []);
+  }, [params.id]);
 
   if (!category) {
     return (
