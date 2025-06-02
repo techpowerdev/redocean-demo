@@ -96,7 +96,7 @@ export default function AffiliateWithdrawDetail({ params }: Props) {
     };
 
     fetch();
-  }, []);
+  }, [params.id]);
 
   return (
     <>
