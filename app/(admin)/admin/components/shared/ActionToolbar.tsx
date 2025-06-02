@@ -14,7 +14,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Product, ProductVariant, Promotion } from "@/types/baseTypes";
+import { ProductItem, Promotion } from "@/types/baseTypes";
 
 type ActionButton = {
   icon: React.ReactNode;
@@ -24,7 +24,7 @@ type ActionButton = {
 };
 
 type Props = {
-  selectedItem: Product | ProductVariant | Promotion | null;
+  selectedItem: ProductItem | Promotion | null;
   actions: ActionButton[];
   dropdownItems?: string[];
 };
