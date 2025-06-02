@@ -3,19 +3,11 @@ import { Separator } from "@/components/ui/separator";
 
 import { useProductStore } from "@/state-stores/admin/adminProductStore";
 import Image from "next/image";
-// import { ProductVariantActionToolbar } from "./ProductVariantActionToolbar";
 import { formatPrice } from "@/utils/formatPrice";
-// import AddVariantOptions from "./forms/AddVariantOptions";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ListPlus } from "lucide-react";
-import ChangeBooleanStatusField from "@/components/shared/ChangeBooleanStatusField";
-// import CreateProductVariantForm from "./forms/CreateProductVariantForm";
 
 export default function ProductDetailComponent() {
   const selectedProduct = useProductStore((state) => state.selectedProduct);
-  const changeHasVariantStatus = useProductStore(
-    (state) => state.changeHasVariantStatus
-  );
 
   return (
     <div className="h-full flex-1 flex flex-col justify-stretch">
