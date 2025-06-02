@@ -9,16 +9,13 @@ import { BuyVoucherParams } from "@/types/voucherTypes";
 import { buyVoucher } from "@/services/voucherServices";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { useCurrentUserStore } from "@/state-stores/useCurrentUserStore";
+import { getCurrentUser } from "@/services/authServices";
 
 type Props = {
   voucherGroup: VoucherGroup;
 };
 
 export default function BuyVoucherClient({ voucherGroup }: Props) {
-  // global state
-  const getCurrentUser = useCurrentUserStore((state) => state.getCurrentUser);
-
   const [buyVoucherData, setBuyVoucherData] = useState<BuyVoucherParams>({
     voucherGroupId: voucherGroup.id,
     quantity: 1,
@@ -44,18 +41,18 @@ export default function BuyVoucherClient({ voucherGroup }: Props) {
 
   const handleBuyVoucher = async () => {
     try {
-      const cUser = await getCurrentUser();
-      console.log("cUser", cUser);
-      // if (!currentUser) {
-      //   router.push("/login-line-liff"); // ถ้า user เป็น null ให้ redirect ไปที่หน้าแรก
-      //   toast.error("กรุณาเชื่อมต่อไลน์");
-      //   return;
-      // }
+      const { data: currentUser } = await getCurrentUser();
 
-      // if (!currentUser.phoneVerified) {
-      //   router.push("/verify-user"); // ถ้า user เป็น null ให้ redirect ไปที่หน้าแรก
-      //   return;
-      // }
+      if (!currentUser) {
+        router.push("/login"); // ถ้า user เป็น null ให้ redirect ไปที่หน้าแรก
+        toast.error("กรุณาเข้าสู่ระบบก่อน");
+        return;
+      }
+
+      if (!currentUser.phoneVerified) {
+        router.push("/verify-user"); // ถ้า user เป็น null ให้ redirect ไปที่หน้าแรก
+        return;
+      }
 
       const result = await buyVoucher(buyVoucherData);
       const clientSecret = result?.data?.paymentIntent?.client_secret;
