@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import Heading from "@/components/shared/Heading";
 import { useEffect } from "react";
 import EmptyCart from "@/app/features/cart/EmptyCart";
-import { getUserCart } from "@/services/cartServices";
 import CartItem from "@/app/features/cart/CartItem";
 import { useCartServerStore } from "@/state-stores/cartServerStore";
 import { ShoppingCart } from "lucide-react";
@@ -32,7 +31,7 @@ export default function CartClient() {
     };
 
     fetchData();
-  }, []); // กำหนดค่าให้ดึงตะกร้าใหม่ เมื่อมีการ เพิ่ม ลบ แก้ไข ล้างตะกร้า
+  }, [setCart]); // กำหนดค่าให้ดึงตะกร้าใหม่ เมื่อมีการ เพิ่ม ลบ แก้ไข ล้างตะกร้า
 
   if (!cart || cart.cartItems?.length === 0) {
     return <EmptyCart />;
