@@ -51,21 +51,6 @@ export default function PrintOrderDetail({
     },
   });
 
-  const getVoucherCard = async () => {
-    if (!order || !order.orderVouchers?.[0]?.voucherGroup?.id) return;
-    try {
-      const result = await getOrderVouchersOfUser({
-        orderId: order.id,
-        voucherGroupId: order.orderVouchers[0].voucherGroup.id,
-      });
-      if (result.data.orderVouchers) {
-        setOrderVouchers(result.data.orderVouchers);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
       await changeTrackingNumber(params.id, data.trackingNumber);
@@ -89,7 +74,20 @@ export default function PrintOrderDetail({
   }, [form, params.id]);
 
   useEffect(() => {
-    if (!order) return;
+    const getVoucherCard = async () => {
+      if (!order || !order.orderVouchers?.[0]?.voucherGroup?.id) return;
+      try {
+        const result = await getOrderVouchersOfUser({
+          orderId: order.id,
+          voucherGroupId: order.orderVouchers[0].voucherGroup.id,
+        });
+        if (result.data.orderVouchers) {
+          setOrderVouchers(result.data.orderVouchers);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
 
     const fetchVoucher = async () => {
       try {
