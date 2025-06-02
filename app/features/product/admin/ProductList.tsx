@@ -6,9 +6,9 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import Image from "next/image";
 import { useProductStore } from "@/state-stores/admin/adminProductStore";
 import Loading from "@/components/shared/Loading";
-import { Eye } from "lucide-react";
+// import { Eye } from "lucide-react";
 import { ProductItem } from "@/types/baseTypes";
-import ChangeBooleanStatusField from "@/components/shared/ChangeBooleanStatusField";
+// import ChangeBooleanStatusField from "@/components/shared/ChangeBooleanStatusField";
 
 interface Props {
   items: ProductItem[] | null;
@@ -17,9 +17,9 @@ interface Props {
 export function ProductList({ items }: Props) {
   const selectProduct = useProductStore((state) => state.selectProduct);
   const selectedProduct = useProductStore((state) => state.selectedProduct);
-  const changeProductStatus = useProductStore(
-    (state) => state.changeProductStatus
-  );
+  // const changeProductStatus = useProductStore(
+  //   (state) => state.changeProductStatus
+  // );
 
   if (items?.length === 0) {
     return (
