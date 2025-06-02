@@ -78,7 +78,7 @@ export default function PromotionClient({
         endAt: nearestPromotion.endAt,
       });
     }
-  }, [selectedTimeSlot]);
+  }, [selectedTimeSlot, nearestPromotion, promotions]);
 
   return (
     <div>
