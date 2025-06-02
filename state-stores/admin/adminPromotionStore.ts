@@ -1,18 +1,18 @@
 import { getPromotions, updatePromotion } from "@/services/promotionServices";
-import { Promotion, Product } from "@/types/baseTypes";
+import { Promotion, ProductItem } from "@/types/baseTypes";
 import toast from "react-hot-toast";
 import { create } from "zustand";
 
 // สร้าง Zustand store
 type State = {
-  selectedProductInPromotion: Product | null;
+  selectedProductInPromotion: ProductItem | null;
   selectedPromotionType: string;
   promotionLists: Promotion[] | null;
   selectedPromotion: Promotion | null;
 };
 
 type Action = {
-  selectProductInPromotion: (product: Product | null) => void;
+  selectProductInPromotion: (product: ProductItem | null) => void;
   selectPromotionType: (promotionType: string) => void;
   setPromotionLists: (promotions: Promotion[]) => void;
   selectPromotion: (promotion: Promotion | null) => void;
