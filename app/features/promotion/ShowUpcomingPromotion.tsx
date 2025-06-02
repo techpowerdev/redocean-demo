@@ -2,7 +2,6 @@
 
 import * as React from "react";
 
-import { Card, CardContent } from "@/components/ui/card";
 import { Promotion } from "@/types/baseTypes";
 import ResponsiveImage from "@/components/shared/ResponsiveImage";
 import { PromotionCountdown } from "./PromotionCountdown";
