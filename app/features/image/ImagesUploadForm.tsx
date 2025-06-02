@@ -192,7 +192,120 @@
 //   );
 // }
 
+// "use client";
+
+// import {
+//   useFieldArray,
+//   type Control,
+//   type FieldValues,
+//   type ArrayPath,
+//   type FieldArray,
+//   type Path,
+// } from "react-hook-form";
+// import {
+//   FormControl,
+//   FormField,
+//   FormItem,
+//   FormMessage,
+// } from "@/components/ui/form";
+// import { ImagePlus } from "lucide-react";
+// import clsx from "clsx";
+// import ImageUploadForm from "./ImageUploadForm";
+// import {
+//   type AspectRatio,
+//   type Height,
+//   type Width,
+//   withClass,
+// } from "@/utils/imageUploadUtils";
+// import { forwardRef } from "react";
+
+// // Define a constraint for our generic type to ensure it has an images array
+// interface WithImages {
+//   images: string[];
+// }
+
+// type Props<T extends FieldValues & WithImages> = {
+//   control: Control<T>;
+//   aspectRatio?: AspectRatio;
+//   width?: Width;
+//   height?: Height;
+//   name?: ArrayPath<T>;
+// };
+
+// const ImagesUploadForm = forwardRef<HTMLDivElement, Props<any>>(
+//   function ImagesUploadForm(
+//     {
+//       control,
+//       aspectRatio = "1/1",
+//       width = "40",
+//       height = "40",
+//       name = "images" as ArrayPath<any>,
+//     },
+//     ref
+//   ) {
+//     const {
+//       fields: imageFields,
+//       append: appendImage,
+//       remove: removeImage,
+//     } = useFieldArray({
+//       control,
+//       name,
+//     });
+
+//     // Helper function to create a properly typed path for nested array fields
+//     const getFieldPath = (index: number): ArrayPath<any> => {
+//       return `${name}.${index}` as ArrayPath<any>;
+//     };
+
+//     // Create a properly typed empty field value
+//     const createEmptyField = (): FieldArray<any, typeof name> => {
+//       return "" as unknown as FieldArray<any, typeof name>;
+//     };
+
+//     return (
+//       <div ref={ref} className="flex flex-wrap gap-2">
+//         {imageFields.map((field, imageIndex) => (
+//           <FormField
+//             key={field.id}
+//             control={control}
+//             name={getFieldPath(imageIndex) as Path<any>}
+//             render={({ field }) => (
+//               <FormItem>
+//                 <FormControl>
+//                   <ImageUploadForm
+//                     field={field}
+//                     remove={() => removeImage(imageIndex)}
+//                     width={width}
+//                     height={height}
+//                     aspectRatio={aspectRatio}
+//                   />
+//                 </FormControl>
+//                 <FormMessage />
+//               </FormItem>
+//             )}
+//           />
+//         ))}
+
+//         {/* ปุ่มเพิ่มรูป */}
+//         <div className={clsx(withClass(width, height))}>
+//           <button
+//             type="button"
+//             onClick={() => appendImage(createEmptyField())}
+//             className="w-full h-full flex justify-center items-center cursor-pointer hover:bg-gray-50 p-2 border-2 border-dashed"
+//           >
+//             <ImagePlus className="text-slate-200" />
+//           </button>
+//         </div>
+//       </div>
+//     );
+//   }
+// );
+
+// export default ImagesUploadForm;
+
 "use client";
+
+import type React from "react";
 
 import {
   useFieldArray,
@@ -232,73 +345,79 @@ type Props<T extends FieldValues & WithImages> = {
   name?: ArrayPath<T>;
 };
 
-const ImagesUploadForm = forwardRef<HTMLDivElement, Props<any>>(
-  function ImagesUploadForm(
-    {
-      control,
-      aspectRatio = "1/1",
-      width = "40",
-      height = "40",
-      name = "images" as ArrayPath<any>,
-    },
-    ref
-  ) {
-    const {
-      fields: imageFields,
-      append: appendImage,
-      remove: removeImage,
-    } = useFieldArray({
-      control,
-      name,
-    });
+// Create a generic forwardRef component
+function ImagesUploadFormInner<T extends FieldValues & WithImages>(
+  {
+    control,
+    aspectRatio = "1/1",
+    width = "40",
+    height = "40",
+    name = "images" as ArrayPath<T>,
+  }: Props<T>,
+  ref: React.ForwardedRef<HTMLDivElement>
+) {
+  const {
+    fields: imageFields,
+    append: appendImage,
+    remove: removeImage,
+  } = useFieldArray({
+    control,
+    name,
+  });
 
-    // Helper function to create a properly typed path for nested array fields
-    const getFieldPath = (index: number): ArrayPath<any> => {
-      return `${name}.${index}` as ArrayPath<any>;
-    };
+  // Helper function to create a properly typed path for nested array fields
+  const getFieldPath = (index: number): Path<T> => {
+    return `${name}.${index}` as Path<T>;
+  };
 
-    // Create a properly typed empty field value
-    const createEmptyField = (): FieldArray<any, typeof name> => {
-      return "" as unknown as FieldArray<any, typeof name>;
-    };
+  // Create a properly typed empty field value
+  const createEmptyField = (): FieldArray<T, ArrayPath<T>> => {
+    return "" as FieldArray<T, ArrayPath<T>>;
+  };
 
-    return (
-      <div ref={ref} className="flex flex-wrap gap-2">
-        {imageFields.map((field, imageIndex) => (
-          <FormField
-            key={field.id}
-            control={control}
-            name={getFieldPath(imageIndex) as Path<any>}
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <ImageUploadForm
-                    field={field}
-                    remove={() => removeImage(imageIndex)}
-                    width={width}
-                    height={height}
-                    aspectRatio={aspectRatio}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        ))}
+  return (
+    <div ref={ref} className="flex flex-wrap gap-2">
+      {imageFields.map((field, imageIndex) => (
+        <FormField
+          key={field.id}
+          control={control}
+          name={getFieldPath(imageIndex)}
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <ImageUploadForm
+                  field={field}
+                  remove={() => removeImage(imageIndex)}
+                  width={width}
+                  height={height}
+                  aspectRatio={aspectRatio}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      ))}
 
-        {/* ปุ่มเพิ่มรูป */}
-        <div className={clsx(withClass(width, height))}>
-          <button
-            type="button"
-            onClick={() => appendImage(createEmptyField())}
-            className="w-full h-full flex justify-center items-center cursor-pointer hover:bg-gray-50 p-2 border-2 border-dashed"
-          >
-            <ImagePlus className="text-slate-200" />
-          </button>
-        </div>
+      {/* ปุ่มเพิ่มรูป */}
+      <div className={clsx(withClass(width, height))}>
+        <button
+          type="button"
+          onClick={() => appendImage(createEmptyField())}
+          className="w-full h-full flex justify-center items-center cursor-pointer hover:bg-gray-50 p-2 border-2 border-dashed"
+        >
+          <ImagePlus className="text-slate-200" />
+        </button>
       </div>
-    );
-  }
-);
+    </div>
+  );
+}
+
+// Use forwardRef with proper typing
+const ImagesUploadForm = forwardRef(ImagesUploadFormInner) as <
+  T extends FieldValues & WithImages
+>(
+  props: Props<T> & { ref?: React.ForwardedRef<HTMLDivElement> }
+) => ReturnType<typeof ImagesUploadFormInner>;
 
 export default ImagesUploadForm;
