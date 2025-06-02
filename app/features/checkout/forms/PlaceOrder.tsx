@@ -189,39 +189,6 @@ export default function PlaceOrder({ singleItem, cartItems }: Props) {
     router.push(`/checkout/${clientSecret}`);
   };
 
-  const applyCoupon = async (couponcode: string) => {
-    if (!orderSummary) {
-      return;
-    }
-
-    const itemData = orderSummary?.items?.map((item) => ({
-      productItemId: item.productItemId,
-      productCategoryId: item.productModelItem.productItem.categoryId,
-      productName: item.productModelItem.productItem.name,
-    }));
-
-    try {
-      const validateCouponData = {
-        code: couponcode,
-        orderValue: orderSummary?.netAmount,
-        orderItems: itemData,
-      };
-
-      const coupon = await validateCoupon(validateCouponData);
-
-      if (coupon.data.discountValue) {
-        setCouponDiscountValue(coupon.data.discountValue);
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      } else {
-        toast.error("เกิดข้อผิดพลาดในการตรวจสอบคูปอง");
-      }
-      setSelectedCoupon(null);
-    }
-  };
-
   const handleRemoveCoupon = () => {
     setSelectedCoupon(null);
     setCouponDiscountValue(0);
@@ -231,9 +198,43 @@ export default function PlaceOrder({ singleItem, cartItems }: Props) {
     if (!selectedCoupon?.code) {
       return;
     }
+
+    const applyCoupon = async (couponcode: string) => {
+      if (!orderSummary || !selectedCoupon?.code) {
+        return;
+      }
+
+      const itemData = orderSummary?.items?.map((item) => ({
+        productItemId: item.productItemId,
+        productCategoryId: item.productModelItem.productItem.categoryId,
+        productName: item.productModelItem.productItem.name,
+      }));
+
+      try {
+        const validateCouponData = {
+          code: couponcode,
+          orderValue: orderSummary?.netAmount,
+          orderItems: itemData,
+        };
+
+        const coupon = await validateCoupon(validateCouponData);
+
+        if (coupon.data.discountValue) {
+          setCouponDiscountValue(coupon.data.discountValue);
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          toast.error(error.message);
+        } else {
+          toast.error("เกิดข้อผิดพลาดในการตรวจสอบคูปอง");
+        }
+        setSelectedCoupon(null);
+      }
+    };
+
     applyCoupon(selectedCoupon?.code);
-    console.log("selectedCoupon");
-  }, [selectedCoupon]);
+  }, [selectedCoupon, orderSummary]);
+
   return (
     <>
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
