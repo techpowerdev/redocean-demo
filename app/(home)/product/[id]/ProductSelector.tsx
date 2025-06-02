@@ -21,13 +21,11 @@ export default function ProductSelector({
   const [selection, setSelection] = useState<(number | null)[]>(
     Array(tiers?.length || 0).fill(null)
   );
-  const [selectedModel, setSelectedModel] = useState<ProductModel | null>(null);
 
   useEffect(() => {
     if (!hasVariants) {
       // ถ้าไม่มีตัวเลือกเลย ให้ใช้โมเดลแรกเลย
       const defaultModel = models?.[0] || null;
-      setSelectedModel(defaultModel);
       onChange?.(defaultModel);
       return;
     }
@@ -37,7 +35,6 @@ export default function ProductSelector({
         m.tierIndex?.length === selection.length &&
         m.tierIndex?.every((val, idx) => val === selection[idx])
     );
-    setSelectedModel(found || null);
     onChange?.(found || null);
   }, [selection, models, onChange, hasVariants]);
 
