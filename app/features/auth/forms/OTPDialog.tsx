@@ -12,13 +12,11 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import useAuthStore from "@/state-stores/useAuthStore";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { z } from "zod";
 import { convertPhoneNumber } from "@/utils/convertPhoneNumber";
 import { useRouter } from "next/navigation";
-import { useCurrentUserStore } from "@/state-stores/useCurrentUserStore";
 import { verifyUser } from "@/services/authServices";
 
 const otpSchema = z.object({
@@ -39,11 +37,6 @@ const verifyOtpSchema = otpSchema; // .pick({ otp: true });
 
 const OTPDialog = () => {
   const router = useRouter();
-
-  // global state
-  const setCurrentUser = useCurrentUserStore((state) => state.setCurrentUser);
-  const isVerified = useAuthStore((state) => state.isVerified);
-  const setIsVerified = useAuthStore((state) => state.setIsVerified);
 
   // local state
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -106,12 +99,10 @@ const OTPDialog = () => {
 
       if (response.data.code == 0 && response.data.msg == "Verify Success") {
         try {
-          const response = await verifyUser({
+          await verifyUser({
             phoneNumber,
             phoneVerified: true,
           });
-          setIsVerified(true);
-          setCurrentUser(response.data);
           router.push("/");
           toast.success("ยืนยันตัวตนสำเร็จ!");
         } catch (error) {
@@ -140,8 +131,6 @@ const OTPDialog = () => {
       return () => clearInterval(timer);
     }
   }, [countdown]);
-
-  if (isVerified) return null;
 
   return (
     <AlertDialog open={true}>
