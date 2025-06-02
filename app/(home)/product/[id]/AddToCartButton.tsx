@@ -1,11 +1,9 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { addProductItemToCart } from "@/services/cartServices";
 import { useCartServerStore } from "@/state-stores/cartServerStore";
 import { ProductModel } from "@/types/baseTypes";
 import React from "react";
-import toast from "react-hot-toast";
 
 type Props = {
   selectedModel: ProductModel | null;
@@ -25,16 +23,7 @@ export default function AddToCartButton({
   const handleAddProductToCart = useCartServerStore(
     (state) => state.handleAddProductToCart
   );
-  const addProductToCard = async () => {
-    if (!buyProductData) return;
 
-    try {
-      await addProductItemToCart(buyProductData);
-    } catch (error) {
-      // toast.error(error.message);
-      console.log(error);
-    }
-  };
   return (
     <div className="w-full">
       <Button
