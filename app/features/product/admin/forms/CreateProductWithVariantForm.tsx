@@ -221,7 +221,14 @@ function cartesianProduct(arrays: string[][]): string[][] {
 // เช่น สี และ ขนาด
 // ถ้าสีเดียวกันแต่ขนาดต่างกัน จะรวมแถว
 // ถ้าสีและขนาดต่างกัน จะไม่รวมแถว
-function mergeVariants(variants: any[]) {
+type Variant = {
+  attributes: Record<string, string>;
+  price: string;
+  stock: string;
+  sku?: string;
+};
+
+function mergeVariants(variants: Variant[]) {
   if (variants.length === 0) return [];
 
   // หาตัวเลือก (attribute) ทั้งหมดจากตัวอย่างแรก
@@ -231,9 +238,16 @@ function mergeVariants(variants: any[]) {
   const mainKey = keys[0];
   const subKey = keys[1]; // เช่น ขนาด (หรืออาจไม่มีเลย)
 
-  let mergedRows: any[] = [];
-  let mainKeyCount: Record<string, number> = {};
-  let mainKeyIndex: Record<string, number> = {};
+  const mergedRows: {
+    mainKey: string;
+    subKey: string | null;
+    originalIndex: number;
+    showMain: boolean;
+    rowSpan: number;
+  }[] = [];
+
+  const mainKeyCount: Record<string, number> = {};
+  const mainKeyIndex: Record<string, number> = {};
 
   variants.forEach((variant, index) => {
     const mainValue = variant.attributes[mainKey];
