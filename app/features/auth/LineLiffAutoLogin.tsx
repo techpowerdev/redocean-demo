@@ -47,7 +47,7 @@ export default function LineLiffAutoLogin() {
     };
 
     initializeLiff();
-  }, []);
+  }, [router]);
 
   return (
     <div className="hidden">
