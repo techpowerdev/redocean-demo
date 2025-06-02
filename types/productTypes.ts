@@ -83,37 +83,3 @@ export type UpdateProductItemParams = Partial<CreateProductItemParams>;
 export type UpdateProductItemResponse = {
   data: ProductItem;
 };
-
-// -----------------------------------------------
-export type CheckProductAvailabilityForUserParams = {
-  items: {
-    productId: string;
-    sku: string;
-    quantity: number;
-    promotionActivityId?: string | null;
-    promotionType?: string | null;
-  }[];
-};
-
-export type CheckProductAvailabilityForUserResponse = {
-  items: {
-    productId: string;
-    sku: string;
-    name: string;
-    description: string;
-    variantOptions: string;
-    image: string;
-    promotionActivityId?: string | null;
-    promotionType?: string | null;
-    unitPrice: number;
-    quantity: number;
-    discount: number;
-    discountedPrice: number;
-    total: number;
-    warningMessage?: string | null;
-    isAvailableStock: boolean;
-  }[];
-  totalAmount: number;
-  totalDiscount: number;
-  netAmount: number;
-};
