@@ -11,8 +11,6 @@ import toast from "react-hot-toast";
 
 import { useRouter } from "next/navigation";
 
-import { useCurrentUserStore } from "@/state-stores/useCurrentUserStore";
-
 import {
   createOrderWithPaymentIntent,
   summaryOrderBeforeCheckout,
@@ -30,6 +28,7 @@ import CouponSelector from "@/app/features/coupon/CouponSelector";
 import { Coupon } from "@/types/baseTypes";
 import { validateCoupon } from "@/services/couponServices";
 import { X } from "lucide-react";
+import { getCurrentUser } from "@/services/authServices";
 
 type Props = {
   singleItem?: CreateOrderItem;
@@ -39,7 +38,6 @@ type Props = {
 export default function PlaceOrder({ singleItem, cartItems }: Props) {
   // global state
   const selectedAddress = useAddressStore((state) => state.selectedAddress);
-  const currentUser = useCurrentUserStore((state) => state.currentUser);
   const clearCart = useCartServerStore((state) => state.clearCart);
 
   // local state
@@ -55,16 +53,6 @@ export default function PlaceOrder({ singleItem, cartItems }: Props) {
   const items = singleItem ? [singleItem] : cartItems || [];
 
   const handleOpenPlaceOrderForm = async () => {
-    if (!currentUser) {
-      router.push("/login-line-liff"); // ถ้า user เป็น null ให้ redirect ไปที่หน้าแรก
-      toast.error("กรุณาเชื่อมต่อไลน์");
-      return;
-    }
-
-    if (!currentUser.phoneVerified) {
-      router.push("/verify-user"); // ถ้า user เป็น null ให้ redirect ไปที่หน้าแรก
-      return;
-    }
     try {
       const { data } = await summaryOrderBeforeCheckout({
         items: items,
@@ -91,17 +79,6 @@ export default function PlaceOrder({ singleItem, cartItems }: Props) {
   };
 
   const handleCheckout = async () => {
-    if (!currentUser) {
-      router.push("/login-line-liff"); // ถ้า user เป็น null ให้ redirect ไปที่หน้าแรก
-      toast.error("กรุณาเชื่อมต่อไลน์");
-      return;
-    }
-
-    if (!currentUser.phoneVerified) {
-      router.push("/verify-user"); // ถ้า user เป็น null ให้ redirect ไปที่หน้าแรก
-      return;
-    }
-
     if (items.length === 0) {
       return;
     }
@@ -193,6 +170,24 @@ export default function PlaceOrder({ singleItem, cartItems }: Props) {
     setSelectedCoupon(null);
     setCouponDiscountValue(0);
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const { data: currentUser } = await getCurrentUser();
+
+      if (!currentUser) {
+        router.push("/login"); // ถ้า user เป็น null ให้ redirect ไปที่หน้าแรก
+        toast.error("กรุณาเข้าสู่ระบบก่อน");
+        return;
+      }
+
+      if (!currentUser.phoneVerified) {
+        router.push("/verify-user"); // ถ้า user เป็น null ให้ redirect ไปที่หน้าแรก
+        return;
+      }
+    };
+    fetchData();
+  }, [router]);
 
   useEffect(() => {
     if (!selectedCoupon?.code) {
