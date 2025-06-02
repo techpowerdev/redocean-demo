@@ -17,7 +17,6 @@ type Props = {
 
 export default function BuyVoucherClient({ voucherGroup }: Props) {
   // global state
-  const currentUser = useCurrentUserStore((state) => state.currentUser);
   const getCurrentUser = useCurrentUserStore((state) => state.getCurrentUser);
 
   const [buyVoucherData, setBuyVoucherData] = useState<BuyVoucherParams>({
@@ -31,7 +30,7 @@ export default function BuyVoucherClient({ voucherGroup }: Props) {
     setBuyVoucherData((prev) => {
       return { ...prev, quantity: prev.quantity + 1 };
     });
-  }, [buyVoucherData.quantity, voucherGroup]);
+  }, []);
 
   const handleQtyDecrease = useCallback(() => {
     if (buyVoucherData.quantity === 1) {
