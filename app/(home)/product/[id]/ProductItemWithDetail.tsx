@@ -66,6 +66,8 @@ export default function ProductItemWithDetail({
     });
   }, [buyProductData]);
 
+  const modelImages = product?.models?.map((model) => model.image);
+
   useEffect(() => {
     const fetchData = async (productModelId: string) => {
       try {
@@ -97,7 +99,7 @@ export default function ProductItemWithDetail({
         };
       });
     }
-  }, [selectedModel?.id]);
+  }, [selectedModel]);
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
@@ -108,7 +110,9 @@ export default function ProductItemWithDetail({
           </div>
           <div className="my-2">
             <ProductImageSelector
-              images={product.images}
+              images={[...(product.images ?? []), ...(modelImages ?? [])]
+                .filter((img): img is string => typeof img === "string")
+                .filter((img, idx, arr) => arr.indexOf(img) === idx)}
               selectedProductImage={selectedProductImage}
               setSelectedProductImage={setSelectedProductImage}
             />
@@ -175,7 +179,7 @@ export default function ProductItemWithDetail({
                 : null}
             </>
           )}
-          <div className="my-4">โค้ดส่วนลด</div>
+          {/* <div className="my-4">โค้ดส่วนลด</div> */}
           <div>
             <ProductSelector
               setSelectedProductImage={setSelectedProductImage}
