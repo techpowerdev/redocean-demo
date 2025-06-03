@@ -54,7 +54,7 @@
 
 # แก้ bug ใน splidejs (slide lib)
 
-## ให้เพิ่ม "types": "./dist/types/index.d.ts" ใน package.json ใน node_modules/splidejs/react-splide/package.json
+## ให้เพิ่ม "types": "./dist/types/index.d.ts" ใน package.json ใน node_modules/@splidejs/react-splide/package.json
 
 ### "exports": {
 
