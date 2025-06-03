@@ -19,16 +19,19 @@ export type Session = {
 
 const secretKey = process.env.SESSION_SECRET_KEY!;
 const encodedKey = new TextEncoder().encode(secretKey);
+const sessionJwtExpiresIn = process.env.SESSION_JWT_EXPIRES_IN || "7d";
+const days = parseInt(process.env.SESSION_COOKIE_EXPIRES_IN_DAYS || "1", 10);
+const sessonCookieExpiresIn = days * 24 * 60 * 60 * 1000;
 
 // @@@@@@@ การสร้าง server action ต้องประกาศเป็น async function
 export async function createSession(payload: Session) {
   // const expiredAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
-  const expiredAt = new Date(Date.now() + 60 * 1000); // 1 minute
+  const expiredAt = new Date(Date.now() + sessonCookieExpiresIn); // 1 minute
 
   const session = await new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime("7d")
+    .setExpirationTime(sessionJwtExpiresIn)
     .sign(encodedKey);
 
   cookies().set("session", session, {
