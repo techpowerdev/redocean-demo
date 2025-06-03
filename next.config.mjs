@@ -28,6 +28,9 @@ const nextConfig = {
         hostname: "api.khumkha.com",
       },
       {
+        hostname: "backend.khumkha.com",
+      },
+      {
         hostname: "via.placeholder.com",
       },
     ],
