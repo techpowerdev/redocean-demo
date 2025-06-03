@@ -113,13 +113,16 @@ export const refreshToken = async (oldRefreshToken: string) => {
     const { accessToken, refreshToken } = reponseData;
 
     // update session with new tokens
-    const updateRes = await fetch("http://localhost:3000/api/auth/update", {
-      method: "POST",
-      body: JSON.stringify({
-        accessToken,
-        refreshToken,
-      }),
-    });
+    const updateRes = await fetch(
+      `${process.env.NEXT_PUBLIC_CLIENT_HOST_URL}/api/auth/update`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          accessToken,
+          refreshToken,
+        }),
+      }
+    );
     if (!updateRes.ok) throw new Error("Failed to update the tokens");
 
     return accessToken; // เอาไป set ให้ authHeader (eg. Bearer token) ใหม่ และ retry request เดิมอีกครั้ง
