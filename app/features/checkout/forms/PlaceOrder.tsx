@@ -29,6 +29,7 @@ import { Coupon } from "@/types/baseTypes";
 import { validateCoupon } from "@/services/couponServices";
 import { X } from "lucide-react";
 import { getCurrentUser } from "@/services/authServices";
+import { GetCurrentUserResponse } from "@/types/userTypes";
 
 type Props = {
   singleItem?: CreateOrderItem;
@@ -41,6 +42,10 @@ export default function PlaceOrder({ singleItem, cartItems }: Props) {
   const clearCart = useCartServerStore((state) => state.clearCart);
 
   // local state
+  const [currentUser, setCurrentUser] = useState<
+    GetCurrentUserResponse["data"] | null
+  >(null);
+
   const [orderSummary, setOrderSummary] = useState<OrderSummary | null>(null);
   const [isOpen, setIsOpen] = useState(false); // จัดการสถานะของ Sheet
   const [creatingOrder, setCreatingOrder] = useState(false);
@@ -52,8 +57,21 @@ export default function PlaceOrder({ singleItem, cartItems }: Props) {
 
   const items = singleItem ? [singleItem] : cartItems || [];
 
+  const checkAuth = () => {
+    if (!currentUser) {
+      router.push("/login"); // ถ้า user เป็น null ให้ redirect ไปที่หน้าแรก
+      toast.error("กรุณาเข้าสู่ระบบก่อน");
+      return;
+    }
+
+    if (!currentUser.phoneVerified) {
+      router.push("/verify-user"); // ถ้า user เป็น null ให้ redirect ไปที่หน้าแรก
+      return;
+    }
+  };
   const handleOpenPlaceOrderForm = async () => {
     try {
+      checkAuth();
       const { data } = await summaryOrderBeforeCheckout({
         items: items,
       });
@@ -173,18 +191,8 @@ export default function PlaceOrder({ singleItem, cartItems }: Props) {
 
   useEffect(() => {
     const fetchData = async () => {
-      const { data: currentUser } = await getCurrentUser();
-
-      if (!currentUser) {
-        router.push("/login"); // ถ้า user เป็น null ให้ redirect ไปที่หน้าแรก
-        toast.error("กรุณาเข้าสู่ระบบก่อน");
-        return;
-      }
-
-      if (!currentUser.phoneVerified) {
-        router.push("/verify-user"); // ถ้า user เป็น null ให้ redirect ไปที่หน้าแรก
-        return;
-      }
+      const { data } = await getCurrentUser();
+      setCurrentUser(data);
     };
     fetchData();
   }, [router]);
