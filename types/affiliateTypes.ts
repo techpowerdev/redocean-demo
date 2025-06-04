@@ -138,7 +138,7 @@ export type GetAffiliateCommissionPolicyResponse = {
 };
 
 export type CreateAffiliateCommissionPolicyParams = {
-  productCommissionRate: number;
+  orderCommissionRate: number;
   referralCommissionRate: number;
   minimumWithdrawAmount: number;
   withdrawFeeType: WITHDRAW_FEE_TYPE;
@@ -152,7 +152,7 @@ export type CreateAffiliateCommissionPolicyResponse = {
 };
 
 export type UpdateAffiliateCommissionPolicyParams = {
-  productCommissionRate: number;
+  orderCommissionRate: number;
   referralCommissionRate: number;
   minimumWithdrawAmount: number;
   withdrawFeeType: WITHDRAW_FEE_TYPE;
