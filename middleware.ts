@@ -38,6 +38,7 @@ export const config = {
     "/user/:path*",
     "/admin/:path*",
     "/affiliate/dashboard",
+    "/affiliate/register",
     "/affiliate/admin/:path*",
   ],
 };
