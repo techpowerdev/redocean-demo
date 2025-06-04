@@ -34,7 +34,7 @@ export default function Header() {
           className="flex justify-center items-center gap-1
        mr-6 rounded-lg p-2 bg-white shadow-white drop-shadow-md"
         >
-          <div className="bg-red-400 text-white rounded-full p-1">
+          <div className="bg-yellow-500 text-white rounded-full p-1">
             <DollarSign size={16} />
           </div>
           <span className="text-sm">สร้างรายได้</span>
