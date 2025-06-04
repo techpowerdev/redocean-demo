@@ -3,8 +3,11 @@ import Image from "next/image";
 import { ArrowRight, BarChart3, DollarSign, Gift, Users } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { getAffiliateCommissionPolicy } from "@/services/affiliateServices";
 
-export default function Home() {
+export default async function Home() {
+  const commissionPolicy = await getAffiliateCommissionPolicy();
+
   return (
     <div className="flex flex-col min-h-screen">
       <header className="border-b">
@@ -63,12 +66,12 @@ export default function Home() {
             <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 items-center">
               <div className="flex flex-col justify-center space-y-4">
                 <div className="space-y-2">
-                  <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl">
+                  <h1 className="text-2xl font-bold tracking-tighter sm:text-5xl">
                     สร้างรายได้ด้วยระบบ Affiliate ของเรา
                   </h1>
                   <p className="max-w-[600px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
                     แนะนำสินค้าให้กับเพื่อน ครอบครัว หรือผู้ติดตามของคุณ
-                    และรับค่าคอมมิชชั่นสูงสุดถึง 20% จากทุกการซื้อ
+                    และรับค่าคอมมิชชั่นสูงสุดถึง 10% จากทุกการซื้อ
                   </p>
                 </div>
                 <div className="flex flex-row gap-2">
@@ -87,7 +90,7 @@ export default function Home() {
               </div>
               <div className="mx-auto lg:mr-0">
                 <Image
-                  src="/affiliate-dashboard-overview.png"
+                  src="/affiliates/affiliate-dashboard-overview.jpg"
                   alt="Affiliate Dashboard"
                   width={500}
                   height={400}
@@ -102,7 +105,7 @@ export default function Home() {
           <div className="container mx-auto px-4 md:px-6">
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">
+                <h2 className="text-2xl font-bold tracking-tighter sm:text-4xl">
                   คุณสมบัติหลักของระบบ Affiliate
                 </h2>
                 <p className="max-w-[900px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
@@ -159,7 +162,7 @@ export default function Home() {
           <div className="container mx-auto px-4 md:px-6">
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">
+                <h2 className="text-2xl font-bold tracking-tighter sm:text-4xl">
                   วิธีการทำงาน
                 </h2>
                 <p className="max-w-[900px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
@@ -213,7 +216,7 @@ export default function Home() {
           <div className="container mx-auto px-4 md:px-6">
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">
+                <h2 className="text-2xl font-bold tracking-tighter sm:text-4xl">
                   โครงสร้างค่าคอมมิชชั่น
                 </h2>
                 <p className="max-w-[900px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
@@ -225,40 +228,33 @@ export default function Home() {
             <div className="mx-auto max-w-3xl mt-8">
               <div className="rounded-lg border shadow-sm">
                 <div className="p-6">
-                  <h3 className="text-2xl font-bold">อัตราค่าคอมมิชชั่น</h3>
+                  <h3 className="text-xl font-bold">อัตราค่าคอมมิชชั่น</h3>
                   <div className="mt-4 grid gap-4">
                     <div className="grid grid-cols-2 items-center gap-4 border-b pb-4">
-                      <div className="font-medium">หมวดหมู่สินค้า</div>
+                      <div className="font-medium">ประเภทคอมมิชชั่น</div>
                       <div className="font-medium">อัตราค่าคอมมิชชั่น</div>
                     </div>
                     <div className="grid grid-cols-2 items-center gap-4 border-b pb-4">
-                      <div>อิเล็กทรอนิกส์</div>
-                      <div>5-10%</div>
-                    </div>
-                    <div className="grid grid-cols-2 items-center gap-4 border-b pb-4">
-                      <div>แฟชั่น</div>
-                      <div>10-15%</div>
-                    </div>
-                    <div className="grid grid-cols-2 items-center gap-4 border-b pb-4">
-                      <div>ความงามและสุขภาพ</div>
-                      <div>15-20%</div>
-                    </div>
-                    <div className="grid grid-cols-2 items-center gap-4 border-b pb-4">
-                      <div>อาหารและเครื่องดื่ม</div>
-                      <div>8-12%</div>
+                      <div>แนะนำสินค้า</div>
+                      <div>
+                        {commissionPolicy.data.orderCommissionRate}% ของยอดขาย
+                      </div>
                     </div>
                     <div className="grid grid-cols-2 items-center gap-4">
-                      <div>สินค้าอื่นๆ</div>
-                      <div>5-15%</div>
+                      <div>แนะนำเพื่อนมาเข้าร่วมโปรแกรม Affiliate</div>
+                      <div>
+                        {commissionPolicy.data.referralCommissionRate} บาท ต่อ 1
+                        บัญชีที่สมัครเป็น affiliate สำเร็จ
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div className="border-t p-6 bg-gray-50 dark:bg-gray-800 rounded-b-lg">
+                {/* <div className="border-t p-6 bg-gray-50 dark:bg-gray-800 rounded-b-lg">
                   <h4 className="font-semibold">โบนัสพิเศษ</h4>
                   <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
                     รับโบนัสเพิ่ม 5% เมื่อยอดขายรวมต่อเดือนมากกว่า 100,000 บาท
                   </p>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
@@ -271,7 +267,7 @@ export default function Home() {
           <div className="container mx-auto px-4 md:px-6">
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">
+                <h2 className="text-2xl font-bold tracking-tighter sm:text-4xl">
                   คำถามที่พบบ่อย
                 </h2>
                 <p className="max-w-[900px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
@@ -298,20 +294,23 @@ export default function Home() {
                     ฉันจะได้รับค่าคอมมิชชั่นเมื่อไหร่?
                   </h3>
                   <p className="mt-2 text-gray-500 dark:text-gray-400">
-                    ค่าคอมมิชชั่นจะถูกจ่ายทุกวันที่ 15 ของเดือนถัดไป
-                    หลังจากที่ยอดขายได้รับการยืนยันและผ่านช่วงเวลาคืนสินค้า (30
-                    วัน)
+                    ค่าคอมมิชชั่นจะได้รับ
+                    หลังจากที่ยอดขายได้รับการยืนยันและผ่านช่วงเวลาคืนสินค้า (15
+                    วัน) โดยจะโอนย้ายไปสะสมเป็นยอดรายได้ไว้ในบัญชี affiliate
+                    ของคุณ
                   </p>
                 </div>
               </div>
               <div className="rounded-lg border shadow-sm">
                 <div className="p-6">
                   <h3 className="text-lg font-semibold">
-                    มีขั้นต่ำในการถอนเงินหรือไม่?
+                    การโอนเงินค่าคอมมิชชั่น?
                   </h3>
                   <p className="mt-2 text-gray-500 dark:text-gray-400">
-                    ยอดขั้นต่ำในการถอนเงินคือ 500 บาท
-                    หากยอดค่าคอมมิชชั่นของคุณต่ำกว่า 500 บาท
+                    {`${commissionPolicy.data.payoutSchedule} `}
+                    ระบบจะทำการโอนยอดค่าคอมมิชชั่นทั้งหมดไปยังบัญชีธนาคารของคุณโดยอัตโนมัติ
+                    เมื่อมียอดสะสมขั้นต่ำ 1000 บาทขึ้นไป
+                    หากยอดค่าคอมมิชชั่นของคุณต่ำกว่า 1000 บาท
                     จะถูกสะสมไว้จนกว่าจะถึงยอดขั้นต่ำ
                   </p>
                 </div>
@@ -335,7 +334,7 @@ export default function Home() {
           <div className="container mx-auto px-4 md:px-6">
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">
+                <h2 className="text-2xl font-bold tracking-tighter sm:text-4xl">
                   พร้อมที่จะเริ่มต้นแล้วหรือยัง?
                 </h2>
                 <p className="max-w-[900px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
