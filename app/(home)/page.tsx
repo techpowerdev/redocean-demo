@@ -7,9 +7,9 @@ import FlashSaleLists from "../features/flash-sale/FlashSaleLists";
 import { getAllVoucherGroupsForSell } from "@/services/voucherServices";
 import SliderContainer from "@/components/shared/SliderContainer";
 import BuyVoucherClient from "../features/voucher/BuyVoucherClient";
-import ResponsiveImage from "@/components/shared/ResponsiveImage";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
+import Image from "next/image";
 
 export const dynamic = "force-dynamic";
 
@@ -29,36 +29,44 @@ export default async function Home() {
 
   return (
     <div>
-      {/* Banners */}
-      {banners?.data.length ? (
+      {banners?.data.length > 0 && (
         <div className="pb-8">
           <SliderContainer
             options={{
               type: "loop", // ทำให้วนซ้ำ
               autoplay: true, // เริ่มเล่นอัตโนมัติ
               interval: 3000, // ความเร็วในการเลื่อน (มิลลิวินาที)
-              // pauseOnHover: false, // ไม่หยุดเมื่อเมาส์ชี้
-              // pauseOnFocus: false, // ไม่หยุดเมื่อโฟกัส
-              // resetProgress: false, // ไม่รีเซ็ต progress เมื่อเลื่อนเอง
             }}
             breakpoints={{
               9999: { perPage: 1, arrows: false }, // แสดงแบบเดียวกันกับทุกหน้าจอ
             }}
           >
             {banners?.data?.map((banner) => (
-              <div key={banner.id}>
-                <ResponsiveImage
-                  alt="Banner"
+              <div key={banner.id} className="relative">
+                <Image
                   src={
-                    `${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}/${banner?.image?.id}` ||
-                    "/placeholder.svg"
+                    banner?.image?.id
+                      ? `${process.env.NEXT_PUBLIC_IMAGE_HOST_URL}/${banner.image.id}`
+                      : "/placeholder.svg"
                   }
+                  alt="Banner"
+                  // ควรกำหนดเสมอ เพื่อให้ browser เลือกโหลดก่อน เพื่อ score : LPC ดีขึ้น
+                  priority
+                  // ควรกำหนดเสมอเพื่อป้องกัน layout shiff หรือถ้าไม่รู้ขนาดจริงๆ ให้ใช้ fill แทน
+                  width={2600} // ขนาดจริง
+                  height={800} // ขนาดจริง
+                  // reponsive ตามพื้นที่ที่เหลือให้อย่าง flex หรือตามขนาดของ grid หรือ container ที่อยู่ (กว้างเต็ม container สูง auto ตามความกว้าง)
+                  style={{
+                    width: "100%",
+                    height: "auto",
+                  }}
+                  sizes="100vw" // มีแค่ 1 ขนาด คือแสดงเต็ม view
                 />
               </div>
             ))}
           </SliderContainer>
         </div>
-      ) : null}
+      )}
 
       {/* Groupbuy */}
       {filteredGroupbuyingPromotions?.length > 0 && (
