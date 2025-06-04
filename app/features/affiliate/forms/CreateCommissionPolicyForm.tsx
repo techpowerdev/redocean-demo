@@ -27,12 +27,12 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const CommissionPolicyFormSchema = z.object({
-  productCommissionRate: z.coerce.number({
-    required_error: "กรุณาระบุเปอร์เซ็นต์ค่าคอมมิชชั่นสำหรับสินค้า",
+  orderCommissionRate: z.coerce.number({
+    required_error: "กรุณาระบุค่าคอมมิชชั่นสำหรับการแนะนำสินค้า (%)",
     invalid_type_error: "ระบุเป็นตัวเลขเท่านั้น",
   }),
   referralCommissionRate: z.coerce.number({
-    required_error: "กรุณาระบุเปอร์เซ็นต์ค่าคอมมิชชั่นสำหรับการแนะนำเพื่อน",
+    required_error: "กรุณาระบุค่าคอมมิชชั่นสำหรับการแนะนำเพื่อน (บาท)",
     invalid_type_error: "ระบุเป็นตัวเลขเท่านั้น",
   }),
   minimumWithdrawAmount: z.coerce.number({
@@ -63,12 +63,12 @@ export default function CreateCommissionPolicyForm() {
   const form = useForm<CommissionPolicyFormValues>({
     resolver: zodResolver(CommissionPolicyFormSchema),
     defaultValues: {
-      productCommissionRate: 1,
+      orderCommissionRate: 1,
       referralCommissionRate: 3,
       minimumWithdrawAmount: 1000,
       withdrawFeeType: "fixed",
       withdrawFee: 20,
-      payoutSchedule: "ทุกวันที่ 14 และ 28 ของเดือน",
+      payoutSchedule: "ทุกวันที่ 15 และ 28 ของเดือน",
       isActive: true,
     },
   });
@@ -96,10 +96,10 @@ export default function CreateCommissionPolicyForm() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
-          name="productCommissionRate"
+          name="orderCommissionRate"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>เปอร์เซ็นต์ค่าคอมมิชชั่นสำหรับสินค้า</FormLabel>
+              <FormLabel>ค่าคอมมิชชั่นสำหรับการแนะนำสินค้า (%)</FormLabel>
               <FormControl>
                 <Input
                   type="number"
@@ -117,7 +117,7 @@ export default function CreateCommissionPolicyForm() {
           name="referralCommissionRate"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>เปอร์เซ็นต์ค่าคอมมิชชั่นจากการแนะนำเพื่อน</FormLabel>
+              <FormLabel>ค่าคอมมิชชั่นสำหรับการแนะนำเพื่อน (บาท)</FormLabel>
               <FormControl>
                 <Input type="number" step="1" placeholder="เช่น 5" {...field} />
               </FormControl>
