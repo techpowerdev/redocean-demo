@@ -6,7 +6,7 @@ import SignOutButton from "@/app/features/auth/SignOutButton";
 export default async function AuthButton() {
   const session = await getSession();
   return (
-    <div className="flex items-center gap-4 ml-auto">
+    <div className="flex items-center gap-4">
       {!session || !session.user ? (
         <>
           <Link className="text-white" href={"/login"}>
