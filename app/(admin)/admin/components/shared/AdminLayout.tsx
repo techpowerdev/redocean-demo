@@ -186,7 +186,7 @@ export function AdminLayout({
       variant: "default",
     },
     {
-      href: "affiliate/admin/dashboard",
+      href: "/affiliate/admin/dashboard",
       title: "โปรแกรม Affiliate",
       // label: "128",
       icon: Users,
