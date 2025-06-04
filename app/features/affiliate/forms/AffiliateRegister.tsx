@@ -71,6 +71,7 @@ export default function AffiliateRegister() {
       firstName: "",
       lastName: "",
       email: "",
+      referralCode: "",
       phoneNumber: "",
       idCard: "",
       idCardImage: "",
@@ -304,20 +305,43 @@ export default function AffiliateRegister() {
                       />
                     </div>
                   </div>
-                  <div className="space-y-2">
-                    <FormField
-                      control={form.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>อีเมล *</FormLabel>
-                          <FormControl>
-                            <Input placeholder="example@gmail.com" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>อีเมล *</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="email"
+                                placeholder="example@gmail.com"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <FormField
+                        control={form.control}
+                        name="referralCode"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>
+                              รหัสอ้างอิงของผู้แนะนำ (Referral code)
+                            </FormLabel>
+                            <FormControl>
+                              <Input placeholder="bYOpQUfX" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                   </div>
                   <div className="space-y-2">
                     <FormField
