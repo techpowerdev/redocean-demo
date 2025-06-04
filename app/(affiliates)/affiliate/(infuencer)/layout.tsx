@@ -72,11 +72,25 @@ export default function AffiliateLayout({
     );
   }
 
-  if (!userAffiliate || userAffiliate?.status === "pending") {
+  if (userAffiliate?.status === "pending") {
     return (
       <div className="w-full min-h-screen flex flex-col justify-center items-center">
         <span>อยู่ระหว่างตรวจสอบ และรออนุมัติ</span>
         <span>ระหว่างนี้ท่านจะยังไม่สามารถใช้งานระบบ affiliate ได้</span>
+        <Link
+          className="text-white px-4 py-2 rounded-md bg-primary hover:bg-primary/85 my-2"
+          href={"/"}
+        >
+          กลับไปหน้าหลัก
+        </Link>
+      </div>
+    );
+  }
+  if (userAffiliate?.status === "rejected") {
+    return (
+      <div className="w-full min-h-screen flex flex-col justify-center items-center">
+        <span>คำขอสมัครเป็น Affiliate ของคุณถูกปฏิเสธ</span>
+        <span>เนื่องจาก{userAffiliate.rejectReason}</span>
         <Link
           className="text-white px-4 py-2 rounded-md bg-primary hover:bg-primary/85 my-2"
           href={"/"}
