@@ -57,10 +57,15 @@ export default function AffiliateLinks() {
   const onSubmit = async (data: ProductLinkSchema) => {
     console.log("Product link:", data.productLink);
     const url = new URL(data.productLink);
-    const pathname = url.pathname; // "/product/cm9hhbxz3000a1ffj7w1mahe3"
-    const productId = pathname.split("/product/")[1]; // "cm9hhbxz3000a1ffj7w1mahe3"
+    // "http://localhost:3000/product/cmbdiu54100?promotionId=cmbdmu7ep00011"
+    const pathname = url.pathname;
+    const productItemId = pathname.split("/product/")[1]; // "cm9hhbxz3000a1ffj7w1mahe3"
+    const promotionId = url.searchParams.get("promotionId") || ""; // ดึง promotionId จาก query string
 
-    const newAffiliateLink = await generateAffiliateLink(productId);
+    const newAffiliateLink = await generateAffiliateLink({
+      productItemId,
+      promotionId,
+    });
 
     const affiliateLinks = await getAffiliateLinks();
     if (affiliateLinks) {

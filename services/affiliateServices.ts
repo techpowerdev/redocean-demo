@@ -119,13 +119,12 @@ export const updateAffiliate = async (
 };
 
 // affiliate link
-export const generateAffiliateLink = async (
-  productItemId: string
-): Promise<GenerateAffiliateLinkResponse> => {
+export const generateAffiliateLink = async (data: {
+  productItemId: string;
+  promotionId: string;
+}): Promise<GenerateAffiliateLinkResponse> => {
   try {
-    const response = await authAxios.post(`/affiliate-link/generate`, {
-      productItemId,
-    });
+    const response = await authAxios.post(`/affiliate-link/generate`, data);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
