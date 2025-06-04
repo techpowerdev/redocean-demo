@@ -65,11 +65,11 @@ export default function AffiliateLayout({
                     <Image
                       src="/logo.jpg"
                       alt="Affiliate Logo"
-                      width={24}
-                      height={24}
+                      width={40}
+                      height={40}
                       className="rounded"
                     />
-                    <span>AffiliateHub</span>
+                    <span>Khumkha Affiliate</span>
                   </Link>
                   <AffiliateNavbar links={affiliateNavbar} />
                 </nav>
@@ -88,22 +88,6 @@ export default function AffiliateLayout({
               />
               <span className="hidden md:inline">Khumkha Affiliate</span>
             </Link>
-          </div>
-          <div className="flex items-center gap-4">
-            <Avatar>
-              <AvatarImage src="/placeholder-user.jpg" alt="User" />
-              <AvatarFallback>SD</AvatarFallback>
-            </Avatar>
-            <div className="hidden md:block">
-              <div className="text-sm font-medium">Sofia Davis</div>
-              <div className="text-xs text-muted-foreground">
-                sofia@example.com
-              </div>
-            </div>
-            <Button variant="ghost" size="icon">
-              <LogOut className="h-5 w-5" />
-              <span className="sr-only">ออกจากระบบ</span>
-            </Button>
           </div>
         </div>
       </header>
