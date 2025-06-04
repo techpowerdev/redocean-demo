@@ -28,6 +28,7 @@ import {
   // PackageOpen,
   ShoppingBag,
   ShoppingCart,
+  Users,
   // TicketPercent,
   // Truck,
 } from "lucide-react";
@@ -185,12 +186,19 @@ export function AdminLayout({
       variant: "default",
     },
     {
-      href: "/admin/media/image",
-      title: "คลังรูปภาพ",
+      href: "affiliate/admin/dashboard",
+      title: "โปรแกรม Affiliate",
       // label: "128",
-      icon: Images,
+      icon: Users,
       variant: "default",
     },
+    // {
+    //   href: "/admin/media/image",
+    //   title: "คลังรูปภาพ",
+    //   // label: "128",
+    //   icon: Images,
+    //   variant: "default",
+    // },
   ];
   return (
     <TooltipProvider delayDuration={0}>
