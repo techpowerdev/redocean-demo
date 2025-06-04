@@ -13,11 +13,13 @@ export default function Home() {
             <Image
               src="/logo.jpg"
               alt="Khumkha Logo"
-              width={32}
-              height={32}
+              width={48}
+              height={48}
               className="rounded"
             />
-            <span className="text-xl font-bold">Khumkha Affiliate</span>
+            <span className="hidden sm:text-xl font-bold">
+              Khumkha Affiliate
+            </span>
           </Link>
           <nav className="hidden md:flex gap-6">
             <Link
@@ -46,7 +48,7 @@ export default function Home() {
             </Link>
           </nav>
           <div className="flex items-center gap-4">
-            <Link href="/affiliate/login">
+            <Link href="/affiliate/dashboard">
               <Button variant="outline">เข้าสู่ระบบ</Button>
             </Link>
             <Link href="/affiliate/register">
@@ -69,7 +71,7 @@ export default function Home() {
                     และรับค่าคอมมิชชั่นสูงสุดถึง 20% จากทุกการซื้อ
                   </p>
                 </div>
-                <div className="flex flex-col gap-2 min-[400px]:flex-row">
+                <div className="flex flex-row gap-2">
                   <Link href="/affiliate/register">
                     <Button className="px-8">
                       เริ่มต้นตอนนี้
@@ -348,11 +350,6 @@ export default function Home() {
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
-                <Link href="/affiliate/login">
-                  <Button variant="outline" className="px-8">
-                    เข้าสู่ระบบ
-                  </Button>
-                </Link>
               </div>
             </div>
           </div>
@@ -360,13 +357,13 @@ export default function Home() {
       </main>
       <footer className="border-t">
         <div className="container mx-auto flex flex-col gap-4 py-10 md:flex-row md:gap-8 md:py-12 px-4 md:px-6">
-          <div className="flex flex-col gap-2 md:gap-4 md:w-1/3">
+          <div className="flex flex-col gap-2 md:gap-4">
             <Link href="/affiliate" className="flex items-center gap-2">
               <Image
                 src="/logo.jpg"
                 alt="Khumkha Logo"
-                width={32}
-                height={32}
+                width={48}
+                height={48}
                 className="rounded"
               />
               <span className="text-xl font-bold">Khumkha Affiliate</span>
@@ -376,124 +373,6 @@ export default function Home() {
               ที่ช่วยให้คุณสร้างรายได้จากการแนะนำสินค้าที่คุณชื่นชอบ
             </p>
           </div>
-          {/* <div className="grid flex-1 grid-cols-2 md:grid-cols-4 gap-8">
-            <div className="space-y-2">
-              <h4 className="text-sm font-medium">เกี่ยวกับเรา</h4>
-              <ul className="space-y-2 text-sm">
-                <li>
-                  <Link
-                    href="/affiliate#"
-                    className="text-gray-500 hover:underline dark:text-gray-400"
-                  >
-                    เกี่ยวกับบริษัท
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/affiliate#"
-                    className="text-gray-500 hover:underline dark:text-gray-400"
-                  >
-                    ติดต่อเรา
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/affiliate#"
-                    className="text-gray-500 hover:underline dark:text-gray-400"
-                  >
-                    ข่าวสาร
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div className="space-y-2">
-              <h4 className="text-sm font-medium">Affiliate</h4>
-              <ul className="space-y-2 text-sm">
-                <li>
-                  <Link
-                    href="/affiliate#"
-                    className="text-gray-500 hover:underline dark:text-gray-400"
-                  >
-                    วิธีการทำงาน
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/affiliate#"
-                    className="text-gray-500 hover:underline dark:text-gray-400"
-                  >
-                    ค่าคอมมิชชั่น
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/affiliate#"
-                    className="text-gray-500 hover:underline dark:text-gray-400"
-                  >
-                    เงื่อนไขและข้อตกลง
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div className="space-y-2">
-              <h4 className="text-sm font-medium">ช่วยเหลือ</h4>
-              <ul className="space-y-2 text-sm">
-                <li>
-                  <Link
-                    href="/affiliate#"
-                    className="text-gray-500 hover:underline dark:text-gray-400"
-                  >
-                    คำถามที่พบบ่อย
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/affiliate#"
-                    className="text-gray-500 hover:underline dark:text-gray-400"
-                  >
-                    ศูนย์ช่วยเหลือ
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/affiliate#"
-                    className="text-gray-500 hover:underline dark:text-gray-400"
-                  >
-                    นโยบายความเป็นส่วนตัว
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div className="space-y-2">
-              <h4 className="text-sm font-medium">ติดตามเรา</h4>
-              <ul className="space-y-2 text-sm">
-                <li>
-                  <Link
-                    href="/affiliate#"
-                    className="text-gray-500 hover:underline dark:text-gray-400"
-                  >
-                    Facebook
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/affiliate#"
-                    className="text-gray-500 hover:underline dark:text-gray-400"
-                  >
-                    Instagram
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/affiliate#"
-                    className="text-gray-500 hover:underline dark:text-gray-400"
-                  >
-                    Twitter
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          </div> */}
         </div>
       </footer>
     </div>
