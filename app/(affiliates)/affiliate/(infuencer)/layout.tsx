@@ -77,6 +77,12 @@ export default function AffiliateLayout({
       <div className="w-full min-h-screen flex flex-col justify-center items-center">
         <span>อยู่ระหว่างตรวจสอบ และรออนุมัติ</span>
         <span>ระหว่างนี้ท่านจะยังไม่สามารถใช้งานระบบ affiliate ได้</span>
+        <Link
+          className="text-white px-4 py-2 rounded-md bg-primary hover:bg-primary/85 my-2"
+          href={"/"}
+        >
+          กลับไปหน้าหลัก
+        </Link>
       </div>
     );
   }
@@ -102,11 +108,11 @@ export default function AffiliateLayout({
                     <Image
                       src="/logo.jpg"
                       alt="Affiliate Logo"
-                      width={24}
-                      height={24}
+                      width={40}
+                      height={40}
                       className="rounded"
                     />
-                    <span>AffiliateHub</span>
+                    <span>Khumkha Affiliate</span>
                   </Link>
                   <AffiliateNavbar links={affiliateNavbar} />
                 </nav>
@@ -126,7 +132,7 @@ export default function AffiliateLayout({
               <span className="hidden md:inline">Khumkha Affiliate</span>
             </Link>
           </div>
-          <div className="flex items-center gap-4">
+          {/* <div className="flex items-center gap-4">
             <Avatar>
               <AvatarImage src="/placeholder-user.jpg" alt="User" />
               <AvatarFallback>SD</AvatarFallback>
@@ -141,7 +147,7 @@ export default function AffiliateLayout({
               <LogOut className="h-5 w-5" />
               <span className="sr-only">ออกจากระบบ</span>
             </Button>
-          </div>
+          </div> */}
         </div>
       </header>
       <div className="flex flex-1">
