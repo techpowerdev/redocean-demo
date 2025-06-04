@@ -10,6 +10,7 @@ export const Step1AffiliateSchema = z.object({
     .refine((val) => val === "" || z.string().email().safeParse(val).success, {
       message: "กรุณาระบุอีเมลที่ถูกต้อง",
     }),
+  referralCode: z.string().optional(),
   phoneNumber: z
     .string()
     .min(9, "กรุณาระบุเบอร์โทร") // ตรวจสอบให้แน่ใจว่าฟิลด์ไม่ว่าง
