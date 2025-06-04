@@ -580,6 +580,7 @@ export type Click = {
  */
 export type Commission = {
   id: string;
+  type: COMMISSION_TYPE;
   amount: number;
   status: COMMISSION_STATUS;
   cancelReason: string | null;
@@ -587,7 +588,8 @@ export type Commission = {
   updatedAt: Date;
 
   // FK
-  orderId: string;
+  orderId: string | null;
+  referralAffiliateId: string | null;
   affiliateId: string;
 
   // Relation
@@ -600,7 +602,7 @@ export type Commission = {
  */
 export type CommissionPolicy = {
   id: string;
-  productCommissionRate: number; // อัตราคอมมิชชันจากสินค้า (%)
+  orderCommissionRate: number; // อัตราคอมมิชชันจากสินค้า (%)
   referralCommissionRate: number; // อัตราคอมมิชชันจากการแนะนำ (%)
   minimumWithdrawAmount: number; // ยอดขั้นต่ำในการถอน
   withdrawFeeType: WITHDRAW_FEE_TYPE;
@@ -1095,6 +1097,11 @@ export type AFFILIATE_STATUS = "pending" | "approved" | "rejected";
  *
  */
 export type COMMISSION_STATUS = "pending" | "paid" | "cancelled";
+/**
+ * Enum CommissionType
+ *
+ */
+export type COMMISSION_TYPE = "orderCommission" | "referralCommission";
 /**
  * Enum WithdrawStatus
  *
