@@ -21,7 +21,6 @@ import {
   Flame,
   GalleryVertical,
   Gift,
-  Images,
   LayoutList,
   // LayoutDashboard,
   LucideIcon,
@@ -248,7 +247,7 @@ export function AdminLayout({
                 isCollapsed ? "px-2 line-clamp-1" : "line-clamp-none"
               )}
             >
-              RED OCEAN MARKETING
+              ADMIN : KHUMKHA.COM
             </h1>
           </div>
           <Separator />
