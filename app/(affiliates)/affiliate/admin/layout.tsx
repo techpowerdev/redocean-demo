@@ -1,9 +1,8 @@
 "use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { BarChart3, Coins, HandCoins, LogOut, Menu, Users } from "lucide-react";
+import { BarChart3, Coins, HandCoins, Menu, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import AffiliateNavbar from "../(infuencer)/AffiliateNavbar";
