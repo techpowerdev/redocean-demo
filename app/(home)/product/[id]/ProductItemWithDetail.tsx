@@ -8,7 +8,7 @@ import {
 import React, { useCallback, useEffect, useState } from "react";
 import ProductTitle from "./ProductTitle";
 import ProductSelector from "./ProductSelector";
-import AddToCartButton from "./AddToCartButton";
+// import AddToCartButton from "./AddToCartButton";
 import ProductPrice from "./ProductPrice";
 import toast from "react-hot-toast";
 import SetProductQuantity from "./SetProductQuantity";
@@ -210,12 +210,12 @@ export default function ProductItemWithDetail({
               )}
             </div>
           )}
-          <div className="w-full sm:w-2/3">
+          {/* <div className="w-full sm:w-2/3">
             <AddToCartButton
               selectedModel={selectedModel}
               buyProductData={buyProductData}
             />
-          </div>
+          </div> */}
           <PlaceOrder singleItem={selectedModel ? buyProductData : undefined} />
         </div>
       </div>
