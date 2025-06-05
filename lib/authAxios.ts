@@ -17,6 +17,7 @@ const authAxios = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+  withCredentials: true,
 });
 
 // 👉 Interceptor: เพิ่ม token ก่อนส่ง request
